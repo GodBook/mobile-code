@@ -23,6 +23,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.CancellationException
 import java.util.BitSet
 import java.util.WeakHashMap
+import java.util.regex.Pattern
 import java.util.concurrent.atomic.AtomicLong
 
 object NativeSyntax {
@@ -177,8 +178,19 @@ class MobileLanguage(private val language: CodeLanguage, private val document: (
         if(current.version!=original.version || current.path!=original.path) return
         if(semantic.isNotEmpty()) semantic.forEach { publisher.addItem(SemanticItem(it,prefix.length,document)) }
         else {
-            val words=keywords(language).asSequence()+wordPattern.findAll(original.text).map { it.value }
-            words.takeWhile { !Thread.currentThread().isInterrupted }.filter { it.startsWith(prefix) && it!=prefix }.distinct().take(80).forEach { publisher.addItem(SimpleCompletionItem(it,"基础补全",prefix.length,it)) }
+            val words=LinkedHashSet<String>()
+            fun include(word: String) { if(word.startsWith(prefix) && word!=prefix && words.size<80) words+=word }
+            keywords(language).forEach(::include)
+            // Kotlin Regex.findAll creates another Matcher for each next match.
+            // Android's native regex matcher copies its input: reuse one matcher.
+            val matcher=wordPattern.matcher(original.text)
+            var matches=0
+            while(words.size<80 && !Thread.currentThread().isInterrupted && matcher.find()) {
+                if(matches++%128==0 && document()?.version!=original.version) return
+                include(matcher.group())
+            }
+            if(Thread.currentThread().isInterrupted || document()?.version!=original.version) return
+            words.forEach { publisher.addItem(SimpleCompletionItem(it,"基础补全",prefix.length,it)) }
             snippets(language).filter { it.first.startsWith(prefix) }.forEach { (label,text) -> publisher.addItem(SemanticItem(Completion(label,text,"代码片段",snippet=true,version=original.version),prefix.length,document)) }
         }
         publisher.updateList()
@@ -201,7 +213,7 @@ class MobileLanguage(private val language: CodeLanguage, private val document: (
         }
     }
     companion object {
-        private val wordPattern=Regex("[\\p{L}_][\\p{L}\\p{N}_]*")
+        private val wordPattern=Pattern.compile("[\\p{L}_][\\p{L}\\p{N}_]*")
         fun keywords(language: CodeLanguage): List<String> = when(language) {
             CodeLanguage.PYTHON -> "def class return if elif else for while in import from as try except finally with lambda yield async await True False None print input range len list dict str int".split(' ')
             CodeLanguage.JAVA -> "public private protected class interface extends implements static final void int long double boolean String return if else for while new try catch throw throws import package System".split(' ')
