@@ -2,67 +2,55 @@
 
 Updated: 2026-10-12, Asia/Shanghai.
 
-## Outcome
+## Current outcome
 
-The four-language IDE 0.1.0 baseline below passed 20 device/UI integration tests and was delivered locally. Public repository https://github.com/GodBook/mobile-code now contains the source. Releases 0.2.0 and 0.2.1 are published, with every uploaded asset size/SHA256 verified against GitHub's digest before publication. Latest/update.json fetched without authentication identifies 0.2.1. Six unit tests and two phone security tests passed. The phone has 0.2.0 installed; the final real download/install of 0.2.1 is still being investigated because Android Java HTTPS requests time out even though phone-system curl reaches both GitHub and its API. Do not claim end-to-end update acceptance yet. Broader compatibility limits below still apply.
+Public repository: https://github.com/GodBook/mobile-code . Release https://github.com/GodBook/mobile-code/releases/tag/v0.2.2 is published and latest. All five assets were checked against their local sizes and GitHub SHA256 digests before publication. Anonymous latest/download/update.json returns versionCode5 and the expected APK hash.
 
-Current increment: 0.2.0 / versionCode 3 is installed; 0.2.1 / versionCode 4 is latest. APK 0.2.1: 429,738,092 bytes, SHA256 9d7187b05b64ef1f6342b2a20340953cd3a9d5fae4920afddcf7ce6d10087bc2. Tag points to d3f4012; its five assets include the APK, app source ZIP, 16-recipe/23-input corresponding source ZIP, update.json and SHA256SUMS. INTERNET and REQUEST_INSTALL_PACKAGES are explicitly authorized; editing/build/run/debug continue locally.
+The connected Xiaomi Mi 9 SE completed a real online upgrade from the local versionCode4 / 0.2.2-preview bridge to the published versionCode5 / 0.2.2 APK. PublishedUpdateTest fetched the public manifest, downloaded the actual 429,738,676-byte APK through Android DownloadManager and passed APK verification in 69.747s. Installation used the application's install-update action, Android's source permission screen and normal package-installer confirmation. The installed base.apk SHA256 matches the published APK exactly. No adb install replaced the application during this upgrade.
 
-Phone update diagnostic: the phone resolves/reaches GitHub, but Mobile Code UID 10272 had a LineageOS REJECT_ALL (262144) network policy. Manifest INTERNET is granted. Under the user's online-update authorization, only that UID's REJECT_ALL bit was removed via the verified INetworkPolicyManager.removeUidPolicy API; readback is policy 0. No root was used. The PIN lock remains, and deep Doze interrupted timing checks in the 0.2.0 regression (partial output observation, preset-input timeout and >2s stop). Preserve those failed logs; do not count this run as passed. Wake/unlock is needed for repeat foreground acceptance.
+UpgradeDataTest.verifyAfterSystemUpdate passed 1/1 in 0.476s: all recorded project IDs, representative Chinese/emoji source hash, breakpoint and editor settings survived. The final APK passed the complete 22-case foreground regression in 119.706s. A further real GitHub check passed in 3.29s with installed=5/offered=5 and CURRENT state. The separate test APK was built for this final application version. Published production assets remain unchanged.
 
-Update: the same Mi 9 SE reconnected under a different wireless IP and is now unlocked. Find the active grus device with adb devices; do not target old offline entries. The 0.2.0 full regression had 17/22 pass under PIN/Doze. Repeating its four timing/output failures while keeping the phone awake passed 4/4 in 38.471s, so 21 distinct cases now have pass evidence. Editor UI acceptance remains to rerun while unlocked. Reports: verification/local/update-0.2.0-regression.json (failed run) and update-0.2.0-timing-retest.json (passed retest).
+## Frozen release artifact
 
-Network follow-up: explicit NetworkDiagnosticsTest passed on the phone, with the Java GitHub redirect chain and API each returning 200. Global proxy settings are null. Forced-refresh client checks were unreliable. The pending 0.2.2 client follows normal response cache policy and retries one transient I/O failure while retaining the 60s bound, HTTPS allowlist and certificate checks. Its local versionCode4/0.2.2-preview bridge is installed; PublishedUpdateTest successfully fetched the public versionCode4 manifest in ~3s (.downloads/github-fixed-client-check.log, github-fixed-client-logcat.txt). Do not replace the public 0.2.0/0.2.1 APKs or tags.
+- Version 0.2.2 / versionCode5; source tag v0.2.2 points to 3dfa390.
+- APK: artifacts/update-publication/MobileCode-0.2.2-arm64-v8a.apk, 429,738,676 bytes.
+- APK SHA256: 61acbfc1d73789876d1e218733244f45a1921eb45e047656abb92e8d8a8613d3.
+- Certificate SHA256: b579d64db9b1ca5ab84084823dfcae5c625de4bcd6dd38fe4bdcfc1df5fa370a. Original signing identity retained; private backup is outside the repository.
+- ARM64 only, minSdk29, compile/targetSdk37, application debuggable=false.
+- Six unit tests and 484/484 native-file checks passed; verification/local/update-0.2.2-apk-audit.json.
+- Release includes APK, application source ZIP, corresponding-source ZIP, update.json and SHA256SUMS.txt. Corresponding materials cover 16 recipes and 23 upstream inputs/patches; docs/SOURCE_MATERIALS.md.
+- Historical 0.2.0/0.2.1 releases and tags are preserved.
 
-0.2.2 final APK is prepared: artifacts/update-publication/MobileCode-0.2.2-arm64-v8a.apk, 429,738,676 bytes, SHA256 61acbfc1d73789876d1e218733244f45a1921eb45e047656abb92e8d8a8613d3. Six unit tests, build and 484-file audit pass. The corresponding source archive is prepared. Next: commit/push reviewed 0.2.2 source, prepare_release.py, publish its five verified release assets, run PublishedUpdateTest on the versionCode4 bridge to really download versionCode5, then use the normal system install flow and verify UpgradeDataTest/foreground regression with the final test APK.
+## Device evidence and handoff
 
-The versionCode4 full regression took 829.239s under renewed PIN/Doze and passed 19/22; failures were stop timing, timeout output and editor Compose UI absence. It is not a passing run. The user was asked to unlock again. A bounded activity helper (session 84612) taps the harmless status-bar corner while testing to prevent renewed inactivity lock; stop it by creating .downloads/ota-v022-device-activity.finished (or wait its 20-minute bound). It never enters a PIN or changes lock configuration. Current build session 28033 compiles the added UpgradeDataTest marker fixture for versionCode4 and records pre-upgrade project/settings data. Check its result before replacing the test APK. Rebuild only the final versionCode5 Android test APK afterward; keep the already audited final APK unchanged.
+- Locate the active lineage_grus / Mi 9 SE with adb devices; wireless addresses change. Ignore offline entries and the unrelated x86_64 emulator.
+- Before/after upgrade fixture: .downloads/update-data-before.log and update-0.2.2-data-after.log. Do not delete the private update-acceptance.json or test projects.
+- Real download: .downloads/update-0.2.2-real-download.log. Installed hash: .downloads/update-0.2.2-installed-sha256.txt. Update/installer screenshots remain in .downloads.
+- Public report and five raw instrumentation logs: verification/releases/v0.2.2/acceptance.json and adjacent *.log files. Local reports generated with tools/summarize_android_tests.py: verification/local/update-0.2.2-{final-regression,data-after,real-download}.json.
+- Final regression: .downloads/update-0.2.2-final-regression.log; 22/22, classes OfflineIdeTest,WorkbenchTest,UpdateIntegrationTest. Includes four-language run/debug/project completion, editor, resource faults and update security.
+- Bridge foreground retest passed 3/3 after unlocking: .downloads/update-unlocked-retest.log. Earlier locked runs passed only 17/22 (0.2.0) and 19/22 (bridge); retain failures and do not call those runs passed.
+- Temporary screen-activity helper was stopped through .downloads/ota-v022-unlocked-activity.finished; its session confirmed termination. It never entered a PIN or changed lock configuration.
+- Process-list inspection after the regression showed no run/debug workers. Application reopened for the user. Projects, acceptance fixtures and signing materials are preserved.
+- Authorized repository/update increment is complete. Broader device/performance work requires the environments listed below; do not repeat already passing acceptance without a relevant change or failure.
 
-## Workspace and environment
+## Environment and authorization
 
-- Workspace: D:\CHATGPT\mobile code; initially empty, no Git repository.
-- JDK17 D:\dev\jdk-17; Android SDK37.0 D:\dev\android-sdk; NDK28.2.13676358; CMake3.22.1; Gradle9.4.1 in .toolchains/.
-- WSL Ubuntu-24.04: /opt/mobilecode-work points here. Persistent CPython builds and package extraction are in /root/.cache/mobilecode/.
-- User explicitly authorized testing the connected Xiaomi Mi 9 SE: LineageOS Android15/API35, ARM64, 4096-byte pages, ~6GB RAM. Query adb devices to find its current wireless serial; ignore unrelated offline entries. emulator-5580 is development x86_64.
+- Workspace: D:\CHATGPT\mobile code; JDK17 D:\dev\jdk-17; SDK D:\dev\android-sdk; NDK28.2.13676358; CMake3.22.1; Gradle9.4.1 in .toolchains/.
+- WSL Ubuntu-24.04: /opt/mobilecode-work points here. Runtime builds/package extraction: /root/.cache/mobilecode/.
+- User explicitly authorized this connected phone, public GitHub repository/releases and online updates. INTERNET and REQUEST_INSTALL_PACKAGES are authorized additions; core editing/build/run/debug remain local/offline.
+- Phone: Xiaomi Mi 9 SE, LineageOS Android15/API35, ARM64, 4096-byte pages, approximately 6GB RAM. Only Mobile Code's app-specific REJECT_ALL policy was removed under the update authorization; readback policy0. No root.
+- Keys, tokens, device logs and generated toolchains are excluded from Git. Public visibility does not assign a new general license to application-owned source.
 
-## Verified artifact
+## Previous accepted IDE baseline
 
-- app/build/outputs/apk/release/app-release.apk: 429,662,908 bytes.
-- SHA256: 89253f5cf325560c336ef9a5b25a04e35a53dd3cc8d6bdc57d6910bab576259e.
-- Installed phone APK SHA256 matches. minSdk29/target37, ARM64-only, no INTERNET or broad storage access; app debuggable=false.
-- Signed using the local Android development certificate. This is a locally installable prototype, not a public release signed with an owner-managed production key.
+0.1.0 passed 20/20 phone/UI tests in 117.815s and 5/5 host tests. APK SHA256: 89253f5cf325560c336ef9a5b25a04e35a53dd3cc8d6bdc57d6910bab576259e. Historical reports: verification/local/phone-runtime.json, phone-acceptance.log, host-runtime.json and apk-audit.json. Local delivery is preserved in artifacts/; docs/VERIFICATION.md.
 
-## Evidence
+Coverage: four real local languages; stdin/argv/EOF; source breakpoints, step-in/over/out, stacks, locals and safe watches; cross-file clangd/Jedi/JDT completion; Chinese IME/emoji; rapid edits, undo/fold/autosave/click-run; immutable snapshots, ZIP/source import/export, traversal rejection, timeouts, crash isolation and output limits.
 
-- verification/local/phone-runtime.json and phone-acceptance.log: 20/20 passed in 117.815s, against the exact APK SHA256 above.
-- Device coverage: four real languages run; stdin during debugging; breakpoint, step-in/over/out, stack, locals, safe watches; cross-file clangd/Jedi/JDT completions; paused execution budget; Chinese composing/emoji; 30 rapid text resets; undo/redo/fold/autosave/click-run; immutable snapshots, source/ZIP export and import; traversal rejection; timeout, blocked preset input, native SIGSEGV, 12MiB stdout/10MiB log cap, EOF/idempotence and <2s stop.
-- verification/local/host-runtime.json: 5/5 passed, including native FIFO console/Unicode argv and actual private-FD Java/Python debug integration.
-- verification/local/apk-audit.json: all 484 packaged native files passed ABI, 16KiB LOAD alignment and expected SHA256 checks; native names are unique; offline archive hash and required assets passed.
-- verification/local/apk-signing.txt, apk-manifest*.txt, installed-apk-sha256.txt: signing, permissions and installed-version evidence.
-- No run/debug workers remained in the phone process list after acceptance. Test projects and session data were preserved.
-
-## Important implementation decisions
-
-- C/C++ compile PIC shared modules and call standard main through the installed native launcher. Debug console FIFOs are opened directly by native-debug; readiness is confirmed by a real marker before sending input. Control arguments are stripped before user argv.
-- Android OpenJDK uses the runner's narrow libjvm dladdr layout adapter. Java continued events are emitted before VM resume to avoid overwriting an immediate step stop.
-- CPython3.13 stdout/stderr explicitly use console pipes; LLDB's Python3.14 is isolated. Same-named libpython3.so stable-ABI shims get unique installed names and context-correct NEEDED mappings.
-- Canonical project paths handle /data/data versus /data/user/0. Syntax results/folds/brackets are generation/line checked on the UI thread; released editors reject navigation.
-- Cancellation marks the session and kills workers before joining blocked readers. Reused foreground services acknowledge every startForegroundService request and use start IDs when stopping.
-- Runtime package versions are frozen under tools/locks; Gradle dependency locks, Gradle/CPython/JDT archive SHA256, notices and component license assets are saved.
-
-## Local delivery
-
-- artifacts/MobileCode-0.1.0-arm64-v8a.apk is the verified, installed release APK identified above.
-- artifacts/MobileCode-0.1.0-source.zip contains application sources, build files and locks, toolchain preparation scripts, design/build documents and verification evidence. Generated toolchains, caches and signing keys are excluded.
-- artifacts/SHA256SUMS.txt and artifacts/delivery.json record file hashes, the tested device and validation limits. tools/package_delivery.py checks that the source APK matches the passing phone and APK-audit reports before packaging.
-- These final project records are included in the source ZIP. No runtime source changed after phone acceptance. Do not rerun or broaden completed checks unless source changes or a concrete failure warrants it.
-
-The next development work, if requested, is the unverified compatibility/performance matrix and public-distribution materials below, not a repeat of the completed local handoff.
+Runtime decisions: C/C++ PIC modules load in the installed launcher; native debugging uses console FIFOs and real readiness markers. CPython3.13 and LLDB Python3.14 are isolated. Java uses the narrow libjvm layout adapter and private-FD transport; continued events precede resume. Canonical paths handle /data/data versus /data/user/0. Editor parse/fold results are generation-checked. Cancellation kills workers before joining pipe readers.
 
 ## Explicit limits
 
-Actual 16KiB execution, the Android10-17/vendor matrix, P95 performance and long-running background/low-memory behavior are not verified. Phone tests retained Wi-Fi for wireless ADB; the APK has no networking permission. SAF stream behavior is verified; third-party provider UI matrices remain pending.
+Actual 16KiB device execution, Android10–17/vendor coverage, P95 performance and long-running background/low-memory behavior remain unverified. This phone has 4KiB pages. Tests keep Wi-Fi for wireless ADB; offline-regression classes do not require updater traffic. SAF stream round trips are covered; third-party provider UI matrices remain pending.
 
-Formal broad P0/P4 compatibility acceptance stays open for these environments. The user's new GitHub request authorizes public source/release publication and online updates. Corresponding GPL/LGPL source materials are now collected separately; see docs/SOURCE_MATERIALS.md. Existing signing identity must be retained for upgrades. Root, reboot and unrelated system-setting changes remain outside scope.
-
-Failed exploratory logs remain in .downloads; authoritative final evidence is in verification/local. Runtime source is frozen at the verified version.
+Formal broad P0/P4 compatibility acceptance remains open for those environments. The APK retains the original development certificate for compatible updates. Root, reboot, PIN bypass and unrelated system changes remain outside scope.

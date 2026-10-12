@@ -50,7 +50,7 @@ $env:ANDROID_HOME = 'D:\dev\android-sdk'
 
 输出：`app/build/outputs/apk/release/app-release.apk`。准备工具链期间不要同时构建同一 ABI 的 APK。详细环境、组件来源和常见问题见 [构建说明](docs/BUILD.md)。
 
-当前 release 使用本机 Android debug keystore 签名，应用级 `debuggable=false`。这是可安装的本地测试产物；公开发布时应配置持久化的发布密钥，不能将密钥提交到源码目录。
+当前 release 沿用首版 Android 开发证书，应用级 `debuggable=false`；原签名私钥已在源码目录外备份。发布现有更新通道的新版必须保留同一签名，不能换用另一台电脑自动生成的 debug keystore。密钥不能提交到仓库；版本状态与兼容性范围见验证记录。
 
 ## 验证
 

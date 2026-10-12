@@ -1,0 +1,305 @@
+{
+  "schemaVersion": 1,
+  "regressionReportGeneratedAt": "2026-10-12T11:53:44.876177+00:00",
+  "sourceCommit": "3dfa39075550d1345bd98c765e889bcd8fd0a8d7",
+  "repository": "https://github.com/GodBook/mobile-code",
+  "release": {
+    "id": 410531664,
+    "tag": "v0.2.2",
+    "url": "https://github.com/GodBook/mobile-code/releases/tag/v0.2.2",
+    "publishedAt": "2026-10-12T11:44:01Z",
+    "latestManifestVerifiedWithoutAuthentication": true,
+    "assetsVerifiedAgainstGitHubSizeAndDigest": true,
+    "assets": [
+      {
+        "name": "MobileCode-0.2.2-arm64-v8a.apk",
+        "bytes": 429738676,
+        "sha256": "61acbfc1d73789876d1e218733244f45a1921eb45e047656abb92e8d8a8613d3"
+      },
+      {
+        "name": "MobileCode-0.2.2-source.zip",
+        "bytes": 269489,
+        "sha256": "8b1886f145e25cdd251bb84bc029a4bb51a131cdb2260284e47a388913436556"
+      },
+      {
+        "name": "MobileCode-0.2.2-corresponding-sources.zip",
+        "bytes": 156785258,
+        "sha256": "d9686e7f3550cec82a86c5391c32bc1ac29119dbc25de26e83398a7122c0f17e"
+      },
+      {
+        "name": "update.json",
+        "bytes": 854,
+        "sha256": "a4cb8f351d868acb188f0d14e065cc2b5e67638153e413194e7d1c3fcaed8ca7"
+      },
+      {
+        "name": "SHA256SUMS.txt",
+        "bytes": 378,
+        "sha256": "8631921977c735f886043af30d598e5b77d704ec5adfe2ab434908e12ff19cd7"
+      }
+    ]
+  },
+  "apk": {
+    "packageName": "dev.mobilecode.ide",
+    "versionName": "0.2.2",
+    "versionCode": 5,
+    "bytes": 429738676,
+    "sha256": "61acbfc1d73789876d1e218733244f45a1921eb45e047656abb92e8d8a8613d3",
+    "installedBaseApkSha256": "61acbfc1d73789876d1e218733244f45a1921eb45e047656abb92e8d8a8613d3",
+    "certificateSha256": "b579d64db9b1ca5ab84084823dfcae5c625de4bcd6dd38fe4bdcfc1df5fa370a",
+    "minSdk": 29,
+    "targetSdk": 37,
+    "abi": "arm64-v8a",
+    "debuggable": false
+  },
+  "device": {
+    "model": "Xiaomi Mi 9 SE",
+    "os": "LineageOS Android 15",
+    "api": 35,
+    "abi": "arm64-v8a",
+    "pageBytes": 4096
+  },
+  "unitTests": {
+    "passed": 6,
+    "failed": 0,
+    "suite": "dev.mobilecode.ide.update.UpdateReleaseTest"
+  },
+  "nativeAudit": {
+    "passed": true,
+    "nativeFiles": 484,
+    "checks": 1460,
+    "failed": 0,
+    "scope": "Packaged ELF ABI, 16KiB LOAD alignment, hashes, offline resources and unique installed names; not live 16KiB execution"
+  },
+  "onlineUpgrade": {
+    "from": {
+      "versionCode": 4,
+      "versionName": "0.2.2-preview",
+      "kind": "Local bridge built from final production source with version overrides; not a public release"
+    },
+    "to": {
+      "versionCode": 5,
+      "versionName": "0.2.2",
+      "kind": "Published GitHub APK"
+    },
+    "realDownload": {
+      "passed": true,
+      "tests": 1,
+      "durationSeconds": 69.747,
+      "transport": "Android DownloadManager from the public GitHub Release URL",
+      "bytes": 429738676,
+      "log": "verification/releases/v0.2.2/download.log"
+    },
+    "installer": {
+      "passed": true,
+      "method": "Application install action -> per-app unknown-source permission -> Android package-installer update confirmation",
+      "applicationInstalledUsingAdb": false
+    },
+    "dataPreservation": {
+      "passed": true,
+      "beforeTests": 1,
+      "beforeDurationSeconds": 0.46,
+      "afterTests": 1,
+      "afterDurationSeconds": 0.476,
+      "checks": [
+        "All pre-recorded project IDs",
+        "Representative Chinese/emoji source SHA256",
+        "Saved breakpoint",
+        "Dark/light theme",
+        "Font size",
+        "Word wrap",
+        "Run timeout"
+      ],
+      "beforeLog": "verification/releases/v0.2.2/data-before.log",
+      "afterLog": "verification/releases/v0.2.2/data-after.log"
+    },
+    "postUpgradeLatestCheck": {
+      "passed": true,
+      "tests": 1,
+      "durationSeconds": 3.29,
+      "installedVersionCode": 5,
+      "offeredVersionCode": 5,
+      "result": "CURRENT",
+      "log": "verification/releases/v0.2.2/current-check.log"
+    }
+  },
+  "finalRegression": {
+    "passed": true,
+    "tests": 22,
+    "durationSeconds": 119.706,
+    "log": "verification/releases/v0.2.2/regression.log",
+    "results": [
+      {
+        "class": "dev.mobilecode.ide.OfflineIdeTest",
+        "test": "nativeCrashAndOutputFloodStayContained",
+        "passed": true,
+        "status": 0,
+        "failure": null
+      },
+      {
+        "class": "dev.mobilecode.ide.OfflineIdeTest",
+        "test": "blockedPresetInputStillTimesOut",
+        "passed": true,
+        "status": 0,
+        "failure": null
+      },
+      {
+        "class": "dev.mobilecode.ide.OfflineIdeTest",
+        "test": "interactiveInputEofAndIdempotentStop",
+        "passed": true,
+        "status": 0,
+        "failure": null
+      },
+      {
+        "class": "dev.mobilecode.ide.OfflineIdeTest",
+        "test": "pythonHasRealSourceDebugger",
+        "passed": true,
+        "status": 0,
+        "failure": null
+      },
+      {
+        "class": "dev.mobilecode.ide.OfflineIdeTest",
+        "test": "python313RunsWithInput",
+        "passed": true,
+        "status": 0,
+        "failure": null
+      },
+      {
+        "class": "dev.mobilecode.ide.OfflineIdeTest",
+        "test": "pythonHasCrossFileSemanticCompletion",
+        "passed": true,
+        "status": 0,
+        "failure": null
+      },
+      {
+        "class": "dev.mobilecode.ide.OfflineIdeTest",
+        "test": "atomicWorkspaceSnapshotAndZipRoundTrip",
+        "passed": true,
+        "status": 0,
+        "failure": null
+      },
+      {
+        "class": "dev.mobilecode.ide.OfflineIdeTest",
+        "test": "cppRunsStlAcrossFiles",
+        "passed": true,
+        "status": 0,
+        "failure": null
+      },
+      {
+        "class": "dev.mobilecode.ide.OfflineIdeTest",
+        "test": "cppHasCrossFileSemanticCompletion",
+        "passed": true,
+        "status": 0,
+        "failure": null
+      },
+      {
+        "class": "dev.mobilecode.ide.OfflineIdeTest",
+        "test": "cRunsWithInputAndArguments",
+        "passed": true,
+        "status": 0,
+        "failure": null
+      },
+      {
+        "class": "dev.mobilecode.ide.OfflineIdeTest",
+        "test": "timeoutAndCrashLeaveEditorAndNextRunUsable",
+        "passed": true,
+        "status": 0,
+        "failure": null
+      },
+      {
+        "class": "dev.mobilecode.ide.OfflineIdeTest",
+        "test": "javaHasRealSourceDebugger",
+        "passed": true,
+        "status": 0,
+        "failure": null
+      },
+      {
+        "class": "dev.mobilecode.ide.OfflineIdeTest",
+        "test": "javaHasCrossFileSemanticCompletion",
+        "passed": true,
+        "status": 0,
+        "failure": null
+      },
+      {
+        "class": "dev.mobilecode.ide.OfflineIdeTest",
+        "test": "cppHasRealSourceDebugger",
+        "passed": true,
+        "status": 0,
+        "failure": null
+      },
+      {
+        "class": "dev.mobilecode.ide.OfflineIdeTest",
+        "test": "java17RunsWithInput",
+        "passed": true,
+        "status": 0,
+        "failure": null
+      },
+      {
+        "class": "dev.mobilecode.ide.OfflineIdeTest",
+        "test": "installedReleaseHasUpdaterPermissionsAndNonDebuggable",
+        "passed": true,
+        "status": 0,
+        "failure": null
+      },
+      {
+        "class": "dev.mobilecode.ide.OfflineIdeTest",
+        "test": "cHasCrossFileSemanticCompletion",
+        "passed": true,
+        "status": 0,
+        "failure": null
+      },
+      {
+        "class": "dev.mobilecode.ide.OfflineIdeTest",
+        "test": "cHasRealSourceDebugger",
+        "passed": true,
+        "status": 0,
+        "failure": null
+      },
+      {
+        "class": "dev.mobilecode.ide.WorkbenchTest",
+        "test": "fourIncrementalGrammarsAcceptUnicodeAndIncompleteSource",
+        "passed": true,
+        "status": 0,
+        "failure": null
+      },
+      {
+        "class": "dev.mobilecode.ide.WorkbenchTest",
+        "test": "createEditComposeUndoFoldAutosaveAndRunFromWorkbench",
+        "passed": true,
+        "status": 0,
+        "failure": null
+      },
+      {
+        "class": "dev.mobilecode.ide.UpdateIntegrationTest",
+        "test": "rejectsCorruptDownloadsAndDowngradesBeforeInstaller",
+        "passed": true,
+        "status": 0,
+        "failure": null
+      },
+      {
+        "class": "dev.mobilecode.ide.UpdateIntegrationTest",
+        "test": "updaterProviderCannotExposeWorkspaceFiles",
+        "passed": true,
+        "status": 0,
+        "failure": null
+      }
+    ]
+  },
+  "testApk": {
+    "compiledAgainstApplicationVersionCode": 5,
+    "sha256": "7c79a5087dfa7f779f265d878a58db735f26dc4ad8c15fa628508818bfbf1309",
+    "installedSeparatelyUsingAdb": true
+  },
+  "cleanup": {
+    "noRunOrDebugWorkersAfterRegression": true,
+    "temporaryScreenActivityHelperStopped": true,
+    "projectsAndTestDataPreserved": true
+  },
+  "notVerified": [
+    "Actual 16KiB execution",
+    "Full Android10–17/vendor matrix",
+    "P95 performance and long-running background/low-memory matrix",
+    "Third-party SAF provider UI matrix",
+    "Airplane-mode run on this phone; Wi-Fi was retained for wireless ADB"
+  ],
+  "historicalFailures": "Earlier locked/Doze runs failed timing/UI checks (0.2.0 17/22; bridge 19/22). Raw failures are retained locally; this report records the separate, unlocked final-APK 22/22 run."
+}
