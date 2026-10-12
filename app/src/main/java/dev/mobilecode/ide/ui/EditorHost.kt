@@ -38,7 +38,11 @@ fun EditorHost(model: IdeViewModel,state: IdeState,settings: EditorSettings,sess
     val snapshotDocument=if(preview) document else null
     val key=if(preview) "snapshot:${state.navigation.serial}:$path" else path
     val currentModel by rememberUpdatedState(model)
-    AndroidView(modifier=modifier.testTag("code-editor"),factory={ FrameLayout(it) },update={ container ->
+    AndroidView(modifier=modifier.testTag("code-editor"),factory={ FrameLayout(it).apply {
+        // Compose must see a focusable host before update() attaches the editor.
+        isFocusable=true; isFocusableInTouchMode=true
+        descendantFocusability=ViewGroup.FOCUS_AFTER_DESCENDANTS
+    } },update={ container ->
         registry.entries.keys.filter { it!=key && it !in state.documents }.forEach(registry::remove)
         val entry=registry.entries.getOrPut(key) {
             val editor=MobileCodeEditor(container.context)
