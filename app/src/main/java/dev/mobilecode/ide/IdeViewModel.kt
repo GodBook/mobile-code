@@ -38,9 +38,10 @@ class IdeViewModel(application: Application): AndroidViewModel(application) {
     private var signatureJob: Job?=null
     private var cursorSave: Job?=null
     private var navigationId=0L
+    private val restoration: Job
 
     init {
-        viewModelScope.launch {
+        restoration=viewModelScope.launch {
             guarded {
                 val projects=app.workspace.projects(); mutable.update { it.copy(projects=projects) }
                 val restored=app.settings.flow.first()
@@ -65,6 +66,7 @@ class IdeViewModel(application: Application): AndroidViewModel(application) {
     fun report(error: String) { mutable.update { it.copy(error=error) } }
     fun document(path: String): Document? = mutable.value.documents[path]
     fun createProject(name: String, language: CodeLanguage, multiple: Boolean) = viewModelScope.launch {
+        restoration.join()
         guarded {
             check(!session.value.active) { "请先停止当前任务" }; saveAll()
             val created=app.workspace.create(name,language,multiple)
@@ -72,7 +74,7 @@ class IdeViewModel(application: Application): AndroidViewModel(application) {
             val projects=app.workspace.projects(); mutable.update { it.copy(projects=projects) }; select(project)
         }
     }
-    fun openProject(project: Project) = viewModelScope.launch { guarded { check(!session.value.active) { "请先停止当前任务再切换项目" }; saveAll(); select(project) } }
+    fun openProject(project: Project) = viewModelScope.launch { restoration.join(); guarded { check(!session.value.active) { "请先停止当前任务再切换项目" }; saveAll(); select(project) } }
     private suspend fun select(project: Project, file: String="", cursor: Position=Position(0,0)) {
         languageChanges.values.forEach { it.cancel() }; languageChanges.clear(); cursorSave?.cancel(); signatureJob?.cancel()
         activation?.cancelAndJoin(); app.languages.close()
@@ -91,8 +93,13 @@ class IdeViewModel(application: Application): AndroidViewModel(application) {
         activation=viewModelScope.launch { guarded { app.languages.activate(project,chain); state.value.documents.values.forEach { app.languages.change(it) } } }
     }
     fun retryTools()=viewModelScope.launch { guarded { app.toolchains.prepare(); activate() } }
-    fun foreground() { activate() }
-    fun home()=viewModelScope.launch { guarded { check(!session.value.active) { "请先停止当前任务" }; saveAll(); activation?.cancelAndJoin(); app.languages.close(); mutable.update { it.copy(project=null,documents=emptyMap(),activePath="",preview=null) } } }
+    fun foreground() { if(restoration.isCompleted) activate() }
+    fun home()=viewModelScope.launch { restoration.join(); guarded {
+        check(!session.value.active) { "请先停止当前任务" }; saveAll()
+        languageChanges.values.forEach { it.cancel() }; languageChanges.clear(); cursorSave?.cancel(); signatureJob?.cancel()
+        activation?.cancelAndJoin(); app.languages.close()
+        mutable.update { it.copy(project=null,documents=emptyMap(),activePath="",preview=null) }
+    } }
     fun openFile(path: String, position: Position?=null)=viewModelScope.launch { guarded { open(path,position) } }
     private suspend fun open(path: String, position: Position?=null) {
         val project=state.value.project ?: return

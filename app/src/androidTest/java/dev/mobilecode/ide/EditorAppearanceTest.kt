@@ -23,12 +23,13 @@ class EditorAppearanceTest {
     private val app get()=rule.activity.application as MobileCodeApp
     private lateinit var model: IdeViewModel
     @Before fun prepare() {
+        lateinit var homing: Job
         rule.runOnUiThread {
             rule.activity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
             model=ViewModelProvider(rule.activity)[IdeViewModel::class.java]
-            model.home()
+            homing=model.home()
         }
-        rule.waitUntil(15_000) { model.state.value.project==null }
+        rule.waitUntil(30_000) { homing.isCompleted && model.state.value.project==null }
     }
     @After fun cleanup() { runBlocking { app.sessions.stop() } }
 

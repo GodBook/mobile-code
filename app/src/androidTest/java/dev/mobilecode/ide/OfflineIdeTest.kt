@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.lifecycle.ViewModelProvider
 import dev.mobilecode.ide.core.*
 import dev.mobilecode.ide.runtime.Toolchain
 import kotlinx.coroutines.*
@@ -33,7 +34,10 @@ class OfflineIdeTest {
         activity.onActivity { it.window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) }
         chain = withTimeout(240_000) { app.toolchains.prepare() }
         app.sessions.stop()
-        app.languages.close()
+        lateinit var model: IdeViewModel
+        activity.onActivity { model=ViewModelProvider(it)[IdeViewModel::class.java] }
+        withTimeout(30_000) { model.home().join() }
+        assertEquals(null,model.state.value.project)
         observer = app.scope.launch {
             app.sessions.state.map { Triple(it.phase,it.stopSequence,it.reason) }.distinctUntilChanged().collect {
                 Log.i("MobileCodeTest", "session=$it output=${app.sessions.state.value.output.takeLast(2500)}")

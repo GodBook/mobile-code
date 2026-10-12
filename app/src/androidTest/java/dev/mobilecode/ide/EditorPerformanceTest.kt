@@ -29,11 +29,12 @@ class EditorPerformanceTest {
         try {
             val sourceBytes=InstrumentationRegistry.getArguments().getString("mcPerformanceBytes")?.toInt() ?: 1024*1024
             require(sourceBytes in 16*1024..1024*1024)
+            lateinit var homing: Job
             rule.runOnUiThread {
                 rule.activity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-                model=ViewModelProvider(rule.activity)[IdeViewModel::class.java]; model.home()
+                model=ViewModelProvider(rule.activity)[IdeViewModel::class.java]; homing=model.home()
             }
-            rule.waitUntil(15_000) { model.state.value.project==null }
+            rule.waitUntil(30_000) { homing.isCompleted && model.state.value.project==null }
             val line="# memory and typing sample: abcdefghijklmnopqrstuvwxyz 0123456789 ..............................................\n"
             val source=line.repeat(sourceBytes/line.length+1).take(sourceBytes)
             val project=runBlocking {
@@ -86,12 +87,14 @@ class EditorPerformanceTest {
                 "inputToFrameP50Ms" to sorted[sorted.size/2],"inputToFrameP95Ms" to sorted[(sorted.size*0.95).toInt()-1],
                 "closedEditors" to 4,"releasedEditors" to released,"appTotalPssKiB" to memory.totalPss,
                 "javaHeapAllocatedBytes" to Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory(),
+                "nativeHeapAllocatedBytes" to Debug.getNativeHeapAllocatedSize(),"memoryStats" to memory.memoryStats,
                 "idleAllocatedBytesOver1500ms" to idleAllocated,
                 "scope" to "Instrumented insert-to-next-Choreographer callback; includes instrumentation, excludes physical IME latency. PSS is app-only after GC, language worker stopped.")
             val output=File(app.getExternalFilesDir(null),"editor-performance-${version.versionName}-$sourceBytes.json")
             output.writeText(gson.toJson(result))
             android.util.Log.i("MobileCodePerformance",gson.toJson(result))
             assertEquals(sourceBytes,source.length)
+            assertTrue("App PSS after closing tabs exceeded 512MiB: ${memory.totalPss}KiB",memory.totalPss<512*1024)
         } finally { runBlocking { app.settings.update(previous) } }
     }
     private fun editor(): MobileCodeEditor = findEditor(rule.activity.window.decorView) ?: error("Editor missing")
