@@ -47,6 +47,9 @@ class EditorPerformanceTest {
             rule.runOnUiThread { model.openProject(project) }
             rule.waitUntil(30_000) { model.state.value.project?.config?.id==project.config.id && model.state.value.document!=null }
             rule.waitForIdle()
+            var editorWidth=0; var editorHeight=0
+            rule.runOnUiThread { editorWidth=editor().width; editorHeight=editor().height }
+            assertTrue("Editor has no visible viewport: ${editorWidth}x$editorHeight",editorWidth>0 && editorHeight>0)
             val openMs=(SystemClock.elapsedRealtimeNanos()-opening)/1_000_000.0
             android.util.Log.i("MobileCodePerformance","stage=open bytes=$sourceBytes ms=$openMs")
             val samples=mutableListOf<Double>()
@@ -83,6 +86,7 @@ class EditorPerformanceTest {
             val version=app.packageManager.getPackageInfo(app.packageName,0)
             val sorted=samples.sorted()
             val result=mapOf("versionName" to version.versionName,"versionCode" to version.longVersionCode,
+                "editorViewportPx" to listOf(editorWidth,editorHeight),
                 "sourceBytes" to source.toByteArray().size,"openToIdleMs" to openMs,"inputToFrameCallbackMs" to samples,
                 "inputToFrameP50Ms" to sorted[sorted.size/2],"inputToFrameP95Ms" to sorted[(sorted.size*0.95).toInt()-1],
                 "closedEditors" to 4,"releasedEditors" to released,"appTotalPssKiB" to memory.totalPss,

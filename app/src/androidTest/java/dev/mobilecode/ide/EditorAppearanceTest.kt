@@ -71,7 +71,7 @@ class EditorAppearanceTest {
             }
             rule.runOnUiThread { model.openProject(project) }
             waitForFile("src/main.cpp")
-            rule.onNodeWithTag("折叠控制台").performClick()
+            if(rule.onAllNodesWithTag("output-expanded").fetchSemanticsNodes().isNotEmpty()) rule.onNodeWithTag("折叠控制台").performClick()
             lateinit var original: MobileCodeEditor
             rule.runOnUiThread { original=editor(); original.setSelection(0,0); original.insertText("// theme undo\n",14) }
             val edited=model.state.value.document!!.text

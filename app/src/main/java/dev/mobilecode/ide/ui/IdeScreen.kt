@@ -27,6 +27,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.*
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.mobilecode.ide.*
 import dev.mobilecode.ide.core.*
@@ -95,11 +97,13 @@ fun IdeScreen(model: IdeViewModel,onImport: ()->Unit,onExport: ()->Unit,onExport
                     modifier=Modifier.padding(padding))
                 else Row(Modifier.fillMaxSize().padding(padding).imePadding()) {
                     if(wide) { Box(Modifier.width(240.dp).fillMaxHeight()) { browser() }; VerticalDivider() }
-                    Column(Modifier.weight(1f).fillMaxHeight()) {
+                    BoxWithConstraints(Modifier.weight(1f).fillMaxHeight()) {
+                    val workbenchHeight=maxHeight
+                    Column(Modifier.fillMaxSize()) {
                         if(state.preview!=null) Row(Modifier.fillMaxWidth().height(48.dp).background(MaterialTheme.colorScheme.surfaceContainer),verticalAlignment=Alignment.CenterVertically) {
                             Text(state.preview!!.title,Modifier.weight(1f).padding(start=16.dp),style=MaterialTheme.typography.labelMedium)
                             IconAction(Icons.Outlined.Close,"关闭快照") { model.closePreview() }
-                        } else if(state.documents.isNotEmpty()) ScrollableTabRow(selectedTabIndex=state.documents.keys.indexOf(state.activePath).coerceAtLeast(0),edgePadding=0.dp,
+                        } else if(state.documents.isNotEmpty() && workbenchHeight>=200.dp) ScrollableTabRow(selectedTabIndex=state.documents.keys.indexOf(state.activePath).coerceAtLeast(0),edgePadding=0.dp,
                             indicator={ positions -> positions.getOrNull(state.documents.keys.indexOf(state.activePath))?.let { TabRowDefaults.SecondaryIndicator(Modifier.tabIndicatorOffset(it)) } }) {
                             state.documents.values.forEach { doc -> Tab(selected=doc.path==state.activePath,onClick={ model.openFile(doc.path) },text={ Row(verticalAlignment=Alignment.CenterVertically) {
                                 Text(doc.path.substringAfterLast('/')+if(doc.dirty) " •" else "",fontFamily=FontFamily.Monospace,fontSize=12.sp)
@@ -113,14 +117,15 @@ fun IdeScreen(model: IdeViewModel,onImport: ()->Unit,onExport: ()->Unit,onExport
                                 TextButton(onClick={ scope.launch { drawer.open() } }) { Text("打开项目文件") }
                             }
                         }
-                        if(state.signature.isNotBlank()) Text(state.signature,Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surfaceContainer).padding(horizontal=12.dp,vertical=6.dp),fontFamily=FontFamily.Monospace,fontSize=12.sp,maxLines=2,overflow=TextOverflow.Ellipsis)
-                        Row(Modifier.fillMaxWidth().padding(horizontal=12.dp,vertical=4.dp),verticalAlignment=Alignment.CenterVertically) {
+                        if(state.signature.isNotBlank() && workbenchHeight>=300.dp) Text(state.signature,Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surfaceContainer).padding(horizontal=12.dp,vertical=6.dp),fontFamily=FontFamily.Monospace,fontSize=12.sp,maxLines=2,overflow=TextOverflow.Ellipsis)
+                        if(workbenchHeight>=240.dp) Row(Modifier.fillMaxWidth().padding(horizontal=12.dp,vertical=4.dp),verticalAlignment=Alignment.CenterVertically) {
                             Text(if(session.sourceLocked || state.preview!=null) "只读" else if(state.documents.values.any { it.dirty }) "正在保存" else "已保存",fontSize=10.sp,color=MaterialTheme.colorScheme.onSurfaceVariant)
                             Spacer(Modifier.width(12.dp)); Text(if(tools.toolchain==null) tools.message else languageStatus,Modifier.weight(1f),fontSize=10.sp,maxLines=1,overflow=TextOverflow.Ellipsis,color=MaterialTheme.colorScheme.onSurfaceVariant)
                             Text("UTF-8 · ${if(state.document?.text?.contains("\r\n")==true) "CRLF" else "LF"}",fontSize=10.sp,color=MaterialTheme.colorScheme.onSurfaceVariant)
                         }
-                        KeyboardBar(editor,enabled=!session.sourceLocked && state.preview==null)
-                        OutputPanel(model,state,session,diagnostics,onCopy)
+                        if(workbenchHeight>=300.dp) KeyboardBar(editor,enabled=!session.sourceLocked && state.preview==null)
+                        OutputPanel(model,state,session,diagnostics,onCopy,workbenchHeight)
+                    }
                     }
                 }
             }
@@ -202,9 +207,10 @@ private fun KeyboardBar(editor: MobileCodeEditor?,enabled: Boolean) {
 }
 
 @Composable
-private fun OutputPanel(model: IdeViewModel,state: IdeState,session: SessionState,diagnostics: List<Diagnostic>,onCopy: (String)->Unit) {
+private fun OutputPanel(model: IdeViewModel,state: IdeState,session: SessionState,diagnostics: List<Diagnostic>,onCopy: (String)->Unit,maxWorkbenchHeight: Dp) {
+    val compact=maxWorkbenchHeight<480.dp
     var height by rememberSaveable { mutableFloatStateOf(240f) }
-    var expanded by rememberSaveable { mutableStateOf(true) }
+    var expanded by rememberSaveable { mutableStateOf(!compact) }
     var tab by rememberSaveable { mutableIntStateOf(0) }
     var input by rememberSaveable { mutableStateOf("") }
     var watchDialog by remember { mutableStateOf(false) }
@@ -212,15 +218,17 @@ private fun OutputPanel(model: IdeViewModel,state: IdeState,session: SessionStat
     var channelMenu by remember { mutableStateOf(false) }
     val density=LocalDensity.current
     val keyboard=WindowInsets.ime.getBottom(density)>0
-    val panelHeight=if(!expanded) 48.dp else (if(keyboard) height.coerceAtMost(180f) else height).dp
+    val panelHeight=if(!expanded) 48.dp else minOf((if(keyboard) height.coerceAtMost(180f) else height).dp,(maxWorkbenchHeight-200.dp).coerceAtLeast(48.dp))
+    LaunchedEffect(compact) { if(compact && session.phase!=SessionPhase.PAUSED) expanded=false }
     LaunchedEffect(session.phase) { if(session.phase==SessionPhase.PAUSED) { expanded=true; tab=3 } else if(session.phase==SessionPhase.FAILED && diagnostics.isNotEmpty()) { expanded=true; tab=1 } }
-    Column(Modifier.fillMaxWidth().height(panelHeight).background(MaterialTheme.colorScheme.surfaceContainer)) {
+    val body: @Composable (Dp,Boolean)->Unit = { actualHeight,showExpanded ->
+    Column(Modifier.fillMaxWidth().height(actualHeight).background(MaterialTheme.colorScheme.surfaceContainer).testTag(if(showExpanded) "output-expanded" else "output-collapsed")) {
         Row(Modifier.fillMaxWidth().height(48.dp).pointerInput(density) { detectVerticalDragGestures { change,amount -> change.consume(); height=(height-amount/density.density).coerceIn(144f,460f) } },verticalAlignment=Alignment.CenterVertically) {
             Text(when(session.phase) { SessionPhase.IDLE->"控制台"; SessionPhase.BUILDING->"编译中"; SessionPhase.PAUSED->"已暂停"; SessionPhase.RUNNING->"运行中"; SessionPhase.STARTING,SessionPhase.PREPARING->"准备中"; else->session.reason },Modifier.weight(1f).padding(start=12.dp),fontSize=12.sp,maxLines=1,overflow=TextOverflow.Ellipsis)
             if(!session.active && session.id!=null) Text("${session.elapsedMs/1000.0}s · ${session.exitCode?.let { "退出 $it" } ?: "—"}",fontSize=10.sp,color=MaterialTheme.colorScheme.onSurfaceVariant)
-            IconAction(if(expanded) Icons.Outlined.ExpandMore else Icons.Outlined.ExpandLess,"折叠控制台") { expanded=!expanded }
+            IconAction(if(showExpanded) Icons.Outlined.ExpandMore else Icons.Outlined.ExpandLess,"折叠控制台") { expanded=!expanded }
         }
-        if(expanded) {
+        if(showExpanded) {
             if(session.debugging && session.active) Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),horizontalArrangement=Arrangement.SpaceEvenly) {
                 IconAction(Icons.Outlined.PlayArrow,"继续",session.phase==SessionPhase.PAUSED) { model.debugCommand("continue") }
                 IconAction(Icons.Outlined.SkipNext,"单步跳过",session.phase==SessionPhase.PAUSED) { model.debugCommand("next") }
@@ -241,8 +249,8 @@ private fun OutputPanel(model: IdeViewModel,state: IdeState,session: SessionStat
                             TextButton(onClick={ onCopy(full) }) { Text("复制",fontSize=10.sp) }
                         }
                     }
-                    1 -> LazyColumn(Modifier.fillMaxSize()) { items(diagnostics) { item -> ListItem(headlineContent={ Text(item.message,fontSize=12.sp,maxLines=3,overflow=TextOverflow.Ellipsis) },supportingContent={ Text("${item.path.substringAfterLast('/')}:${item.range.start.line+1}",fontSize=10.sp) },leadingContent={ Text(if(item.severity==1) "错误" else "警告",fontSize=10.sp,color=if(item.severity==1) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary) },modifier=Modifier.clickable { model.diagnostic(item) }) } }
-                    2 -> LazyColumn(Modifier.fillMaxSize()) { items(session.frames,key={ it.id }) { frame -> ListItem(headlineContent={ Text(frame.name,fontFamily=FontFamily.Monospace,fontSize=12.sp,maxLines=1) },supportingContent={ Text("${frame.path?.substringAfterLast('/')} : ${frame.line+1}",fontSize=10.sp) },modifier=Modifier.clickable { model.selectFrame(frame) }) } }
+                    1 -> LazyColumn(Modifier.fillMaxSize()) { items(diagnostics) { item -> ListItem(headlineContent={ Text(item.message,fontSize=12.sp,maxLines=3,overflow=TextOverflow.Ellipsis) },supportingContent={ Text("${item.path.substringAfterLast('/')}:${item.range.start.line+1}",fontSize=10.sp) },leadingContent={ Text(if(item.severity==1) "错误" else "警告",fontSize=10.sp,color=if(item.severity==1) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary) },modifier=Modifier.clickable { model.diagnostic(item); if(compact) expanded=false }) } }
+                    2 -> LazyColumn(Modifier.fillMaxSize()) { items(session.frames,key={ it.id }) { frame -> ListItem(headlineContent={ Text(frame.name,fontFamily=FontFamily.Monospace,fontSize=12.sp,maxLines=1) },supportingContent={ Text("${frame.path?.substringAfterLast('/')} : ${frame.line+1}",fontSize=10.sp) },modifier=Modifier.clickable { model.selectFrame(frame); if(compact) expanded=false }) } }
                     3 -> if(session.variables.isEmpty()) Text("暂停后查看当前栈帧的变量",Modifier.padding(12.dp),fontSize=12.sp,color=MaterialTheme.colorScheme.onSurfaceVariant) else LazyColumn { items(session.variables) { variable -> VariableRow(model,variable) } }
                     4 -> Column {
                         TextButton(onClick={ watchDialog=true }) { Icon(Icons.Outlined.Add,null,Modifier.size(18.dp)); Text("添加观察项",fontSize=11.sp) }
@@ -259,6 +267,15 @@ private fun OutputPanel(model: IdeViewModel,state: IdeState,session: SessionStat
             }
         }
     }
+    }
+    if(compact) {
+        body(48.dp,false)
+        if(expanded) Dialog(onDismissRequest={ expanded=false },properties=DialogProperties(usePlatformDefaultWidth=false)) {
+            BoxWithConstraints(Modifier.fillMaxSize().safeDrawingPadding().imePadding().background(MaterialTheme.colorScheme.surfaceContainer)) {
+                body(maxHeight,true)
+            }
+        }
+    } else body(panelHeight,expanded)
     if(watchDialog) TextEntryDialog("添加观察项","例如 count、person.name、items[2]",onDismiss={ watchDialog=false }) { model.addWatch(it); watchDialog=false }
 }
 

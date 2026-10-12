@@ -131,7 +131,7 @@ class WorkbenchTest {
         rule.waitUntil(30_000) { homing.isCompleted && model.state.value.project==null }
         val project=runBlocking {
             app.workspace.create("可见控制台压力验收",CodeLanguage.PYTHON,false).also {
-                app.workspace.save(it,Document("src/main.py","import sys\nsys.stdout.buffer.write(b'x'*(12*1024*1024))\nsys.stdout.flush()\n"))
+                app.workspace.save(it,Document("src/main.py","import sys, time\nfor _ in range(12):\n    sys.stdout.buffer.write(b'x'*(1024*1024))\n    sys.stdout.flush()\n    time.sleep(0.05)\n"))
             }
         }
         lateinit var opening: Job
@@ -143,9 +143,12 @@ class WorkbenchTest {
             .uiAutomation.grantRuntimePermission(app.packageName,android.Manifest.permission.POST_NOTIFICATIONS)
         val previousId=model.session.value.id
         rule.onNodeWithTag("运行").performClick()
+        val openedPanel=rule.onAllNodesWithTag("output-expanded").fetchSemanticsNodes().isEmpty()
+        if(openedPanel) rule.onNodeWithTag("折叠控制台").performClick()
         rule.waitUntil(30_000) { model.session.value.id!=null && model.session.value.id!=previousId && !model.session.value.active }
         assertEquals(model.session.value.output.takeLast(1000),SessionPhase.FINISHED,model.session.value.phase)
         assertTrue(model.session.value.standardOutput.length>=128*1024)
+        if(openedPanel) rule.onAllNodesWithTag("折叠控制台").onLast().performClick()
         val rendered=CountDownLatch(1); var start=0L; var end=0L
         rule.runOnUiThread {
             val editor=findEditor(rule.activity.window.decorView)!!
