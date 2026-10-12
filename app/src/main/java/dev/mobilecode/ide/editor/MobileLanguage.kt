@@ -20,7 +20,7 @@ import io.github.rosemoe.sora.widget.CodeEditor
 import io.github.rosemoe.sora.widget.SymbolPairMatch
 import io.github.rosemoe.sora.widget.schemes.EditorColorScheme
 import kotlinx.coroutines.runBlocking
-import java.util.TreeMap
+import java.util.BitSet
 import java.util.WeakHashMap
 import java.util.concurrent.atomic.AtomicLong
 
@@ -67,38 +67,46 @@ class SyntaxAnalyzer(private val language: CodeLanguage, private val onBlocks: (
     override fun analyze(text: StringBuilder, delegate: SimpleAnalyzeManager<Unit>.Delegate<Unit>): Styles {
         val analyzedVersion=version.get()
         val source=text.toString()
-        val bytes=source.toByteArray()
-        val byteToChar=IntArray(bytes.size+1)
-        var offset=0; var index=0
-        while(index<source.length) {
-            val cp=Character.codePointAt(source,index); val width=when { cp<128->1; cp<2048->2; cp<65536->3; else->4 }
-            repeat(width) { byteToChar[offset+it]=index }; offset+=width; index+=Character.charCount(cp)
-        }
-        byteToChar[bytes.size]=source.length
+        fun cancelled() = Styles(MappedSpans.Builder(1).apply { addNormalIfNull() }.build())
+        if(delegate.isCancelled) return cancelled()
         val spans=synchronized(lock) { if(handle==0L) IntArray(0) else NativeSyntax.parse(handle,source) }
-        val starts=mutableListOf(0); source.forEachIndexed { i,c -> if(c=='\n') starts+=i+1 }
+        if(delegate.isCancelled) return cancelled()
+        val starts=IntArray(source.count { it=='\n' }+1)
+        var nextLine=1
+        source.forEachIndexed { i,c -> if(c=='\n') starts[nextLine++]=i+1 }
         fun position(i: Int): Position {
             val found=starts.binarySearch(i); val line=if(found>=0) found else (-found-2).coerceAtLeast(0)
             return Position(line,i-starts[line])
         }
-        val changes=TreeMap<Int,Int>(); changes[0]=EditorColorScheme.TEXT_NORMAL
-        val excluded=BooleanArray(source.length)
-        for(i in spans.indices step 3) {
-            if(delegate.isCancelled) break
-            val begin=byteToChar[spans[i].coerceIn(0,bytes.size)]; val end=byteToChar[spans[i+1].coerceIn(0,bytes.size)]
-            val style=when(spans[i+2]) { 1->EditorColorScheme.KEYWORD; 2,4->EditorColorScheme.LITERAL; 3->EditorColorScheme.COMMENT; 5->EditorColorScheme.IDENTIFIER_NAME; else->EditorColorScheme.TEXT_NORMAL }
-            changes[begin]=style; changes[end]=EditorColorScheme.TEXT_NORMAL
-            if(spans[i+2] in 2..3) for(j in begin until end) excluded[j]=true
+        // Native tokens are ordered and disjoint. Convert only their endpoints;
+        // a byte-to-character array used to cost over 4MiB per 1MiB ASCII file.
+        var byteOffset=0; var charOffset=0
+        fun characterAt(byte: Int): Int {
+            while(byteOffset<byte && charOffset<source.length) {
+                val cp=Character.codePointAt(source,charOffset)
+                byteOffset+=when { cp<128->1; cp<2048->2; cp<65536->3; else->4 }
+                charOffset+=Character.charCount(cp)
+            }
+            return charOffset
         }
         val builder=MappedSpans.Builder(starts.size)
-        for((i,style) in changes) { val p=position(i); builder.addIfNeeded(p.line,p.character,style.toLong()) }
-        builder.add(starts.lastIndex,SpanFactory.obtainNoExt(source.length-starts.last(),EditorColorScheme.TEXT_NORMAL.toLong()))
+        builder.addIfNeeded(0,0,EditorColorScheme.TEXT_NORMAL.toLong())
+        val excluded=BitSet(source.length)
+        for(i in spans.indices step 3) {
+            if(delegate.isCancelled) return cancelled()
+            val begin=characterAt(spans[i]); val end=characterAt(spans[i+1])
+            val a=position(begin); val b=position(end)
+            builder.addIfNeeded(a.line,a.character,TextStyle.makeStyle(SyntaxStyle.color(spans[i+2]),spans[i+2] in 2..3))
+            builder.addIfNeeded(b.line,b.character,EditorColorScheme.TEXT_NORMAL.toLong())
+            if(spans[i+2] in 2..3) excluded.set(begin,end)
+        }
+        builder.determine(starts.lastIndex)
         val styles=Styles(builder.build())
         val folds=mutableListOf<Pair<Int,Int>>()
         if(language==CodeLanguage.PYTHON) {
             val pending=ArrayDeque<Pair<Int,Int>>()
-            val lines=source.split('\n')
-            lines.forEachIndexed { line,value ->
+            starts.forEachIndexed { line,start ->
+                val value=source.substring(start,if(line<starts.lastIndex) starts[line+1]-1 else source.length)
                 if(value.isNotBlank() && !value.trimStart().startsWith('#')) {
                     val indentation=value.takeWhile { it==' ' || it=='\t' }.sumOf { if(it=='\t') 4 else 1 }
                     while(pending.isNotEmpty() && indentation<=pending.last().second) {
@@ -107,7 +115,7 @@ class SyntaxAnalyzer(private val language: CodeLanguage, private val onBlocks: (
                     if(value.trimEnd().endsWith(':')) pending.addLast(line to indentation)
                 }
             }
-            while(pending.isNotEmpty()) { val open=pending.removeLast(); if(lines.lastIndex>open.first) folds+=open.first to lines.lastIndex }
+            while(pending.isNotEmpty()) { val open=pending.removeLast(); if(starts.lastIndex>open.first) folds+=open.first to starts.lastIndex }
         } else {
             val pending=ArrayDeque<Int>()
             source.forEachIndexed { i,c ->
@@ -130,13 +138,14 @@ class SyntaxAnalyzer(private val language: CodeLanguage, private val onBlocks: (
             }
         } }
         styles.finishBuilding()
+        if(delegate.isCancelled) return cancelled()
         val currentBrackets=BracketsProvider { actual,position ->
             if(version.get()==analyzedVersion) brackets.getPairedBracketAt(actual,position) else null
         }
         synchronized(stamps) { stamps[styles]=Stamp(analyzedVersion,starts.size,currentBrackets,folds) }
         return styles
     }
-    override fun destroy() { content=null; version.incrementAndGet(); super.destroy(); synchronized(stamps) { stamps.clear() }; synchronized(lock) { if(handle!=0L) NativeSyntax.destroy(handle); handle=0L } }
+    override fun destroy() { content=null; version.incrementAndGet(); main.removeCallbacksAndMessages(null); super.destroy(); synchronized(stamps) { stamps.clear() }; synchronized(lock) { if(handle!=0L) NativeSyntax.destroy(handle); handle=0L } }
 }
 
 class MobileLanguage(private val language: CodeLanguage, private val document: ()->Document?,
@@ -158,8 +167,8 @@ class MobileLanguage(private val language: CodeLanguage, private val document: (
         if(current.version!=original.version || current.path!=original.path) return
         if(semantic.isNotEmpty()) semantic.forEach { publisher.addItem(SemanticItem(it,prefix.length,document)) }
         else {
-            val words=(keywords(language)+Regex("[\\p{L}_][\\p{L}\\p{N}_]*").findAll(original.text).map { it.value }.toList()).distinct()
-            words.filter { it.startsWith(prefix) && it!=prefix }.take(80).forEach { publisher.addItem(SimpleCompletionItem(it,"基础补全",prefix.length,it)) }
+            val words=keywords(language).asSequence()+Regex("[\\p{L}_][\\p{L}\\p{N}_]*").findAll(original.text).map { it.value }
+            words.filter { it.startsWith(prefix) && it!=prefix }.distinct().take(80).forEach { publisher.addItem(SimpleCompletionItem(it,"基础补全",prefix.length,it)) }
             snippets(language).filter { it.first.startsWith(prefix) }.forEach { (label,text) -> publisher.addItem(SemanticItem(Completion(label,text,"代码片段",snippet=true,version=original.version),prefix.length,document)) }
         }
         publisher.updateList()

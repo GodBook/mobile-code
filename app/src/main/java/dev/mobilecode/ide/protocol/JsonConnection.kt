@@ -50,8 +50,10 @@ class JsonConnection(private val input: InputStream, private val output: OutputS
         return JsonParser.parseString(payload.toString(Charsets.UTF_8)).asJsonObject
     }
     private fun write(message: JsonObject) {
-        val bytes=message.toString().toByteArray()
-        synchronized(output) { output.write("Content-Length: ${bytes.size}\r\n\r\n".toByteArray(Charsets.US_ASCII)); output.write(bytes); output.flush() }
+        synchronized(output) {
+            val bytes=message.toString().toByteArray()
+            output.write("Content-Length: ${bytes.size}\r\n\r\n".toByteArray(Charsets.US_ASCII)); output.write(bytes); output.flush()
+        }
     }
     suspend fun request(method: String, parameters: JsonObject=json(), timeout: Long=2000): JsonObject {
         val id=next.incrementAndGet(); val deferred=CompletableDeferred<JsonObject>(); pending[id]=deferred

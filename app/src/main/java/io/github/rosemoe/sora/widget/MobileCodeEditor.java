@@ -10,6 +10,7 @@ import io.github.rosemoe.sora.lang.analysis.StyleUpdateRange;
 import io.github.rosemoe.sora.text.*;
 import io.github.rosemoe.sora.util.IntPair;
 import io.github.rosemoe.sora.widget.layout.*;
+import io.github.rosemoe.sora.widget.schemes.EditorColorScheme;
 import java.util.*;
 
 /** Source-preserving folding layout and debugger gutter for the pinned Sora API. */
@@ -43,6 +44,11 @@ public final class MobileCodeEditor extends CodeEditor {
         if(folds!=null) layout=new FoldLayout(layout);
     }
     public void setFoldRanges(int[] starts,int[] ends) {
+        if(starts.length==ends.length && folds.size()==starts.length) {
+            boolean same=true;
+            for(int i=0;i<starts.length;i++) if(!Objects.equals(folds.get(starts[i]),ends[i])) { same=false; break; }
+            if(same) return;
+        }
         folds.clear(); for(int i=0;i<Math.min(starts.length,ends.length);i++) if(ends[i]>starts[i]) folds.put(starts[i],ends[i]);
         collapsed.retainAll(folds.keySet()); changed();
     }
@@ -65,8 +71,8 @@ public final class MobileCodeEditor extends CodeEditor {
         if(collapsed!=null && collapsed.removeIf(start->line>start && line<=folds.getOrDefault(start,start))) changed();
         super.setSelection(line,column,visible,cause);
     }
-    public void setBreakpointStates(int[] lines,int[] states) { breakpointLines=lines; breakpointStates=states; invalidate(); }
-    public void setExecutionLine(int line) { executionLine=line; invalidate(); }
+    public void setBreakpointStates(int[] lines,int[] states) { if(Arrays.equals(lines,breakpointLines) && Arrays.equals(states,breakpointStates)) return; breakpointLines=lines; breakpointStates=states; invalidate(); }
+    public void setExecutionLine(int line) { if(executionLine==line) return; executionLine=line; invalidate(); }
     @Override protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
         if(layout==null) return;
@@ -76,16 +82,16 @@ public final class MobileCodeEditor extends CodeEditor {
             float y=layout.getCharLayoutOffset(line,0)[0]-getOffsetY()-getRowHeight()/2f;
             if(y < -getRowHeight() || y>getHeight()+getRowHeight()) continue;
             int state=i<breakpointStates.length?breakpointStates[i]:0;
-            gutter.setColor(Color.rgb(242,113,120)); gutter.setStyle(state>0?Paint.Style.FILL:Paint.Style.STROKE);
+            gutter.setColor(getColorScheme().getColor(EditorColorScheme.PROBLEM_ERROR)); gutter.setStyle(state>0?Paint.Style.FILL:Paint.Style.STROKE);
             canvas.drawCircle(dp(8),y,dp(4.5f),gutter);
             if(state<0) canvas.drawLine(dp(4),y-dp(4),dp(12),y+dp(4),gutter);
         }
-        gutter.setStyle(Paint.Style.FILL); gutter.setColor(Color.rgb(169,232,183));
+        gutter.setStyle(Paint.Style.FILL); gutter.setColor(getColorScheme().getColor(EditorColorScheme.SELECTION_INSERT));
         if(executionLine>=0 && executionLine<getLineCount() && !isLineHidden(executionLine)) {
             float y=layout.getCharLayoutOffset(executionLine,0)[0]-getOffsetY()-getRowHeight()/2f;
             Path arrow=new Path(); arrow.moveTo(dp(16),y-dp(5)); arrow.lineTo(dp(23),y); arrow.lineTo(dp(16),y+dp(5)); arrow.close(); canvas.drawPath(arrow,gutter);
         }
-        gutter.setColor(Color.rgb(143,151,163));
+        gutter.setColor(getColorScheme().getColor(EditorColorScheme.LINE_NUMBER));
         for(int start:folds.keySet()) {
             if(start>=getLineCount() || isLineHidden(start)) continue;
             float y=layout.getCharLayoutOffset(start,0)[0]-getOffsetY()-getRowHeight()/2f;

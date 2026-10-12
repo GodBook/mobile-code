@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cstring>
 #include <string>
+#include <string_view>
 #include <unordered_set>
 #include <vector>
 #include "unicode.h"
@@ -15,28 +16,74 @@ struct Document { TSParser* parser; TSTree* tree=nullptr; std::string text; };
 static TSPoint point(const std::string& text,size_t end) {
     TSPoint p{0,0}; for(size_t i=0;i<end;++i) { if(text[i]=='\n') { ++p.row; p.column=0; } else ++p.column; } return p;
 }
-static const std::unordered_set<std::string> keywords={
+static const std::unordered_set<std::string_view> keywords={
     "if","else","for","while","do","switch","case","break","continue","return","class","struct","enum","union","typedef","const","static","extern","volatile","sizeof","namespace","using","template","typename","public","private","protected","virtual","override","new","delete","try","catch","throw","throws","import","package","extends","implements","interface","final","abstract","synchronized","void","int","long","short","char","float","double","bool","boolean","unsigned","signed","auto","def","async","await","from","as","in","is","not","and","or","with","lambda","yield","pass","raise","except","finally","assert","global","nonlocal","del","True","False","None","true","false","null"
+    ,"concept","requires","constexpr","consteval","constinit","noexcept","nullptr","decltype","explicit","friend","operator","this","super","record","var","instanceof","native","transient","strictfp","elif","match"
 };
-static void collect(TSNode node,const std::string& text,std::vector<jint>& spans) {
-    const char* type=ts_node_type(node); int style=0;
-    std::string t(type);
-    if(t.find("comment")!=std::string::npos) style=3;
-    else if(t.find("string")!=std::string::npos || t=="char_literal" || t=="character_literal") style=2;
-    else if(t.find("integer")!=std::string::npos || t.find("float")!=std::string::npos || t=="number_literal" || t=="decimal_integer_literal" || t=="hex_integer_literal") style=4;
-    else if(t=="primitive_type" || t=="type_identifier" || t=="boolean_type" || t=="integral_type" || t=="floating_point_type") style=5;
-    else if(ts_node_child_count(node)==0) {
-        uint32_t start=ts_node_start_byte(node),end=ts_node_end_byte(node);
-        if(end<=text.size() && end-start<32 && keywords.count(text.substr(start,end-start))) style=1;
+static const std::unordered_set<std::string_view> qualifiers={
+    "const","static","extern","volatile","virtual","override","final","abstract","synchronized","constexpr","consteval","constinit","noexcept","explicit","inline","mutable","thread_local","async","await","native","transient","strictfp"
+};
+static bool field(TSNode parent,const char* name,TSNode child) {
+    return !ts_node_is_null(parent) && ts_node_eq(ts_node_child_by_field_name(parent,name,std::strlen(name)),child);
+}
+static int classify(TSNode node,std::string_view text) {
+    const std::string_view type=ts_node_type(node);
+    if(type.find("comment")!=type.npos) return 3;
+    if(type=="string_literal" || type=="concatenated_string" || type=="raw_string_literal" || type=="string" || type=="char_literal" || type=="character_literal" || type=="system_lib_string") return 2;
+    if(type=="primitive_type" || type=="boolean_type" || type=="integral_type" || type=="floating_point_type") return 1;
+    if(type=="type_identifier" || type=="namespace_identifier") return 5;
+    if(ts_node_child_count(node)!=0) return 0;
+    const auto start=ts_node_start_byte(node),end=ts_node_end_byte(node);
+    if(start>=end || end>text.size()) return 0;
+    const auto value=text.substr(start,end-start);
+    if(type.find("integer")!=type.npos || type.find("float")!=type.npos || type=="number_literal" || value=="true" || value=="false" || value=="null" || value=="True" || value=="False" || value=="None" || value=="nullptr") return 4;
+    if(value.front()=='#' || type=="preproc_directive") return 7;
+    if(qualifiers.count(value)) return 8;
+    if(keywords.count(value)) return 1;
+    if(type=="identifier" || type=="field_identifier") {
+        const auto parent=ts_node_parent(node);
+        const std::string_view context=ts_node_is_null(parent)?"":ts_node_type(parent);
+        if((context=="function_declarator" && field(parent,"declarator",node)) ||
+           ((context=="function_definition" || context=="method_declaration" || context=="constructor_declaration") && field(parent,"name",node)) ||
+           (context=="method_invocation" && field(parent,"name",node)) ||
+           ((context=="call_expression" || context=="call") && field(parent,"function",node))) return 6;
+        if((context=="class_definition" || context=="class_declaration" || context=="interface_declaration" || context=="enum_declaration" || context=="record_declaration") && field(parent,"name",node)) return 5;
+        if((context=="field_expression" && field(parent,"field",node)) || (context=="attribute" && field(parent,"attribute",node)) || (context=="qualified_identifier" && field(parent,"name",node))) {
+            const auto outer=ts_node_parent(parent);
+            const std::string_view outerType=ts_node_is_null(outer)?"":ts_node_type(outer);
+            if((outerType=="call_expression" || outerType=="call") && field(outer,"function",parent)) return 6;
+        }
+        if(context=="preproc_function_def" && field(parent,"name",node)) return 6;
+        return 9;
     }
-    if(style) {
-        spans.push_back(ts_node_start_byte(node)); spans.push_back(ts_node_end_byte(node)); spans.push_back(style);
-        return;
+    if(!ts_node_is_named(node)) return 10;
+    return 0;
+}
+static void collect(TSNode root,const std::string& text,std::vector<jint>& spans) {
+    // Cursor traversal avoids a native stack frame/string allocation per AST node.
+    auto cursor=ts_tree_cursor_new(root);
+    std::vector<char> brackets;
+    while(true) {
+        const auto node=ts_tree_cursor_current_node(&cursor);
+        int style=classify(node,text);
+        const auto start=ts_node_start_byte(node),end=ts_node_end_byte(node);
+        if(style==10 && end==start+1) {
+            const char c=text[start];
+            if(c=='(' || c=='[' || c=='{') { style=12+brackets.size()%3; brackets.push_back(c); }
+            else if(c==')' || c==']' || c=='}') {
+                const char expected=c==')'?'(':c==']'?'[':'{';
+                if(!brackets.empty() && brackets.back()==expected) { brackets.pop_back(); style=12+brackets.size()%3; }
+            }
+        }
+        if(style && start<end) { spans.push_back(start); spans.push_back(end); spans.push_back(style); }
+        if(!style && ts_tree_cursor_goto_first_child(&cursor)) continue;
+        while(!ts_tree_cursor_goto_next_sibling(&cursor)) {
+            if(!ts_tree_cursor_goto_parent(&cursor)) { ts_tree_cursor_delete(&cursor); return; }
+        }
     }
-    for(uint32_t i=0;i<ts_node_child_count(node);++i) collect(ts_node_child(node,i),text,spans);
 }
 extern "C" JNIEXPORT jlong JNICALL Java_dev_mobilecode_ide_editor_NativeSyntax_create(JNIEnv*,jobject,jint language) {
-    auto* doc=new Document{ts_parser_new()};
+    auto* doc=new Document{ts_parser_new(),nullptr,{}};
     const TSLanguage* grammar=language==0?tree_sitter_c():language==1?tree_sitter_cpp():language==2?tree_sitter_python():tree_sitter_java();
     if(!ts_parser_set_language(doc->parser,grammar)) { ts_parser_delete(doc->parser); delete doc; return 0; }
     return reinterpret_cast<jlong>(doc);

@@ -25,6 +25,8 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.core.content.FileProvider
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.distinctUntilChanged
 import dev.mobilecode.ide.ui.IdeScreen
 
 class MainActivity: ComponentActivity() {
@@ -40,6 +42,7 @@ class MainActivity: ComponentActivity() {
     }
     override fun onStart() {
         super.onStart()
+        model.foreground()
         model.app.updates.check(manual=false)
     }
     private fun installDownloadedUpdate() {
@@ -59,14 +62,14 @@ class MainActivity: ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState); enableEdgeToEdge()
         setContent {
-            val settings by model.settings.collectAsStateWithLifecycle()
-            SideEffect {
-                val style=if(settings.dark) SystemBarStyle.dark(android.graphics.Color.TRANSPARENT)
+            val dark by remember(model) { model.settings.map { it.dark }.distinctUntilChanged() }.collectAsStateWithLifecycle(initialValue=true)
+            LaunchedEffect(dark) {
+                val style=if(dark) SystemBarStyle.dark(android.graphics.Color.TRANSPARENT)
                     else SystemBarStyle.light(android.graphics.Color.TRANSPARENT,android.graphics.Color.TRANSPARENT)
                 enableEdgeToEdge(style,style)
             }
-            val palette=if(settings.dark) darkColorScheme(primary=Color(0xFFA9E8B7),onPrimary=Color(0xFF12351D),background=Color(0xFF15181C),surface=Color(0xFF15181C),surfaceContainer=Color(0xFF20252C),outlineVariant=Color(0xFF343B43))
-                else lightColorScheme(primary=Color(0xFF286440),background=Color(0xFFFAFAF7),surface=Color(0xFFFAFAF7))
+            val palette=remember(dark) { if(dark) darkColorScheme(primary=Color(0xFF82D6FF),onPrimary=Color(0xFF003548),background=Color(0xFF111213),surface=Color(0xFF111213),onSurface=Color(0xFFD9E2EE),onSurfaceVariant=Color(0xFFA1AFBF),surfaceContainer=Color(0xFF202429),surfaceContainerLow=Color(0xFF191C20),surfaceContainerHigh=Color(0xFF292E35),outline=Color(0xFF8190A1),outlineVariant=Color(0xFF343B43),error=Color(0xFFFF857B))
+                else lightColorScheme(primary=Color(0xFF00658A),onPrimary=Color.White,background=Color(0xFFFAFAF8),surface=Color(0xFFFAFAF8),onSurface=Color(0xFF263445),onSurfaceVariant=Color(0xFF566577),surfaceContainer=Color(0xFFEEF1F4),surfaceContainerLow=Color(0xFFF4F6F8),surfaceContainerHigh=Color(0xFFE5EAF0),outline=Color(0xFF718094),outlineVariant=Color(0xFFD2DAE3),error=Color(0xFFC02C27)) }
             MaterialTheme(colorScheme=palette) {
                 val lifecycle=LocalLifecycleOwner.current
                 DisposableEffect(lifecycle) {

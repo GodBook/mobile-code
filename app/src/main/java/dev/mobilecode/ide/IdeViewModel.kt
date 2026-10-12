@@ -32,6 +32,7 @@ class IdeViewModel(application: Application): AndroidViewModel(application) {
     val diagnostics=combine(app.languages.diagnostics,session) { live,run -> live+run.diagnostics }.stateIn(viewModelScope,SharingStarted.Eagerly,emptyList())
     val languageStatus=app.languages.status
     private val saves=mutableMapOf<String,Job>()
+    private val languageChanges=mutableMapOf<String,Job>()
     private val saveLock=Mutex()
     private var activation: Job?=null
     private var signatureJob: Job?=null
@@ -73,6 +74,7 @@ class IdeViewModel(application: Application): AndroidViewModel(application) {
     }
     fun openProject(project: Project) = viewModelScope.launch { guarded { check(!session.value.active) { "请先停止当前任务再切换项目" }; saveAll(); select(project) } }
     private suspend fun select(project: Project, file: String="", cursor: Position=Position(0,0)) {
+        languageChanges.values.forEach { it.cancel() }; languageChanges.clear(); cursorSave?.cancel(); signatureJob?.cancel()
         activation?.cancelAndJoin(); app.languages.close()
         val files=app.workspace.files(project)
         val chosen=file.takeIf { it in files } ?: files.firstOrNull { project.config.language.isSource(it) } ?: files.firstOrNull().orEmpty()
@@ -80,7 +82,7 @@ class IdeViewModel(application: Application): AndroidViewModel(application) {
         val points=app.workspace.breakpoints(project)
         mutable.update { it.copy(project=project,files=files,documents=if(document!=null) mapOf(chosen to document) else emptyMap(),activePath=chosen,
             preview=null,breakpoints=points,navigation=Navigation(cursor.line,cursor.character,++navigationId),signature="") }
-        app.settings.update(settings.value.copy(lastProject=project.config.id,lastFile=chosen,cursorLine=cursor.line,cursorColumn=cursor.character))
+        app.settings.location(project.config.id,chosen,cursor.line,cursor.character)
         activate()
     }
     private fun activate() {
@@ -89,6 +91,7 @@ class IdeViewModel(application: Application): AndroidViewModel(application) {
         activation=viewModelScope.launch { guarded { app.languages.activate(project,chain); state.value.documents.values.forEach { app.languages.change(it) } } }
     }
     fun retryTools()=viewModelScope.launch { guarded { app.toolchains.prepare(); activate() } }
+    fun foreground() { activate() }
     fun home()=viewModelScope.launch { guarded { check(!session.value.active) { "请先停止当前任务" }; saveAll(); activation?.cancelAndJoin(); app.languages.close(); mutable.update { it.copy(project=null,documents=emptyMap(),activePath="",preview=null) } } }
     fun openFile(path: String, position: Position?=null)=viewModelScope.launch { guarded { open(path,position) } }
     private suspend fun open(path: String, position: Position?=null) {
@@ -99,10 +102,12 @@ class IdeViewModel(application: Application): AndroidViewModel(application) {
         mutable.update { it.copy(documents=it.documents+(path to document),activePath=path,preview=null,signature="",
             navigation=position?.let { p -> Navigation(p.line,p.character,++navigationId) } ?: Navigation()) }
         app.languages.change(document)
-        app.settings.update(settings.value.copy(lastProject=project.config.id,lastFile=path))
+        cursorSave?.cancel()
+        app.settings.location(project.config.id,path,position?.line ?: 0,position?.character ?: 0)
     }
     fun closeFile(path: String)=viewModelScope.launch { guarded {
         val document=state.value.documents[path] ?: return@guarded; if(document.dirty) saveDocument(document)
+        languageChanges.remove(path)?.cancel()
         app.languages.closeDocument(path)
         val remaining=state.value.documents-path
         mutable.update { it.copy(documents=remaining,activePath=if(it.activePath==path) remaining.keys.lastOrNull().orEmpty() else it.activePath) }
@@ -126,7 +131,8 @@ class IdeViewModel(application: Application): AndroidViewModel(application) {
         mutable.update { it.copy(documents=it.documents+(path to document),breakpoints=moved) }
         saves.remove(path)?.cancel()
         saves[path]=viewModelScope.launch { delay(500); guarded { saveDocument(document) } }
-        viewModelScope.launch { guarded { app.languages.change(document) } }
+        languageChanges.remove(path)?.cancel()
+        languageChanges[path]=viewModelScope.launch { delay(120); guarded { app.languages.change(document) } }
     }
     private suspend fun saveDocument(document: Document)=saveLock.withLock {
         val project=state.value.project ?: return@withLock
@@ -142,17 +148,19 @@ class IdeViewModel(application: Application): AndroidViewModel(application) {
     fun savePosition(line: Int,column: Int) {
         if(state.value.preview!=null) return
         val path=state.value.activePath
+        val projectId=state.value.project?.config?.id ?: return
         cursorSave?.cancel()
-        cursorSave=viewModelScope.launch { delay(300); app.settings.update(settings.value.copy(lastFile=path,cursorLine=line,cursorColumn=column)) }
+        cursorSave=viewModelScope.launch { delay(300); app.settings.location(projectId,path,line,column) }
         signatureJob?.cancel()
         signatureJob=viewModelScope.launch {
             delay(200)
             val document=state.value.document ?: return@launch
             val index=Positions.index(document.text,Position(line,column))
-            val recent=document.text.take(index).takeLast(100)
+            val recent=document.text.substring((index-100).coerceAtLeast(0),index)
             if(recent.contains('(')) {
                 val signature=runCatching { app.languages.signature(document,Position(line,column)) }.getOrDefault("")
-                if(state.value.document?.version==document.version) mutable.update { it.copy(signature=signature) }
+                currentCoroutineContext().ensureActive()
+                if(state.value.activePath==document.path && state.value.document?.version==document.version) mutable.update { it.copy(signature=signature) }
             } else mutable.update { it.copy(signature="") }
         }
     }
@@ -208,7 +216,7 @@ class IdeViewModel(application: Application): AndroidViewModel(application) {
         }
     }
     fun closePreview() { mutable.update { it.copy(preview=null,navigation=Navigation()) } }
-    fun updateSettings(value: EditorSettings)=viewModelScope.launch { guarded { app.settings.update(value) } }
+    fun updateSettings(value: EditorSettings)=viewModelScope.launch { guarded { app.settings.appearance(value) } }
     fun configureRun(entry: String,args: List<String>,timeout: Int,preload: String?)=viewModelScope.launch { guarded {
         val project=state.value.project ?: return@guarded
         val updated=app.workspace.updateConfig(project,project.config.copy(entry=entry,arguments=args,runTimeoutSeconds=timeout,preloadedInput=preload))

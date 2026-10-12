@@ -11,6 +11,7 @@ import dev.mobilecode.ide.data.*
 import dev.mobilecode.ide.protocol.JsonConnection
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.selects.select
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -36,7 +37,21 @@ class SessionSupervisor(private val context: Context, private val scope: Corouti
     private var diskLog: OutputStream?=null
     private var diskBytes=0L
     private val pointIds=ConcurrentHashMap<Int,Pair<String,Int>>()
-    private val publisher=scope.launch { while(isActive) { delay(50); val texts=synchronized(outputLock) { listOf(output.toString(),channels.getValue("stdout").toString(),channels.getValue("stderr").toString(),channels.getValue("build").toString()) }; if(mutable.value.output!=texts[0]) mutable.update { it.copy(output=texts[0],standardOutput=texts[1],standardError=texts[2],buildOutput=texts[3]) } } }
+    private val outputChanged=Channel<Unit>(Channel.CONFLATED)
+    private var outputDirty=false
+    private val publisher=scope.launch {
+        for(change in outputChanged) {
+            delay(50)
+            synchronized(outputLock) {
+                if(outputDirty) {
+                    val all=output.toString(); val out=channels.getValue("stdout").toString()
+                    val error=channels.getValue("stderr").toString(); val build=channels.getValue("build").toString()
+                    mutable.update { it.copy(output=all,standardOutput=out,standardError=error,buildOutput=build) }
+                    outputDirty=false
+                }
+            }
+        }
+    }
 
     val snapshot get() = currentArtifact?.snapshot
     private fun track(child: ChildProcess) { children[child.pid]=child; scope.launch { child.exit.await(); children.remove(child.pid) } }
@@ -44,6 +59,7 @@ class SessionSupervisor(private val context: Context, private val scope: Corouti
         synchronized(outputLock) {
             channels[channel]?.let { value -> value.append(text); if(value.length>128*1024) value.delete(0,value.length-128*1024) }
             output.append(text)
+            outputDirty=true; outputChanged.trySend(Unit)
             if(output.length>512*1024) output.delete(0,output.length-512*1024)
             if(diskBytes<10L*1024*1024) {
                 val bytes=text.toByteArray(); val size=minOf(bytes.size.toLong(),10L*1024*1024-diskBytes).toInt()
@@ -55,7 +71,7 @@ class SessionSupervisor(private val context: Context, private val scope: Corouti
     suspend fun start(project: Project, chain: Toolchain, debugging: Boolean, points: List<Breakpoint>, preloadedInput: String?, requestId: String=UUID.randomUUID().toString()): String = lock.withLock {
         if(mutable.value.active) { check(mutable.value.id==requestId) { "已有任务正在运行" }; return@withLock requestId }
         forcedReason=null; debugTarget=null; currentArtifact=null; pointIds.clear()
-        synchronized(outputLock) { output.clear(); channels.values.forEach { it.clear() }; diskBytes=0; diskLog=null }
+        synchronized(outputLock) { output.clear(); channels.values.forEach { it.clear() }; diskBytes=0; diskLog=null; outputDirty=false }
         mutable.value=SessionState(id=requestId,phase=SessionPhase.PREPARING,debugging=debugging)
         try { ContextCompat.startForegroundService(context,Intent(context,SessionForegroundService::class.java)) }
         catch(error:Exception) { mutable.update { it.copy(phase=SessionPhase.FAILED,reason=error.message ?: "无法启动本地任务") }; throw error }
@@ -86,8 +102,11 @@ class SessionSupervisor(private val context: Context, private val scope: Corouti
                     children.values.toList().forEach { it.stop(); it.closeStreams() }; children.clear()
                     synchronized(outputLock) { runCatching { diskLog?.close() }; diskLog=null }
                     val elapsed=SystemClock.elapsedRealtime()-start
-                    val texts=synchronized(outputLock) { listOf(output.toString(),channels.getValue("stdout").toString(),channels.getValue("stderr").toString(),channels.getValue("build").toString()) }
-                    mutable.update { it.copy(phase=finalPhase,exitCode=exit,reason=reason,elapsedMs=elapsed,output=texts[0],standardOutput=texts[1],standardError=texts[2],buildOutput=texts[3]) }
+                    synchronized(outputLock) {
+                        val texts=listOf(output.toString(),channels.getValue("stdout").toString(),channels.getValue("stderr").toString(),channels.getValue("build").toString())
+                        mutable.update { it.copy(phase=finalPhase,exitCode=exit,reason=reason,elapsedMs=elapsed,output=texts[0],standardOutput=texts[1],standardError=texts[2],buildOutput=texts[3]) }
+                        outputDirty=false
+                    }
                     history.status=finalPhase.name.lowercase(); history.durationMs=elapsed; history.exitCode=exit
                     runCatching { workspace.database.dao().putHistory(history) }
                 }

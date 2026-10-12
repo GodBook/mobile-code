@@ -21,6 +21,7 @@ class LanguageService(private val scope: CoroutineScope, private val factory: Pr
     @Volatile private var ready=false
     private val opened=ConcurrentHashMap<String,Int>()
     private val lock=Mutex()
+    private val documentLock=Mutex()
     private val crashes=ArrayDeque<Long>()
     private val mutableDiagnostics=MutableStateFlow<List<Diagnostic>>(emptyList())
     private val mutableStatus=MutableStateFlow("基础补全")
@@ -108,14 +109,27 @@ class LanguageService(private val scope: CoroutineScope, private val factory: Pr
         } catch(error: Exception) { closeUnlocked(); mutableStatus.value="语义服务启动失败：${error.message}"; throw error }
         Unit
     }
-    suspend fun change(document: Document) {
-        val p=project ?: return; val rpc=client ?: return; if(!ready) return
+    suspend fun change(document: Document): Unit = documentLock.withLock {
+        val p=project ?: return@withLock; val rpc=client ?: return@withLock; if(!ready) return@withLock
         val uri=File(p.directory,document.path).toPath().toUri().toString()
-        val old=opened.put(document.path,document.version)
-        if(old==null) rpc.notify("textDocument/didOpen",json("textDocument" to json("uri" to uri,"languageId" to p.config.language.lspId,"version" to document.version,"text" to document.text)))
-        else if(old!=document.version) rpc.notify("textDocument/didChange",json("textDocument" to json("uri" to uri,"version" to document.version),"contentChanges" to listOf(json("text" to document.text))))
+        val old=opened[document.path]
+        if(old!=null && old>=document.version) return@withLock
+        opened[document.path]=document.version
+        try {
+            if(old==null) rpc.notify("textDocument/didOpen",json("textDocument" to json("uri" to uri,"languageId" to p.config.language.lspId,"version" to document.version,"text" to document.text)))
+            else rpc.notify("textDocument/didChange",json("textDocument" to json("uri" to uri,"version" to document.version),"contentChanges" to listOf(json("text" to document.text))))
+        } catch(error: Exception) {
+            if(client===rpc && opened[document.path]==document.version) {
+                if(old==null) opened.remove(document.path) else opened[document.path]=old
+            }
+            throw error
+        }
+    }
+    private suspend fun resume() {
+        if(!ready && client==null) { val p=project ?: return; val tools=chain ?: return; activate(p,tools) }
     }
     suspend fun complete(document: Document, position: Position): List<Completion> {
+        resume()
         val p=project ?: return emptyList(); val rpc=client ?: return emptyList(); if(!ready) return emptyList()
         change(document)
         val response=try {
@@ -134,14 +148,16 @@ class LanguageService(private val scope: CoroutineScope, private val factory: Pr
         }
     }
     suspend fun signature(document: Document, position: Position): String {
+        resume()
         val p=project ?: return ""; val rpc=client ?: return ""; if(!ready) return ""; change(document)
         val result=rpc.request("textDocument/signatureHelp",json("textDocument" to json("uri" to File(p.directory,document.path).toPath().toUri().toString()),"position" to position))["result"] ?: return ""
         if(result.isJsonNull || opened[document.path]!=document.version) return ""
         return result.asJsonObject.getAsJsonArray("signatures")?.firstOrNull()?.asJsonObject?.get("label")?.asString ?: ""
     }
-    suspend fun closeDocument(path: String) {
-        val p=project ?: return; opened.remove(path)
+    suspend fun closeDocument(path: String): Unit = documentLock.withLock {
+        val p=project ?: return@withLock; opened.remove(path)
         client?.notify("textDocument/didClose",json("textDocument" to json("uri" to File(p.directory,path).toPath().toUri().toString())))
+        mutableDiagnostics.update { items -> items.filterNot { it.path==File(p.directory,path).absolutePath } }
     }
     suspend fun close() = lock.withLock { closeUnlocked() }
     private suspend fun closeUnlocked() { ready=false; eventJob?.cancel(); client?.close(); client=null; val p=process; process=null; p?.stop(); p?.closeStreams(); opened.clear(); mutableDiagnostics.value=emptyList() }

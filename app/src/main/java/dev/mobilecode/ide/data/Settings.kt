@@ -24,4 +24,12 @@ class SettingsRepository(private val context: Context) {
         it[timeout]=settings.runTimeout.coerceIn(1,600); it[project]=settings.lastProject; it[file]=settings.lastFile
         it[line]=settings.cursorLine.coerceAtLeast(0); it[column]=settings.cursorColumn.coerceAtLeast(0)
     }
+    suspend fun appearance(settings: EditorSettings) = context.settingsStore.edit {
+        it[dark]=settings.dark; it[font]=settings.fontSize.coerceIn(10f,30f)
+        it[wrap]=settings.wordWrap; it[timeout]=settings.runTimeout.coerceIn(1,600)
+    }
+    suspend fun location(projectId: String,path: String,cursorLine: Int=0,cursorColumn: Int=0) = context.settingsStore.edit {
+        it[project]=projectId; it[file]=path
+        it[line]=cursorLine.coerceAtLeast(0); it[column]=cursorColumn.coerceAtLeast(0)
+    }
 }

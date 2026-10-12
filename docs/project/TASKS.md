@@ -1,5 +1,15 @@
 # Task state
 
+## Appearance and performance increment (2026-10-12)
+
+| ID | Deliverable | State | Acceptance / evidence |
+|---|---|---|---|
+| O1 | Reference-style syntax colors and explicit light/dark themes | Implemented; verifying | Four grammar token roles, Unicode/incomplete edits, actual theme UI, undo/recreation and screenshots |
+| O2 | Memory and interaction improvements | Implemented; verifying | Closed editor/snapshot release, semantic recovery and matched old/new 1MiB benchmark |
+| O3 | Tested GitHub source and 0.2.3 Release | Pending | Signed versionCode6 APK, unit/device regression, ELF audit, source materials and verified release assets |
+
+## Previous accepted baseline
+
 | ID | Deliverable | State | Acceptance / evidence |
 |---|---|---|---|
 | P0.1 | Android build and offline toolchain preparation | Local acceptance passed | Full ARM64 release, locked dependencies, unique native names, hashes and 484 ELF audits |

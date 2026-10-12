@@ -4,6 +4,12 @@ Updated: 2026-10-12, Asia/Shanghai.
 
 ## Current outcome
 
+Active increment: user-requested reference-image syntax colors, explicit light/dark themes, memory/input improvements and a tested GitHub release. Worktree started clean on main at 4f4f309. Version 0.2.3 / versionCode6 is in preparation; it is not yet published or device-accepted.
+
+Implemented: AST token roles and rainbow brackets, complete Sora palettes, explicit theme choices, closed-tab/snapshot editor disposal, linear token-offset conversion, coalesced and serialized LSP changes, position-only settings writes, language-service recovery and event-driven console publication. First appearance run passed data retention, theme/undo/recreation, semantic recovery and four-grammar roles; rapid tab closure exposed a Material3 indicator index crash, now fixed and awaiting retest. Six unit tests and an interim 484-file APK audit passed; final artifact verification is pending. Before-update fixture: .downloads/visual-0.2.3-data-before.log. The old 0.2.2 1MiB typing benchmark was killed by Android LOW_MEMORY (3.7GB RSS reported in exit-info), with queued JSON writes and GC pressure; its failure is retained. A 64KiB baseline passed in 9.758s, P95 callback latency23.119ms and app PSS102044KiB; verification/local/visual-0.2.2-performance-64k.json. Final new-version performance has not yet been measured. First build invocation used a nonexistent release unit-test task; corrected to testP0UnitTest.
+
+The published baseline below remains available until the new artifact passes verification.
+
 Public repository: https://github.com/GodBook/mobile-code . Release https://github.com/GodBook/mobile-code/releases/tag/v0.2.2 is published and latest. All five assets were checked against their local sizes and GitHub SHA256 digests before publication. Anonymous latest/download/update.json returns versionCode5 and the expected APK hash.
 
 The connected Xiaomi Mi 9 SE completed a real online upgrade from the local versionCode4 / 0.2.2-preview bridge to the published versionCode5 / 0.2.2 APK. PublishedUpdateTest fetched the public manifest, downloaded the actual 429,738,676-byte APK through Android DownloadManager and passed APK verification in 69.747s. Installation used the application's install-update action, Android's source permission screen and normal package-installer confirmation. The installed base.apk SHA256 matches the published APK exactly. No adb install replaced the application during this upgrade.

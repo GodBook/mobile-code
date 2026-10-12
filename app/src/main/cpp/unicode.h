@@ -8,6 +8,7 @@ inline std::string utf8(JNIEnv* env, jstring input) {
     const jchar* text = env->GetStringChars(input, nullptr);
     const jsize length = env->GetStringLength(input);
     std::string out;
+    out.reserve(length);
     for (jsize i = 0; i < length; ++i) {
         unsigned cp = text[i];
         if (cp >= 0xd800 && cp <= 0xdbff && i + 1 < length && text[i + 1] >= 0xdc00 && text[i + 1] <= 0xdfff)

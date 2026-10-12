@@ -13,6 +13,7 @@ import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -33,12 +34,14 @@ import dev.mobilecode.ide.data.*
 import io.github.rosemoe.sora.widget.EditorSearcher
 import io.github.rosemoe.sora.widget.MobileCodeEditor
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.distinctUntilChanged
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IdeScreen(model: IdeViewModel,onImport: ()->Unit,onExport: ()->Unit,onExportSource: ()->Unit,onRun: (Boolean)->Unit,onCopy: (String)->Unit,onInstallUpdate: ()->Unit) {
     val state by model.state.collectAsStateWithLifecycle()
-    val settings by model.settings.collectAsStateWithLifecycle()
+    val settings by remember(model) { model.settings.map { it.copy(lastProject="",lastFile="",cursorLine=0,cursorColumn=0) }.distinctUntilChanged() }.collectAsStateWithLifecycle(initialValue=EditorSettings())
     val session by model.session.collectAsStateWithLifecycle()
     val tools by model.toolchains.collectAsStateWithLifecycle()
     val diagnostics by model.diagnostics.collectAsStateWithLifecycle()
@@ -96,7 +99,8 @@ fun IdeScreen(model: IdeViewModel,onImport: ()->Unit,onExport: ()->Unit,onExport
                         if(state.preview!=null) Row(Modifier.fillMaxWidth().height(48.dp).background(MaterialTheme.colorScheme.surfaceContainer),verticalAlignment=Alignment.CenterVertically) {
                             Text(state.preview!!.title,Modifier.weight(1f).padding(start=16.dp),style=MaterialTheme.typography.labelMedium)
                             IconAction(Icons.Outlined.Close,"关闭快照") { model.closePreview() }
-                        } else if(state.documents.isNotEmpty()) ScrollableTabRow(selectedTabIndex=state.documents.keys.indexOf(state.activePath).coerceAtLeast(0),edgePadding=0.dp) {
+                        } else if(state.documents.isNotEmpty()) ScrollableTabRow(selectedTabIndex=state.documents.keys.indexOf(state.activePath).coerceAtLeast(0),edgePadding=0.dp,
+                            indicator={ positions -> positions.getOrNull(state.documents.keys.indexOf(state.activePath))?.let { TabRowDefaults.SecondaryIndicator(Modifier.tabIndicatorOffset(it)) } }) {
                             state.documents.values.forEach { doc -> Tab(selected=doc.path==state.activePath,onClick={ model.openFile(doc.path) },text={ Row(verticalAlignment=Alignment.CenterVertically) {
                                 Text(doc.path.substringAfterLast('/')+if(doc.dirty) " •" else "",fontFamily=FontFamily.Monospace,fontSize=12.sp)
                                 Spacer(Modifier.width(4.dp)); Icon(Icons.Outlined.Close,"关闭 ${doc.path}",Modifier.size(20.dp).clickable { model.closeFile(doc.path) })
@@ -310,7 +314,11 @@ private fun SettingsDialog(model: IdeViewModel,current: EditorSettings,onDismiss
     var draft by remember { mutableStateOf(current) }; var licenses by remember { mutableStateOf(false) }
     val tools by model.toolchains.collectAsStateWithLifecycle()
     AlertDialog(onDismissRequest=onDismiss,title={ Text("设置") },text={ Column(Modifier.verticalScroll(rememberScrollState())) {
-        Row(verticalAlignment=Alignment.CenterVertically) { Text("深色主题",Modifier.weight(1f)); Switch(draft.dark,{ draft=draft.copy(dark=it) }) }
+        Text("外观主题",style=MaterialTheme.typography.titleSmall)
+        Row(Modifier.fillMaxWidth().padding(top=8.dp,bottom=12.dp),horizontalArrangement=Arrangement.spacedBy(12.dp)) {
+            FilterChip(selected=!draft.dark,onClick={ draft=draft.copy(dark=false) },label={ Text("亮色") },leadingIcon={ Icon(Icons.Outlined.LightMode,null,Modifier.size(18.dp)) },modifier=Modifier.weight(1f).testTag("theme-light"))
+            FilterChip(selected=draft.dark,onClick={ draft=draft.copy(dark=true) },label={ Text("暗色") },leadingIcon={ Icon(Icons.Outlined.DarkMode,null,Modifier.size(18.dp)) },modifier=Modifier.weight(1f).testTag("theme-dark"))
+        }
         Row(verticalAlignment=Alignment.CenterVertically) { Text("自动换行",Modifier.weight(1f)); Switch(draft.wordWrap,{ draft=draft.copy(wordWrap=it) }) }
         Text("代码字号 · ${draft.fontSize.toInt()}",Modifier.padding(top=12.dp)); Slider(draft.fontSize,{ draft=draft.copy(fontSize=it) },valueRange=10f..30f,steps=19)
         Text("新项目默认运行上限 · ${draft.runTimeout}s"); Slider(draft.runTimeout.toFloat(),{ draft=draft.copy(runTimeout=it.toInt()) },valueRange=1f..600f)
