@@ -1,17 +1,31 @@
 package dev.mobilecode.ide.update
 
 import dev.mobilecode.ide.BuildConfig
+import android.util.Log
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import java.io.ByteArrayOutputStream
+import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
 
 class UpdateHttpClient {
     suspend fun metadata(): String = withTimeout(60_000) {
-        withContext(Dispatchers.IO) {
+        for (attempt in 0..1) {
+            try { return@withTimeout fetch() }
+            catch (error: IOException) {
+                if (attempt == 1 || error is javax.net.ssl.SSLHandshakeException) throw error
+                Log.w("MobileCodeUpdater", "Retrying version check after ${error.javaClass.simpleName}")
+                delay(400)
+            }
+        }
+        error("无法检查更新")
+    }
+
+    private suspend fun fetch(): String = withContext(Dispatchers.IO) {
             var url = URL("https://github.com/${BuildConfig.UPDATE_REPOSITORY}/releases/latest/download/update.json")
             repeat(6) {
                 ensureActive()
@@ -20,12 +34,11 @@ class UpdateHttpClient {
                 val connection = url.openConnection() as HttpURLConnection
                 try {
                     connection.instanceFollowRedirects = false
-                    connection.connectTimeout = 15_000
-                    connection.readTimeout = 15_000
-                    connection.useCaches = false
+                    connection.connectTimeout = 8000
+                    connection.readTimeout = 10_000
                     connection.setRequestProperty("User-Agent", "MobileCode/${BuildConfig.VERSION_NAME}")
                     connection.setRequestProperty("Accept", "application/json")
-                    connection.setRequestProperty("Cache-Control", "no-cache")
+                    Log.d("MobileCodeUpdater", "Checking HTTPS host ${url.host}")
                     when (val code = connection.responseCode) {
                         301, 302, 303, 307, 308 -> {
                             val location = connection.getHeaderField("Location") ?: error("更新服务器没有提供下载地址")
@@ -55,6 +68,5 @@ class UpdateHttpClient {
                 }
             }
             error("更新服务器重定向次数过多")
-        }
     }
 }

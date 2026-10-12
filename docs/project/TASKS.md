@@ -17,5 +17,5 @@ Available phone: Xiaomi Mi 9 SE, Android15 ARM64, 4KiB. Formal P0/P4 broad compa
 | ID | Deliverable | State | Acceptance / evidence |
 |---|---|---|---|
 | U1 | GitHub release updater and settings | Implemented | Real HTTPS manifest, persistent download, hash/package/version/signature validation, system installer; 6 unit + 2 device security checks passed |
-| U2 | Updated release and connected-phone validation | In progress | 0.2.0 installed; PIN/Doze interrupted full regression. App-specific REJECT_ALL network policy identified and removed as authorized; real download/installer confirmation pending |
-| U3 | Public GodBook/mobile-code repository and release | 0.2.0 published; 0.2.1 in progress | Sanitized source pushed; five uploaded assets verified by GitHub digest; public update endpoint matches the APK; GPL/LGPL source archive included |
+| U2 | Updated release and connected-phone validation | In progress | Improved 0.2.2 bridge installed; real manifest check passes. PIN/Doze prevents a clean full foreground regression; actual APK download/install and data-preservation checks next |
+| U3 | Public GodBook/mobile-code repository and release | 0.2.0/0.2.1 published; 0.2.2 prepared | Sanitized source pushed; five uploaded assets per release verified by GitHub digest; 0.2.2 APK/source materials built and audited, awaiting publication |

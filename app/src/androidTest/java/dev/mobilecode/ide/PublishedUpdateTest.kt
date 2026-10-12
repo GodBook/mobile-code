@@ -1,6 +1,8 @@
 package dev.mobilecode.ide
 
 import android.util.Log
+import android.view.WindowManager
+import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
@@ -15,6 +17,9 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class PublishedUpdateTest {
     @Test fun checksAndDownloadsTheActualGithubRelease() = runBlocking {
+        val activity = ActivityScenario.launch(MainActivity::class.java)
+        try {
+        activity.onActivity { it.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) }
         val app = ApplicationProvider.getApplicationContext<MobileCodeApp>()
         withTimeout(75_000) { app.updates.check().join() }
         val checked = app.updates.state.value
@@ -37,5 +42,6 @@ class PublishedUpdateTest {
         val apk = app.updates.verifiedApk()
         assertEquals(release.size, apk.length())
         Log.i("MobileCodeUpdateTest", "verified real GitHub APK: version=${release.versionName} bytes=${apk.length()} path=${apk.absolutePath}")
+        } finally { activity.close() }
     }
 }

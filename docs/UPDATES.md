@@ -16,6 +16,8 @@
 
 入口：`https://github.com/GodBook/mobile-code/releases/latest/download/update.json`。只使用 HTTPS，不在 APK 中保存 GitHub 令牌。元数据最大64KiB，重定向只允许 GitHub 官方下载域名，最多6次。网络请求有超时，失败不会显示为“已是最新版本”。
 
+0.2.2按GitHub响应的正常缓存策略请求清单，总请求上限60秒；临时网络I/O失败最多重试一次。TLS证书验证失败立即返回错误，不降低校验要求。运行用户代码不受这个重试策略影响。
+
 清单字段：schemaVersion=1、packageName、versionCode、versionName、minSdk、abi、apkUrl、size、sha256、releaseNotes。下载地址必须精确属于本仓库的 `v<versionName>/MobileCode-<versionName>-arm64-v8a.apk`。比较 Android versionCode，拒绝同版本、降级、错误架构及签名变化。
 
 ## 发布新版

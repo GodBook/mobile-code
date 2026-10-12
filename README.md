@@ -65,10 +65,13 @@ PYTHONDONTWRITEBYTECODE=1 python3.13 verification/test_runtime.py
 adb -s DEVICE_SERIAL install -r app/build/outputs/apk/p0/app-p0.apk
 adb -s DEVICE_SERIAL install -r app/build/outputs/apk/androidTest/p0/app-p0-androidTest.apk
 adb -s DEVICE_SERIAL shell am instrument -w -r `
+  -e class dev.mobilecode.ide.OfflineIdeTest,dev.mobilecode.ide.WorkbenchTest,dev.mobilecode.ide.UpdateIntegrationTest `
   dev.mobilecode.ide.test/androidx.test.runner.AndroidJUnitRunner
 ```
 
 模拟器单独使用 `-PmcAbi=x86_64` 构建；生产 APK 默认仅含 ARM64。源码中的测试执行实际编译器、语言服务器和调试器，不模拟成功状态。
+
+联网验收使用单独的 PublishedUpdateTest；从较低 versionCode 检查、下载并验证实际 GitHub APK。升级前后分别运行 UpgradeDataTest 的两个方法检查项目、源码、断点和设置是否保留。测试过程中需解锁手机并保持屏幕活动，避免锁屏/Doze影响界面和时间限制验收。详细流程见 [在线更新与发布](docs/UPDATES.md)。
 
 ## 工程入口
 
