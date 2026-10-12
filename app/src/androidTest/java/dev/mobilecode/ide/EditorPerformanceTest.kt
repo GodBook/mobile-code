@@ -2,6 +2,9 @@ package dev.mobilecode.ide
 
 import android.os.Debug
 import android.os.SystemClock
+import android.os.Handler
+import android.os.Looper
+import android.os.Bundle
 import android.view.Choreographer
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +13,11 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.lifecycle.ViewModelProvider
 import androidx.test.platform.app.InstrumentationRegistry
 import dev.mobilecode.ide.core.*
+import dev.mobilecode.ide.editor.MobileLanguage
+import io.github.rosemoe.sora.lang.Language
+import io.github.rosemoe.sora.lang.completion.CompletionPublisher
+import io.github.rosemoe.sora.text.Content
+import io.github.rosemoe.sora.text.ContentReference
 import io.github.rosemoe.sora.widget.MobileCodeEditor
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.first
@@ -24,6 +32,30 @@ class EditorPerformanceTest {
     @get:Rule val rule=createAndroidComposeRule<MainActivity>()
     private val app get()=rule.activity.application as MobileCodeApp
     private lateinit var model: IdeViewModel
+    @Test fun lexicalFallbackScansOneMiBWithoutNativeMemoryGrowth() {
+        val suffix="\ncompletion_target_needle = 1\ncompletion_target_n"
+        val line="value_name = 12345\n"
+        val size=1024*1024-suffix.length
+        val source=line.repeat(size/line.length).padEnd(size,' ')+suffix
+        val document=Document("src/fallback.py",source)
+        // Explicitly exercise the fallback used before the real server is ready.
+        val language=MobileLanguage(CodeLanguage.PYTHON,{ document },{ _,_->emptyList() },{})
+        val published=CountDownLatch(1)
+        val publisher=CompletionPublisher(Handler(Looper.getMainLooper()),{ published.countDown() },Language.INTERRUPTION_LEVEL_STRONG)
+        try {
+            val content=Content(source)
+            val started=SystemClock.elapsedRealtime()
+            language.requireAutoComplete(ContentReference(content),content.indexer.getCharPosition(source.length),publisher,Bundle())
+            assertTrue("Fallback was not published",published.await(5,TimeUnit.SECONDS))
+            val elapsed=SystemClock.elapsedRealtime()-started
+            assertTrue(publisher.items.toString(),publisher.items.any { it.label.toString()=="completion_target_needle" })
+            val memory=Debug.MemoryInfo().also(Debug::getMemoryInfo)
+            File(app.getExternalFilesDir(null),"lexical-performance.json").writeText(gson.toJson(mapOf(
+                "sourceBytes" to source.length,"elapsedMs" to elapsed,"appPssKiB" to memory.totalPss,"memoryStats" to memory.memoryStats)))
+            assertTrue("Fallback scan stalled: ${elapsed}ms",elapsed<2000)
+            assertTrue("Fallback scan exceeded 512MiB: ${memory.totalPss}KiB",memory.totalPss<512*1024)
+        } finally { language.destroy() }
+    }
     @Test fun measureLargeFileTypingTabRetentionAndIdleAllocations() {
         val previous=runBlocking { app.settings.flow.first() }
         try {
