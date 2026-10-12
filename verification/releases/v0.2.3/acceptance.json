@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-12",
+  "timezone": "Asia/Shanghai",
+  "repository": "https://github.com/GodBook/mobile-code",
+  "implementationCommit": "21c74343e02f9e910258c9b3c56ca7d1187af7b2",
+  "instrumentationCommit": "324e9a96d9d8b913c51bf5cdeedf386ad6dc29fe",
+  "release": {
+    "tag": "v0.2.3",
+    "url": "https://github.com/GodBook/mobile-code/releases/tag/v0.2.3",
+    "publication": "pending"
+  },
+  "apk": {
+    "packageName": "dev.mobilecode.ide",
+    "versionName": "0.2.3",
+    "versionCode": 6,
+    "bytes": 429758440,
+    "sha256": "6cbb4bab39b7f0bb31a0d35d3ace8002a8830f7c4b8a366d22f24da1794de67a",
+    "installedBaseApkSha256": "6cbb4bab39b7f0bb31a0d35d3ace8002a8830f7c4b8a366d22f24da1794de67a",
+    "certificateSha256": "b579d64db9b1ca5ab84084823dfcae5c625de4bcd6dd38fe4bdcfc1df5fa370a",
+    "minSdk": 29,
+    "compileSdk": 37,
+    "targetSdk": 37,
+    "abi": "arm64-v8a",
+    "debuggable": false
+  },
+  "device": {
+    "model": "Xiaomi Mi 9 SE",
+    "os": "LineageOS Android 15",
+    "api": 35,
+    "pageBytes": 4096,
+    "memoryGiBApprox": 6
+  },
+  "unitTests": {"passed": 6, "failed": 0, "evidence": "unit-tests.xml"},
+  "apkAudit": {"nativeFiles": 484, "checks": 1460, "passed": true, "evidence": "apk-audit.json"},
+  "regression": {"passed": 29, "failed": 0, "seconds": 126.836, "evidence": "regression.json", "rawLog": "regression.log"},
+  "dataPreservation": {
+    "passed": true,
+    "seconds": 0.614,
+    "method": "adb install -r with original signing certificate; before/after project IDs, representative Chinese/emoji source hash, breakpoints and appearance settings",
+    "evidence": ["data-before.log", "data-after.log"],
+    "githubOtaInstallerFlowRetestedForThisVersion": false
+  },
+  "editorPerformance": {
+    "sourceBytes": 1048576,
+    "visibleViewportPx": [1080, 939],
+    "openToIdleMs": 431.855312,
+    "insertions": 80,
+    "inputToFrameCallbackP95Ms": 30.794531,
+    "closedEditorsReleased": 4,
+    "postCloseAppPssKiB": 176101,
+    "evidence": "editor-performance.json"
+  },
+  "lexicalFallback": {
+    "sourceBytes": 1048576,
+    "elapsedMs": 80,
+    "appPssKiB": 183591,
+    "expectedIdentifierVerified": true,
+    "semanticServiceUnavailableExplicitlyForThisFallbackTest": true,
+    "realFourLanguageSemanticServicesCoveredSeparately": true,
+    "evidence": "lexical-performance.json"
+  },
+  "visibleConsoleFlood": {"bytes": 12582912, "inputToFrameCallbackMs": 4.623437, "appPssKiB": 150050, "evidence": "console-performance.json"},
+  "performanceScope": "Instrumented input submission to next Choreographer callback; app-only PSS samples, excluding language workers. Not a physical-IME-to-display or sustained-load guarantee.",
+  "failureHistory": [
+    "Old and intermediate large-file runs reached LOW_MEMORY at 3.7/3.9GB RSS; final code reuses one Android native regex matcher and stops obsolete completion scans.",
+    "Intermediate 26/27 and 27/28 runs are not counted as passed.",
+    "Landscape fixed-height panels had left a zero-height editor; responsive workbench passed three real landscape checks before the final portrait regression.",
+    "Asleep-window and zero-height performance probes are retained locally and excluded from final evidence."
+  ],
+  "notVerified": [
+    "Actual 16KiB device execution",
+    "Full Android10–17/vendor matrix",
+    "Physical input-to-display P95 and sustained/background/low-memory matrix",
+    "External SAF provider UI matrix"
+  ]
+}

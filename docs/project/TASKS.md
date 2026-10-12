@@ -4,9 +4,9 @@
 
 | ID | Deliverable | State | Acceptance / evidence |
 |---|---|---|---|
-| O1 | Reference-style syntax colors and explicit light/dark themes | Implemented; verifying | Four grammar token roles, Unicode/incomplete edits, actual theme UI, undo/recreation and screenshots |
-| O2 | Memory and interaction improvements | Implemented; verifying | Closed editor/snapshot release, semantic recovery and matched old/new 1MiB benchmark |
-| O3 | Tested GitHub source and 0.2.3 Release | Pending | Signed versionCode6 APK, unit/device regression, ELF audit, source materials and verified release assets |
+| O1 | Reference-style syntax colors and explicit light/dark themes | Phone acceptance passed | Four grammar roles, Unicode/incomplete edits, actual theme choices, undo/recreation and real screenshots; final29/29 regression |
+| O2 | Memory and interaction improvements | Phone acceptance passed; broad matrix pending | Visible1MiB open431.855ms/frame-callback P9530.795ms/PSS176101KiB; lexical fallback80ms;12MiB visible console; closed editors and semantic recovery |
+| O3 | Tested GitHub source and 0.2.3 Release | Ready to publish | VersionCode6, original signature,6 unit tests,29/29 device cases,484 native files/1460 checks and upgrade data preservation; assets/public latest pending |
 
 ## Previous accepted baseline
 

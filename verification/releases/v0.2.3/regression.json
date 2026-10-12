@@ -1,0 +1,225 @@
+{
+  "time": "2026-10-12T14:40:20.038955+00:00",
+  "device": {
+    "model": "Xiaomi Mi 9 SE",
+    "os": "LineageOS Android 15",
+    "api": 35,
+    "abi": "arm64-v8a",
+    "pageBytes": 4096
+  },
+  "apk": "app\\build\\outputs\\apk\\release\\app-release.apk",
+  "apkSha256": "6cbb4bab39b7f0bb31a0d35d3ace8002a8830f7c4b8a366d22f24da1794de67a",
+  "passed": true,
+  "tests": [
+    {
+      "class": "dev.mobilecode.ide.OfflineIdeTest",
+      "test": "nativeCrashAndOutputFloodStayContained",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.OfflineIdeTest",
+      "test": "blockedPresetInputStillTimesOut",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.OfflineIdeTest",
+      "test": "interactiveInputEofAndIdempotentStop",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.OfflineIdeTest",
+      "test": "pythonHasRealSourceDebugger",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.OfflineIdeTest",
+      "test": "python313RunsWithInput",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.OfflineIdeTest",
+      "test": "pythonHasCrossFileSemanticCompletion",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.OfflineIdeTest",
+      "test": "atomicWorkspaceSnapshotAndZipRoundTrip",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.OfflineIdeTest",
+      "test": "cppRunsStlAcrossFiles",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.OfflineIdeTest",
+      "test": "cppHasCrossFileSemanticCompletion",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.OfflineIdeTest",
+      "test": "cRunsWithInputAndArguments",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.OfflineIdeTest",
+      "test": "timeoutAndCrashLeaveEditorAndNextRunUsable",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.OfflineIdeTest",
+      "test": "javaHasRealSourceDebugger",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.OfflineIdeTest",
+      "test": "javaHasCrossFileSemanticCompletion",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.OfflineIdeTest",
+      "test": "cppHasRealSourceDebugger",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.OfflineIdeTest",
+      "test": "java17RunsWithInput",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.OfflineIdeTest",
+      "test": "installedReleaseHasUpdaterPermissionsAndNonDebuggable",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.OfflineIdeTest",
+      "test": "cHasCrossFileSemanticCompletion",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.OfflineIdeTest",
+      "test": "cHasRealSourceDebugger",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.WorkbenchTest",
+      "test": "fourIncrementalGrammarsAcceptUnicodeAndIncompleteSource",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.WorkbenchTest",
+      "test": "visibleOutputFloodKeepsEditorResponsiveAndMemoryBounded",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.WorkbenchTest",
+      "test": "createEditComposeUndoFoldAutosaveAndRunFromWorkbench",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.UpdateIntegrationTest",
+      "test": "rejectsCorruptDownloadsAndDowngradesBeforeInstaller",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.UpdateIntegrationTest",
+      "test": "updaterProviderCannotExposeWorkspaceFiles",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.EditorAppearanceTest",
+      "test": "lightAndDarkSelectionPreservesTextUndoAndRestoresAfterRecreation",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.EditorAppearanceTest",
+      "test": "closedTabsAndReplacedSnapshotsReleaseEditorResources",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.EditorAppearanceTest",
+      "test": "semanticCompletionRestartsAfterMemoryReleaseAndRejectsOlderVersions",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.EditorAppearanceTest",
+      "test": "syntaxRolesMatchReferenceAndRemainOrderedWithUnicode",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.EditorPerformanceTest",
+      "test": "measureLargeFileTypingTabRetentionAndIdleAllocations",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.EditorPerformanceTest",
+      "test": "lexicalFallbackScansOneMiBWithoutNativeMemoryGrowth",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    }
+  ],
+  "durationSeconds": 126.836,
+  "log": ".downloads\\visual-0.2.3-regression-shipping.log",
+  "notVerified": [
+    "Actual 16KiB execution",
+    "Full Android10–17/vendor matrix",
+    "P95 performance and long-running background/low-memory matrix"
+  ]
+}
