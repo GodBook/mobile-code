@@ -1,0 +1,6 @@
+{
+  "repository": "GodBook/mobile-code",
+  "packageName": "dev.mobilecode.ide",
+  "abi": "arm64-v8a",
+  "signingCertificateSha256": "b579d64db9b1ca5ab84084823dfcae5c625de4bcd6dd38fe4bdcfc1df5fa370a"
+}

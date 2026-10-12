@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <application android:name=".MobileCodeApp" android:label="Mobile Code"
+        android:icon="@drawable/ic_launcher" android:allowBackup="false"
+        android:supportsRtl="true" android:usesCleartextTraffic="false" android:theme="@style/Theme.MobileCode">
+        <activity android:name=".MainActivity" android:exported="true" android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <service android:name=".runtime.SessionForegroundService" android:exported="false"
+            android:foregroundServiceType="specialUse" android:stopWithTask="false">
+            <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="User-initiated offline code compilation, interactive console execution, and source debugging with a visible stop control." />
+        </service>
+        <provider android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.updates" android:exported="false" android:grantUriPermissions="true">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/update_paths" />
+        </provider>
+    </application>
+</manifest>
