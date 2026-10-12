@@ -20,6 +20,7 @@ import io.github.rosemoe.sora.widget.CodeEditor
 import io.github.rosemoe.sora.widget.SymbolPairMatch
 import io.github.rosemoe.sora.widget.schemes.EditorColorScheme
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.CancellationException
 import java.util.BitSet
 import java.util.WeakHashMap
 import java.util.concurrent.atomic.AtomicLong
@@ -161,14 +162,23 @@ class MobileLanguage(private val language: CodeLanguage, private val document: (
     override fun requireAutoComplete(content: ContentReference, position: CharPosition, publisher: CompletionPublisher, extraArguments: Bundle) {
         val original=document() ?: return
         val line=content.getLine(position.line)
-        val prefix=line.substring(0,position.column).takeLastWhile { it.isLetterOrDigit() || it=='_' }
-        val semantic=runCatching { runBlocking { completion(original,Position(position.line,position.column)) } }.getOrDefault(emptyList())
+        val before=line.substring(0,position.column)
+        val leading=before.trimStart()
+        // Completion may run before asynchronous syntax styles are installed.
+        if((language==CodeLanguage.PYTHON && leading.startsWith('#')) ||
+            (language!=CodeLanguage.PYTHON && leading.startsWith("//"))) return
+        val prefix=before.takeLastWhile { it.isLetterOrDigit() || it=='_' }
+        if(prefix.isEmpty() && !before.endsWith('.') && !before.endsWith("->") && !before.endsWith("::")) return
+        val semantic=try { runBlocking { completion(original,Position(position.line,position.column)) } }
+            catch(cancel: InterruptedException) { Thread.currentThread().interrupt(); return }
+            catch(cancel: CancellationException) { return }
+            catch(error: Exception) { emptyList() }
         val current=document() ?: return
         if(current.version!=original.version || current.path!=original.path) return
         if(semantic.isNotEmpty()) semantic.forEach { publisher.addItem(SemanticItem(it,prefix.length,document)) }
         else {
-            val words=keywords(language).asSequence()+Regex("[\\p{L}_][\\p{L}\\p{N}_]*").findAll(original.text).map { it.value }
-            words.filter { it.startsWith(prefix) && it!=prefix }.distinct().take(80).forEach { publisher.addItem(SimpleCompletionItem(it,"基础补全",prefix.length,it)) }
+            val words=keywords(language).asSequence()+wordPattern.findAll(original.text).map { it.value }
+            words.takeWhile { !Thread.currentThread().isInterrupted }.filter { it.startsWith(prefix) && it!=prefix }.distinct().take(80).forEach { publisher.addItem(SimpleCompletionItem(it,"基础补全",prefix.length,it)) }
             snippets(language).filter { it.first.startsWith(prefix) }.forEach { (label,text) -> publisher.addItem(SemanticItem(Completion(label,text,"代码片段",snippet=true,version=original.version),prefix.length,document)) }
         }
         publisher.updateList()
@@ -191,6 +201,7 @@ class MobileLanguage(private val language: CodeLanguage, private val document: (
         }
     }
     companion object {
+        private val wordPattern=Regex("[\\p{L}_][\\p{L}\\p{N}_]*")
         fun keywords(language: CodeLanguage): List<String> = when(language) {
             CodeLanguage.PYTHON -> "def class return if elif else for while in import from as try except finally with lambda yield async await True False None print input range len list dict str int".split(' ')
             CodeLanguage.JAVA -> "public private protected class interface extends implements static final void int long double boolean String return if else for while new try catch throw throws import package System".split(' ')
