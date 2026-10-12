@@ -4,9 +4,11 @@ Updated: 2026-10-12, Asia/Shanghai.
 
 ## Outcome
 
-The four-language IDE 0.1.0 baseline below passed 20 device/UI integration tests and was delivered locally. The user now requests a public GitHub repository and online app updates. This increment is in progress: updater implementation, 6 unit tests and 2 connected-phone security tests passed. Public repository https://github.com/GodBook/mobile-code is created; source push and release upload are next. The phone currently shows its PIN lock screen, so the system-installer confirmation cannot yet be exercised. Broader compatibility limits below still apply.
+The four-language IDE 0.1.0 baseline below passed 20 device/UI integration tests and was delivered locally. Public repository https://github.com/GodBook/mobile-code now contains the source, and 0.2.0 with online updates is published and installed on the phone. All five release assets' sizes/SHA256 matched GitHub's uploaded digests before publication, and the public latest/update.json was fetched without authentication. Six unit tests and two phone security tests passed. The 0.2.1 network-help/cache-refresh patch is built and its six unit tests pass; publication and a real download from installed 0.2.0 are next. The phone remains PIN locked, so system-installer confirmation needs the user to unlock it. Broader compatibility limits below still apply.
 
-Current increment: 0.2.0 / versionCode 3, intended GodBook/mobile-code. A versionCode 2 build will be used locally to verify a real in-place update to the published version. INTERNET and REQUEST_INSTALL_PACKAGES are now explicitly authorized; editing/build/run/debug continue to work locally. Do not apply the old no-INTERNET assertion to this new requirement.
+Current increment: 0.2.0 / versionCode 3 is public and installed. 0.2.1 / versionCode 4 improves cache refresh/network help and will exercise a real update from the installed 0.2.0. INTERNET and REQUEST_INSTALL_PACKAGES are explicitly authorized; editing/build/run/debug continue to work locally. Do not apply the old no-INTERNET assertion to this new requirement.
+
+Phone update diagnostic: the phone resolves/reaches GitHub, but Mobile Code UID 10272 had a LineageOS REJECT_ALL (262144) network policy. Manifest INTERNET is granted. Under the user's online-update authorization, only that UID's REJECT_ALL bit was removed via the verified INetworkPolicyManager.removeUidPolicy API; readback is policy 0. No root was used. The PIN lock remains, and deep Doze interrupted timing checks in the 0.2.0 regression (partial output observation, preset-input timeout and >2s stop). Preserve those failed logs; do not count this run as passed. Wake/unlock is needed for repeat foreground acceptance.
 
 ## Workspace and environment
 

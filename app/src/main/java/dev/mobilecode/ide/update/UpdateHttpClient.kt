@@ -25,6 +25,7 @@ class UpdateHttpClient {
                     connection.useCaches = false
                     connection.setRequestProperty("User-Agent", "MobileCode/${BuildConfig.VERSION_NAME}")
                     connection.setRequestProperty("Accept", "application/json")
+                    connection.setRequestProperty("Cache-Control", "no-cache")
                     when (val code = connection.responseCode) {
                         301, 302, 303, 307, 308 -> {
                             val location = connection.getHeaderField("Location") ?: error("更新服务器没有提供下载地址")

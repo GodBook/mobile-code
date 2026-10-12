@@ -237,7 +237,7 @@ class UpdateService(private val context: Context, private val scope: CoroutineSc
     }
 
     private fun friendly(error: Exception): String = when (error) {
-        is java.net.UnknownHostException, is java.net.ConnectException -> "无法连接 GitHub，请检查网络后重试"
+        is java.net.UnknownHostException, is java.net.ConnectException -> "无法连接 GitHub，请检查网络，并确认系统允许 Mobile Code 联网"
         is java.net.SocketTimeoutException, is TimeoutCancellationException -> "检查更新超时，请稍后重试"
         is javax.net.ssl.SSLException -> "无法验证更新服务器的 HTTPS 证书，请检查网络和系统时间"
         is IOException -> "网络或存储操作失败，请检查连接和可用空间后重试"
