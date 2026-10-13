@@ -8,7 +8,21 @@
   "release": {
     "tag": "v0.2.3",
     "url": "https://github.com/GodBook/mobile-code/releases/tag/v0.2.3",
-    "publication": "pending"
+    "publication": "published",
+    "id": 410733833,
+    "publishedAt": "2026-10-13T04:31:35Z",
+    "sourceTagCommit": "91de6361d95ab365f67fe30b4fa8544b09e3c18e",
+    "latest": true,
+    "assetsVerifiedAgainstGithubSizeAndDigest": true,
+    "anonymousLatestManifestVerified": true,
+    "originalGitHistoryPreserved": true,
+    "assets": [
+      {"name": "MobileCode-0.2.3-arm64-v8a.apk", "bytes": 429758440, "sha256": "6cbb4bab39b7f0bb31a0d35d3ace8002a8830f7c4b8a366d22f24da1794de67a"},
+      {"name": "MobileCode-0.2.3-source.zip", "bytes": 834017, "sha256": "947dd46bee53cc78b1788887ebda19fde7120a14cafc433da18b0e63a610c0f2"},
+      {"name": "MobileCode-0.2.3-corresponding-sources.zip", "bytes": 156785258, "sha256": "3b84b873b39a263362029be6976a295e068827e9b4b81ae5bd0392190bc7445b"},
+      {"name": "update.json", "bytes": 2034, "sha256": "9d4eeaad859f2e77734792353f90f266dafd1b0cd3acc6cdb864113d2cc40f04"},
+      {"name": "SHA256SUMS.txt", "bytes": 382, "sha256": "f313ffa822c9f6d5eace141c5366ade31611f8ce7519427a1d542658c36b37dc"}
+    ]
   },
   "apk": {
     "packageName": "dev.mobilecode.ide",
@@ -40,6 +54,16 @@
     "method": "adb install -r with original signing certificate; before/after project IDs, representative Chinese/emoji source hash, breakpoints and appearance settings",
     "evidence": ["data-before.log", "data-after.log"],
     "githubOtaInstallerFlowRetestedForThisVersion": false
+  },
+  "publishedUpdateCheck": {
+    "passed": true,
+    "seconds": 3.293,
+    "installedVersionCode": 6,
+    "offeredVersionCode": 6,
+    "state": "CURRENT",
+    "evidence": "published-check.json",
+    "rawLog": "published-check.log",
+    "firstAttemptTimedOutAndWasExcluded": true
   },
   "editorPerformance": {
     "sourceBytes": 1048576,

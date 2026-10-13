@@ -1,0 +1,29 @@
+{
+  "time": "2026-10-13T04:38:40.641819+00:00",
+  "device": {
+    "model": "Xiaomi Mi 9 SE",
+    "os": "LineageOS Android 15",
+    "api": 35,
+    "abi": "arm64-v8a",
+    "pageBytes": 4096
+  },
+  "apk": "app\\build\\outputs\\apk\\release\\app-release.apk",
+  "apkSha256": "6cbb4bab39b7f0bb31a0d35d3ace8002a8830f7c4b8a366d22f24da1794de67a",
+  "passed": true,
+  "tests": [
+    {
+      "class": "dev.mobilecode.ide.PublishedUpdateTest",
+      "test": "checksAndDownloadsTheActualGithubRelease",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    }
+  ],
+  "durationSeconds": 3.293,
+  "log": ".downloads\\visual-0.2.3-published-check-retry.log",
+  "notVerified": [
+    "Actual 16KiB execution",
+    "Full Android10–17/vendor matrix",
+    "P95 performance and long-running background/low-memory matrix"
+  ]
+}

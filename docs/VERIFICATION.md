@@ -1,8 +1,12 @@
 # 验证记录
 
-更新日期：2026-10-12。所有“待验证”均表示未取得通过证据。
+更新日期：2026-10-13。所有“待验证”均表示未取得通过证据。
 
 ## 0.2.3 高亮、主题与性能验收
+
+[v0.2.3](https://github.com/GodBook/mobile-code/releases/tag/v0.2.3)已于2026-10-13发布并设为latest。APK、应用源码、对应源码、update.json、SHA256SUMS.txt共5个资产的大小及GitHub SHA256摘要均与本地文件一致；匿名更新入口返回versionCode6及下方APK哈希。Git HTTPS发生TLS失败后，通过GitHub Git data API保留原始8个提交的身份与历史，发布源码标签91de636。
+
+发布后手机真实GitHub检查重试1/1通过，3.293秒，installed=6/offered=6并显示CURRENT；首次19.953秒的超时失败保留在本地，不计作通过。本次没有重新执行0.2.3的GitHub APK下载/系统安装器流程，覆盖安装和数据保留采用adb install -r验证。
 
 最终APK为0.2.3/versionCode6，429,758,440字节，SHA256：`6cbb4bab39b7f0bb31a0d35d3ace8002a8830f7c4b8a366d22f24da1794de67a`。安装后的base.apk哈希相同；沿用原签名，ARM64-only、minSdk29、compile/targetSdk37、debuggable=false。
 

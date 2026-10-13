@@ -1,12 +1,12 @@
 # Current checkpoint
 
-Updated: 2026-10-12, Asia/Shanghai.
+Updated: 2026-10-13, Asia/Shanghai.
 
 ## Current outcome
 
-0.2.3 / versionCode6 has passed device acceptance and is ready for GitHub publication. Public latest is still0.2.2 until the new draft's five assets are verified and published. User authorized source/release updates; no further permission is needed.
+0.2.3 / versionCode6 is published and latest: https://github.com/GodBook/mobile-code/releases/tag/v0.2.3 . All five uploaded assets were verified against local sizes and SHA256 before publication on2026-10-13T04:31:35Z. Anonymous latest/download/update.json returns versionCode6 and the frozen APK hash. The phone's actual GitHub check passed1/1 in3.293s with installed=6/offered=6 and CURRENT state. This increment is complete; no requested application or release work remains.
 
-Application implementation:21c7434. Instrumentation stress coverage:324e9a9. Workspace:D:\CHATGPT\mobile code, branch main; remote https://github.com/GodBook/mobile-code.
+Application implementation:21c7434. Instrumentation stress coverage:324e9a9. Source tag v0.2.3 points to91de636. Workspace:D:\CHATGPT\mobile code, branch main; remote https://github.com/GodBook/mobile-code.
 
 ## Frozen artifact and checks
 
@@ -28,9 +28,13 @@ Startup restoration now completes before new project/home actions. The phone rot
 
 The old0.2.2 and intermediate visible1MiB probes hit LOW_MEMORY at3.7/3.9GB RSS. Kotlin Regex.findAll rebuilt Android native matchers per token; fallback now reuses one Matcher, checks cancellation/version, and skips comments while asynchronous styles initialize. Earlier26/27,27/28, asleep and zero-height runs remain local and are excluded from passing counts. They must not be cited as successful acceptance.
 
-## Publication next step
+## Publication and handoff
 
-Commit the verified documentation/evidence, prepare_release.py against the frozen APK, push main and create a v0.2.3 draft. Corresponding-source archive is ready in artifacts/update-publication (16 recipes/23 materials). Upload APK, application sources, corresponding sources, update.json and SHA256SUMS.txt; compare all GitHub asset sizes/digests before publishing latest. Then verify anonymous metadata and run PublishedUpdateTest on installed6, update this checkpoint and TASKS.
+Release ID410733833 includes the APK, application source ZIP, corresponding-source ZIP (16 recipes/23 materials), update.json and SHA256SUMS.txt. Evidence is in verification/releases/v0.2.3/acceptance.json, publication fields and adjacent raw test/measurement files. Versioned delivery is preserved in artifacts/update-publication. Do not rebuild or replace these published assets under the same version/tag.
+
+Native Git HTTPS hit TLS failures. GitHub's Git data API uploaded and verified48 blobs/eight original commit identities, then advanced main without force and created the identical annotated tag. Original history was preserved. The ignored .downloads/publish-git-v023.py can synchronize later documentation with --main-only and MC_PUBLICATION_BASE set to the current remote head; inspect remote state first.
+
+The first post-publication phone check timed out; its local .downloads/visual-0.2.3-published-check.log is retained and excluded from passing counts. The retry .downloads/visual-0.2.3-published-check-retry.log passed and is copied to the public published-check evidence. No phone network policy or PIN configuration was changed. No new0.2.3 OTA download/installer flow is claimed; this phone was upgraded using adb install -r and separately checked against the public update endpoint.
 
 ## Environment and limits
 
