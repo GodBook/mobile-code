@@ -7,8 +7,43 @@
   "release": {
     "tag": "v0.3.0",
     "url": "https://github.com/GodBook/mobile-code/releases/tag/v0.3.0",
-    "publication": "prepared",
-    "latest": false
+    "publication": "published",
+    "latest": true,
+    "id": 412390733,
+    "publishedAt": "2026-10-14T06:19:56Z",
+    "sourceTagCommit": "73c9ca050463d59991c0d8496b7aa5bf2fd3436f",
+    "assetsVerifiedAgainstGithubSizeAndDigest": true,
+    "anonymousLatestManifestVerified": true,
+    "anonymousApkHeadVerified": true,
+    "previousReleaseAssetsAndTagPreserved": true,
+    "assets": [
+      {
+        "name": "MobileCode-0.3.0-arm64-v8a.apk",
+        "bytes": 400641853,
+        "sha256": "e319f2360aa471abd294646735af98206a89b69c2cdd4d14ec201856116d0cdd"
+      },
+      {
+        "name": "MobileCode-0.3.0-source.zip",
+        "bytes": 1870400,
+        "sha256": "d87d6d3f731f872cbf055383318ea5113155805e9ab630de261f6a1f70fe2cd0"
+      },
+      {
+        "name": "MobileCode-0.3.0-corresponding-sources.zip",
+        "bytes": 156785258,
+        "sha256": "ea24e972cb89562cbd014cd4a7c42f4ff38c88790cc4c4cb0294d31bb99a1e3a"
+      },
+      {
+        "name": "update.json",
+        "bytes": 3954,
+        "sha256": "8953f2954c3d292e1e4805bd3be14d689f31958f08e7ad1ef615f713112da761"
+      },
+      {
+        "name": "SHA256SUMS.txt",
+        "bytes": 382,
+        "sha256": "139be78ab8417fbaf49e2e887972e46950bb202520ad4b44483a686c71e2bfc8"
+      }
+    ],
+    "evidence": "publication.json"
   },
   "apk": {
     "packageName": "dev.mobilecode.ide",
@@ -195,9 +230,13 @@
     "evidence": [
       "bridge-targeted.json",
       "bridge-recovery-record.json",
-      "bridge-recovery-verify.json",
-      "bridge-storage-100.json"
-    ]
+      "bridge-recovery-verify.json"
+    ],
+    "earlierStorageExperiment": {
+      "versionCode": 6,
+      "apkSha256": "f6cf5309f9efbe7cad36bfc43883a4d454eb01caf04d1de29ef9a6cd5cc13ad6",
+      "evidence": "bridge-storage-100.json"
+    }
   },
   "deviceSettings": {
     "restored": true,

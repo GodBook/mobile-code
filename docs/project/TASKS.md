@@ -20,7 +20,7 @@ User approved the complete [upgrade plan](../UX_UPGRADE_PLAN.md), connected-phon
 | UX-12 | Breakpoint explanations and fresh variable/watch UI | Shipping core phone scope passed | Four-language real debug/step/locals/watch; broader rapid-transition matrix open |
 | UX-13 | Real definition/references/outline and service retry | Shipping phone scope passed | Four-language real cross-file navigation; overload/scope/external-source matrix open; formatting/semantic rename assessed/deferred |
 | UX-14 | Updater clarity and measured complete-package reduction | Implemented; online flow unverified |6.78% measured reduction/native audit/security checks; phone had no network, real new OTA unverified |
-| UX-R | Signed production APK, phone verification and GitHub Release | Phone accepted; publication in progress | Exact APK43/43,6 units/1460 audits; publish five immutable assets and verify anonymous endpoints next |
+| UX-R | Signed production APK, phone verification and GitHub Release | Published and verified | [v0.3.0](https://github.com/GodBook/mobile-code/releases/tag/v0.3.0); exact APK43/43,6 units/1460 audits; five sizes/digests, anonymous manifest7/APK HTTP200 and old assets/tag preservation verified |
 
 ## Appearance and performance increment (2026-10-12)
 

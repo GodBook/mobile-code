@@ -4,7 +4,9 @@
 
 ## 0.3.0 用户体验升级验收
 
-正式包已冻结并完成连接手机验收，GitHub发布正在收尾。版本0.3.0/versionCode7，400,641,853字节，SHA256：`e319f2360aa471abd294646735af98206a89b69c2cdd4d14ec201856116d0cdd`。手机安装的base.apk哈希相同；原签名、ARM64-only、minSdk29、compile/targetSdk37、debuggable=false保持一致。
+[v0.3.0](https://github.com/GodBook/mobile-code/releases/tag/v0.3.0)已于2026-10-14T06:19:56Z发布并设为latest。五个资产的大小及GitHub SHA256均与本地一致，匿名最新清单返回versionCode7，公开APK响应HTTP200及正确长度；历史0.2.3五个资产和源码标签保持不变。[发布核验](../verification/releases/v0.3.0/publication.json)记录详情。
+
+版本0.3.0/versionCode7，400,641,853字节，SHA256：`e319f2360aa471abd294646735af98206a89b69c2cdd4d14ec201856116d0cdd`。手机安装的base.apk哈希相同；原签名、ARM64-only、minSdk29、compile/targetSdk37、debuggable=false保持一致。源码标签73c9ca0，发布后的核验记录在main补充，已发布文件保持冻结。
 
 | 检查 | 结果 | 实际范围 |
 |---|---|---|

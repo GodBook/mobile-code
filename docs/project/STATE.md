@@ -2,9 +2,9 @@
 
 Updated: 2026-10-14, Asia/Shanghai.
 
-## Active objective — publication
+## Completed objective — 0.3.0
 
-User authorized implementation of docs/UX_UPGRADE_PLAN.md, computer-connected phone tests and GitHub/Release publication. Implementation and phone validation are complete within the recorded scope; publish0.3.0/versionCode7 next. Main implementation commit:0a38049efbdf4472c3d817a2cf2ce922fda59201, based on3a0846880bb1350a6bb39717e104a5d441cd07c0. App source/APK stayed unchanged while test fixtures/gestures were corrected. Working tree contains final tests, docs and curated evidence not yet committed. Remote main/latest are still the previous baseline; no0.3.0 tag or Release has been created.
+User-authorized UX implementation, connected-phone tests and GitHub/Release publication are delivered within the recorded scope. [v0.3.0](https://github.com/GodBook/mobile-code/releases/tag/v0.3.0) is published/latest, release ID412390733, published2026-10-14T06:19:56Z. App implementation0a38049efbdf4472c3d817a2cf2ce922fda59201; immutable source tag/archive73c9ca050463d59991c0d8496b7aa5bf2fd3436f. Main contains subsequent publication records. App APK remained unchanged while test fixtures/gestures were corrected. No active implementation task remains; unverified matrices below are explicit limits.
 
 ## Frozen production artifact
 
@@ -36,17 +36,17 @@ USB1944b301, Xiaomi Mi9SE, LineageOS Android15/API35, ARM64,4096-byte pages, abo
 
 Phone has no active default network; saved networks are absent from scan. Prepublication GitHub check failed truthfully. No new phone GitHub download/system-installer/current-version acceptance is claimed. This release used USB adb install-r, distinct from historical0.2.2 real OTA. Host-network inspection was read-only and no hotspot/configuration change was made.
 
-## Next actions
+## Publication result
 
-1. Validate final records/links/diff; commit final tests/docs/evidence.
-2. Preserve old generic local publication metadata, run tools/prepare_release.py on the frozen versioned APK, with original signing identity and all source tracked. Generate the other four assets; do not rebuild the APK.
-3. Normal non-force push main, create/push new annotated v0.3.0 source tag, create GitHub draft with five assets, verify all sizes/GitHub digests, publish as latest.
-4. Verify anonymous latest manifest and public APK availability; write actual release ID/source-tag commit/asset hashes into acceptance and publication records, update docs/STATE/TASKS, push the documentation commit.
-5. Open update notes and deliver Release link plus actual checks/material limits. No further user confirmation is needed; publication was explicitly authorized.
+1. Normal non-force atomic push preserved history and created v0.3.0 at73c9ca0. prepare_release.py validated actual APK signature/SDK/ABI/nondebuggable and archived178 tracked source files.
+2. All five assets uploaded and GitHub size/SHA256 verified before publication. App source ZIP1870400bytes/SHA256d87d6d3f731f872cbf055383318ea5113155805e9ab630de261f6a1f70fe2cd0; corresponding ZIP156785258bytes; update.json3954bytes/SHA2568953f2954c3d292e1e4805bd3be14d689f31958f08e7ad1ef615f713112da761; SHA256SUMS382bytes/SHA256139be78ab8417fbaf49e2e887972e46950bb202520ad4b44483a686c71e2bfc8. APK/corresponding hashes above.
+3. Anonymous latest/download/update.json GET returns exact frozen metadata:code7/0.3.0/400641853bytes/e319f236…; public APK HEAD returnsHTTP200 and exact length. A new full anonymous APK download and phone OTA were not performed. Release API confirms latest412390733.
+4. All five0.2.3 asset sizes/digests and source tag91de636 remain unchanged. Old generic local publication metadata preserved in artifacts/update-publication/v0.2.3. Do not rebuild/replace published0.3.0 assets or reuse its tag.
+5. Final acceptance/publication/published-update records are in verification/releases/v0.3.0. Source ZIP is the prepublication73c9ca0 snapshot; postpublication evidence is supplied on main without replacing frozen archives.
 
 ## Historical baseline and open matrix
 
-Last published:[v0.2.3](https://github.com/GodBook/mobile-code/releases/tag/v0.2.3), code6/APK429758440bytes, SHA2566cbb4bab39b7f0bb31a0d35d3ace8002a8830f7c4b8a366d22f24da1794de67a. Five assets,29/29 final phone cases,6 units and1460 audits passed; source tag91de636, remote main3a084688. Historical tags/assets remain intact. See docs/VERIFICATION.md and verification/releases/v0.2.3/acceptance.json.
+Previous baseline:[v0.2.3](https://github.com/GodBook/mobile-code/releases/tag/v0.2.3), code6/APK429758440bytes, SHA2566cbb4bab39b7f0bb31a0d35d3ace8002a8830f7c4b8a366d22f24da1794de67a. Five assets,29/29 final phone cases,6 units and1460 audits passed; source tag91de636, pre-upgrade main3a084688. Historical tags/assets remain intact. See docs/VERIFICATION.md and verification/releases/v0.2.3/acceptance.json.
 
 Actual16KiB execution, full Android10–17/vendor matrix, stable50ms/physical IME latency, sustained/background/low-memory, external SAF, TalkBack/physical keyboard/split-screen, broader component faults/navigation/debug transitions and new phone OTA remain open. Formal broad P0/P4 acceptance is pending. No cloud execution, keyword-only semantic substitution, broad storage access or new dependency-management/GUI capabilities were added.
 
