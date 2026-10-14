@@ -4,7 +4,9 @@
 
 ## 0.3.1 可靠性修复验收
 
-版本0.3.1/versionCode8，正式APK400,671,849字节，SHA256：`3983d693f654504fbeb6f3e77154bf2b233282ec545c0790e52a80abf5887604`。实际安装base.apk哈希相同；沿用原签名，保持ARM64-only、minSdk29、compile/targetSdk37、debuggable=false。源码和五个发布附件已准备，GitHub发布核验仍在进行；没有宣称新版OTA通过。
+[v0.3.1](https://github.com/GodBook/mobile-code/releases/tag/v0.3.1)于2026-10-14T13:50:30Z发布并设为latest，Release ID412770874。源码标签及应用源码归档冻结在e626c144a7999362ef96d4e52fc4a88211d0a5d4；main补充发布后的核验记录。五个附件的GitHub大小/SHA256均与本地一致，匿名latest清单与实际清单逐字节相同，返回code8；公开APK HEAD返回HTTP200及正确长度。0.3.0五个附件与源码标签保持不变，详见[发布核验](../verification/releases/v0.3.1/publication.json)。
+
+版本0.3.1/versionCode8，正式APK400,671,849字节，SHA256：`3983d693f654504fbeb6f3e77154bf2b233282ec545c0790e52a80abf5887604`。实际安装base.apk哈希相同；沿用原签名，保持ARM64-only、minSdk29、compile/targetSdk37、debuggable=false。没有重新完整下载公开APK或宣称新版手机在线OTA通过。
 
 | 检查 | 结果 | 实际范围 |
 |---|---|---|

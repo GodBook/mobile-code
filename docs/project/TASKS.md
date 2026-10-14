@@ -2,7 +2,7 @@
 
 ## GitHub / Release follow-up (user authorized, 2026-10-14)
 
-0.3.1/code8 publication in progress. Actual signed release APK SHA2563983d693f654504fbeb6f3e77154bf2b233282ec545c0790e52a80abf5887604:27 release units,24 real-phone core cases(246.690s),484 native files/1460 audits and original-data checks before/after install/tests passed. Corresponding sources prepared. Remaining publication steps: matching source commit/archive/tag, non-force push, five verified draft assets, publish/latest and public manifest/APK plus frozen0.3.0 checks. Phone is PIN-locked, so shipping UI/performance suite was not repeated; prior p0 full43 remains separate. New phone OTA and broad device matrices remain unverified.
+0.3.1/code8 [published/latest](https://github.com/GodBook/mobile-code/releases/tag/v0.3.1) at2026-10-14T13:50:30Z, ID412770874. Source tag/archive e626c144a7999362ef96d4e52fc4a88211d0a5d4; normal non-force atomic push preserved history. Actual signed release APK SHA2563983d693f654504fbeb6f3e77154bf2b233282ec545c0790e52a80abf5887604:27 release units,24 real-phone core cases(246.690s),484 native files/1460 audits and original-data checks before/after install/tests passed. All five assets match GitHub sizes/digests; anonymous latest manifest is exactly code8 and APK HEAD isHTTP200/exact length;0.3.0 assets/tag preserved. [Acceptance](../../verification/releases/v0.3.1/acceptance.json) and [publication](../../verification/releases/v0.3.1/publication.json) record details. No requested publication work remains. Phone is PIN-locked, so shipping UI/performance suite was not repeated; prior p0 full43 remains separate. New phone OTA and broad device matrices remain unverified.
 
 ## Four reliability fixes (user authorized, 2026-10-14)
 
