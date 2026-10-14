@@ -1,5 +1,27 @@
 # Task state
 
+## Approved UX implementation and release (2026-10-13)
+
+User approved execution of [the upgrade plan](../UX_UPGRADE_PLAN.md), connected-phone tests, and GitHub/Release publication. Integrated target0.3.0/versionCode7. All runtime, signing, offline and compatibility constraints remain authoritative. “Implemented” does not imply every fault/device matrix has passed; exact shipping evidence is still pending.
+
+| ID | Deliverable | State | Current evidence / remaining work |
+|---|---|---|---|
+| UX-01 | Per-file save, retry, dirty-buffer export and explicit recovery | Bridge phone scope passed | Immediate-flush failure/export/retry, automatic draft and actual force-stop/fresh-process recovery passed; final shipping regression pending |
+| UX-02 | Acknowledged stdin drafts and EOF capability | Bridge phone scope passed | Actual input/EOF/error/session draft case plus four-language core input; final shipping regression pending |
+| UX-03 | Invalid-project recovery and cancellable imports | Bridge phone scope passed | Broken config raw export, mixed-language/src preservation, cancellation and original project hashes |
+| UX-04 | Component readiness and direct retry/space feedback | Implemented; partial phone evidence | Normal tool preparation used throughout; corrupt-resource/full-disk/device restart fault matrix still open |
+| UX-05 | Storage inventory, safe cleanup and generated-file/history access | Bridge phone scope passed |100 real Python runs;283 pre-existing sessions/current snapshot/source hash protected in v2; external SAF UI matrix open |
+| UX-06 | Compact/searchable/pinned/recent home | Bridge phone scope passed | Actual Chinese filter/pin/home/tree UI; final narrow/font checks pending |
+| UX-07 | Folder tree, atomic moves, project operations and recycle restore | Bridge phone scope passed | Conflict rejection, Unicode paths, entry/breakpoint migration, copy/rename and source hashes |
+| UX-08 | Quick open, inline search/replace, line/project search | Bridge phone scope passed | Actual Unicode buffer/search/navigation; final shipping regression pending |
+| UX-09 | Tabs, per-file locations, watches and workspace restoration | Bridge phone scope passed | Tabs/watches and actual cursor after recreation passed on corrected bridge; final shipping regression pending |
+| UX-10 | Focus/responsive UI, accessibility labels, shortcuts and settings | Implemented; matrix partial | Earlier font1502/2 and landscape; updated geometry check next. Physical keyboard/TalkBack/split-screen coverage open |
+| UX-11 | Diagnostic provenance, bounded logs, argv/configuration and history | Implemented; core phone scope passed | Real fault/12MiB flood/10MiB log limit, source snapshot identity and input/argv; external export UI matrix open |
+| UX-12 | Breakpoint explanations and fresh variable/watch UI | Implemented; core phone scope passed | Real four-language debug/step/locals/watch; response identity checks added; broader rapid-transition matrix open |
+| UX-13 | Real definition/references/outline and language-service retry | Bridge phone scope passed | C/C++/Python/Java real cross-file navigation passed; formatting/semantic rename remain assessment items |
+| UX-14 | Updater clarity and measured complete-package reduction | Implemented; OTA pending | Narrow R8 experiment/native audit passed; real public download/install/data preservation next |
+| UX-R | Signed production APK, phone verification and GitHub Release | In progress | Latest bridge checks, freeze production7, five immutable assets, actual OTA and exact shipping43-case regression pending |
+
 ## Appearance and performance increment (2026-10-12)
 
 | ID | Deliverable | State | Acceptance / evidence |

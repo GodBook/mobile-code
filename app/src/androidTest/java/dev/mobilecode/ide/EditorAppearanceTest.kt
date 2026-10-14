@@ -144,7 +144,7 @@ class EditorAppearanceTest {
     }
 
     private fun chooseTheme(dark: Boolean) {
-        rule.onNodeWithTag("更多").performClick(); rule.onNodeWithText("设置").performClick()
+        rule.onNodeWithTag("更多").performClick(); rule.onNodeWithText("设置").performScrollTo().performClick()
         rule.onNodeWithTag(if(dark) "theme-dark" else "theme-light").performClick()
         rule.onNodeWithText("保存",useUnmergedTree=true).performClick()
         rule.waitUntil(10_000) { model.settings.value.dark==dark }

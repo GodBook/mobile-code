@@ -23,6 +23,8 @@ data class UpdateState(
     val downloadedBytes: Long = 0,
     val message: String = "检查 GitHub 上的新版本",
     val autoCheck: Boolean = true,
+    val wifiOnly: Boolean=false,val lastSuccess: Long=0,val bytesPerSecond: Long=0,val remainingSeconds: Long?=null,
+    val installedNotice: Boolean=false,
 ) {
     val busy get() = phase in setOf(UpdatePhase.CHECKING, UpdatePhase.DOWNLOADING, UpdatePhase.VERIFYING)
     val hasUpdate get() = release?.isNewerThan(BuildConfig.VERSION_CODE.toLong()) == true
@@ -31,7 +33,7 @@ data class UpdateState(
 /** The system download survives activity recreation and application process death. */
 class UpdateService(private val context: Context, private val scope: CoroutineScope) {
     private val preferences = context.getSharedPreferences("application-updates", Context.MODE_PRIVATE)
-    private val mutable = MutableStateFlow(UpdateState(autoCheck = preferences.getBoolean("auto", true)))
+    private val mutable = MutableStateFlow(UpdateState(autoCheck = preferences.getBoolean("auto", true),wifiOnly=preferences.getBoolean("wifiOnly",false),lastSuccess=preferences.getLong("lastSuccess",0),installedNotice=preferences.getInt("seenVersion",0)!=BuildConfig.VERSION_CODE))
     val state = mutable.asStateFlow()
     private val commands = Mutex()
     private val manager = context.getSystemService(DownloadManager::class.java)
@@ -91,6 +93,14 @@ class UpdateService(private val context: Context, private val scope: CoroutineSc
         preferences.edit().putBoolean("auto", enabled).apply()
         mutable.update { it.copy(autoCheck = enabled) }
     }
+    fun setWifiOnly(enabled: Boolean) {
+        if(state.value.busy) return
+        preferences.edit().putBoolean("wifiOnly",enabled).apply()
+        mutable.update { it.copy(wifiOnly=enabled) }
+    }
+    val availableBytes get()=context.filesDir.usableSpace
+    val installedReleaseNotice get()=state.value.installedNotice
+    fun acknowledgeInstalledVersion() { preferences.edit().putInt("seenVersion",BuildConfig.VERSION_CODE).apply(); mutable.update { it.copy(installedNotice=false) } }
 
     fun check(manual: Boolean = true): Job = scope.launch {
         restored.await()
@@ -103,10 +113,11 @@ class UpdateService(private val context: Context, private val scope: CoroutineSc
             try {
                 val text = http.metadata()
                 val release = parse(text)
-                preferences.edit().putString("latest", text).apply()
+                val success=System.currentTimeMillis()
+                preferences.edit().putString("latest", text).putLong("lastSuccess",success).apply()
                 val newer = release.isNewerThan(BuildConfig.VERSION_CODE.toLong())
                 mutable.update { it.copy(phase = if (newer) UpdatePhase.AVAILABLE else UpdatePhase.CURRENT, release = release,
-                    message = if (newer) "发现新版本 ${release.versionName}" else "当前已是最新版本") }
+                    lastSuccess=success,message = if (newer) "发现新版本 ${release.versionName}" else "当前已是最新版本") }
             } catch (timeout: TimeoutCancellationException) {
                 mutable.update { it.copy(phase = UpdatePhase.ERROR, message = "检查更新超时，请稍后重试") }
             } catch (cancel: CancellationException) { throw cancel }
@@ -133,6 +144,7 @@ class UpdateService(private val context: Context, private val scope: CoroutineSc
                     .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
                     .setAllowedOverRoaming(false)
                     .setDestinationUri(Uri.fromFile(target))
+                if(state.value.wifiOnly) request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI)
                 val id = manager.enqueue(request)
                 val saved = preferences.edit().putString("pending", Gson().toJson(release)).putLong("downloadId", id).putBoolean("ready", false).commit()
                 if (!saved) { manager.remove(id); error("无法保存下载状态，请重试") }
@@ -145,6 +157,7 @@ class UpdateService(private val context: Context, private val scope: CoroutineSc
 
     private fun observe(id: Long, release: UpdateRelease) {
         downloadJob = scope.launch(Dispatchers.IO) {
+            var previousBytes=0L; var previousTime=android.os.SystemClock.elapsedRealtime(); var samples=0
             try {
                 while (isActive) {
                     val row = manager.query(DownloadManager.Query().setFilterById(id))?.use { cursor ->
@@ -154,6 +167,11 @@ class UpdateService(private val context: Context, private val scope: CoroutineSc
                             cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_REASON)))
                     } ?: error("下载任务已被系统移除，请重新下载")
                     require(row.second <= release.size) { "下载文件大小与版本说明不匹配" }
+                    val now=android.os.SystemClock.elapsedRealtime(); val deltaTime=now-previousTime
+                    val delta=(row.second-previousBytes).coerceAtLeast(0); samples++
+                    val speed=if(samples>=4 && deltaTime>=500 && row.first==DownloadManager.STATUS_RUNNING) delta*1000/deltaTime else 0L
+                    mutable.update { it.copy(bytesPerSecond=speed,remainingSeconds=if(speed>0) (release.size-row.second)/speed else null) }
+                    previousBytes=row.second; previousTime=now
                     when (row.first) {
                         DownloadManager.STATUS_SUCCESSFUL -> {
                             mutable.update { it.copy(phase = UpdatePhase.VERIFYING, downloadedBytes = row.second, message = "正在校验文件和应用签名…") }
@@ -192,7 +210,12 @@ class UpdateService(private val context: Context, private val scope: CoroutineSc
                             else -> "更新下载失败，请检查网络后重试（${row.third}）"
                         })
                         else -> mutable.update { it.copy(phase = UpdatePhase.DOWNLOADING, downloadedBytes = row.second,
-                            message = if (row.first == DownloadManager.STATUS_PAUSED) "等待网络恢复，系统将继续下载…" else "正在下载更新…") }
+                            message = if (row.first == DownloadManager.STATUS_PAUSED) when(row.third) {
+                                DownloadManager.PAUSED_QUEUED_FOR_WIFI -> "等待 Wi-Fi，连接后系统将继续下载…"
+                                DownloadManager.PAUSED_WAITING_TO_RETRY -> "网络中断，系统正在等待重试…"
+                                DownloadManager.PAUSED_WAITING_FOR_NETWORK -> "等待网络连接，系统将继续下载…"
+                                else -> "系统暂停下载，恢复后将继续…"
+                            } else "正在下载更新…") }
                     }
                     delay(1000)
                 }

@@ -25,6 +25,7 @@ class LanguageService(private val scope: CoroutineScope, private val factory: Pr
     private val crashes=ArrayDeque<Long>()
     private val mutableDiagnostics=MutableStateFlow<List<Diagnostic>>(emptyList())
     private val mutableStatus=MutableStateFlow("基础补全")
+    private var capabilities: JsonObject?=null
     val diagnostics=mutableDiagnostics.asStateFlow()
     val status=mutableStatus.asStateFlow()
 
@@ -101,9 +102,10 @@ class LanguageService(private val scope: CoroutineScope, private val factory: Pr
                 "general" to json("positionEncodings" to listOf("utf-16")),
                 "textDocument" to json("completion" to json("completionItem" to json("snippetSupport" to true,"insertReplaceSupport" to true,"documentationFormat" to listOf("plaintext"))),
                     "signatureHelp" to json(),"publishDiagnostics" to json("versionSupport" to true)))
-            rpc.request("initialize",json("processId" to android.os.Process.myPid(),"rootUri" to next.directory.toPath().toUri().toString(),"capabilities" to capability,
+            val initialized=rpc.request("initialize",json("processId" to android.os.Process.myPid(),"rootUri" to next.directory.toPath().toUri().toString(),"capabilities" to capability,
                 "workspaceFolders" to listOf(json("uri" to next.directory.toPath().toUri().toString(),"name" to next.config.name)),
                 "initializationOptions" to json("settings" to json("java" to json("import" to json("maven" to json("enabled" to false),"gradle" to json("enabled" to false)),"configuration" to json("runtimes" to listOf(json("name" to "JavaSE-21","path" to toolchain.javaHome.absolutePath,"default" to true))))))),30_000)
+            capabilities=initialized.getAsJsonObject("result")?.getAsJsonObject("capabilities")
             rpc.notify("initialized"); ready=true; mutableStatus.value="${next.config.language.title} 补全已就绪"
             scope.launch { p.exit.await(); if(process===p) { crashes.addLast(System.currentTimeMillis()); while(crashes.isNotEmpty() && System.currentTimeMillis()-crashes.first()>60_000) crashes.removeFirst(); mutableStatus.value="语言服务已断开，基础补全可用"; close(); delay(1500); if(crashes.size<3) runCatching { activate(next,toolchain) } } }
         } catch(error: Exception) { closeUnlocked(); mutableStatus.value="语义服务启动失败：${error.message}"; throw error }
@@ -159,6 +161,51 @@ class LanguageService(private val scope: CoroutineScope, private val factory: Pr
         client?.notify("textDocument/didClose",json("textDocument" to json("uri" to File(p.directory,path).toPath().toUri().toString())))
         mutableDiagnostics.update { items -> items.filterNot { it.path==File(p.directory,path).absolutePath } }
     }
+    private suspend fun navigationRequest(document: Document,position: Position,method: String): JsonElement? {
+        resume()
+        val p=project ?: error("请先打开项目"); val rpc=client ?: error("语义服务尚未就绪")
+        check(ready) { "语义服务仍在准备，请稍后重试" }
+        val provider=when(method) { "textDocument/definition"->"definitionProvider"; "textDocument/references"->"referencesProvider"; else->"documentSymbolProvider" }
+        val supported=capabilities?.get(provider)
+        check(supported!=null && !supported.isJsonNull && (!supported.isJsonPrimitive || supported.asBoolean)) { "当前语言服务未提供此能力" }
+        change(document)
+        val response=try { rpc.request(method,json("textDocument" to json("uri" to File(p.directory,document.path).toPath().toUri().toString()),
+            "position" to position,"context" to json("includeDeclaration" to true)),10_000) }
+        catch(timeout: TimeoutCancellationException) { currentCoroutineContext().ensureActive(); return null }
+        currentCoroutineContext().ensureActive()
+        if(project?.config?.id!=p.config.id || client!==rpc || opened[document.path]!=document.version) return null
+        return response["result"]?.takeUnless { it.isJsonNull }
+    }
+    suspend fun locations(document: Document,position: Position,method: String): List<CodeLocation> {
+        require(method in listOf("textDocument/definition","textDocument/references"))
+        val result=navigationRequest(document,position,method) ?: return emptyList()
+        val entries=if(result.isJsonArray) result.asJsonArray.toList() else listOf(result)
+        return entries.mapNotNull { element -> runCatching {
+            val item=element.asJsonObject
+            val uri=(item["uri"] ?: item["targetUri"]).asString
+            require(java.net.URI(uri).scheme=="file")
+            val range=(item["targetSelectionRange"] ?: item["range"]).asJsonObject
+            val start=gson.fromJson(range["start"],Position::class.java)
+            CodeLocation(File(java.net.URI(uri)).canonicalPath,start)
+        }.getOrNull() }.distinctBy { it.path to it.position }.take(1000)
+    }
+    suspend fun symbols(document: Document): List<CodeSymbol> {
+        val p=project ?: return emptyList()
+        val result=navigationRequest(document,Position(0,0),"textDocument/documentSymbol") ?: return emptyList()
+        val symbols=mutableListOf<CodeSymbol>()
+        fun visit(items: JsonArray,depth: Int) { for(element in items) {
+            if(symbols.size>=1000 || depth>12) return
+            val item=element.asJsonObject; val location=item["location"]?.asJsonObject
+            val uri=location?.get("uri")?.asString
+            val file=if(uri!=null && java.net.URI(uri).scheme=="file") File(java.net.URI(uri)) else File(p.directory,document.path)
+            val range=location?.get("range") ?: item["selectionRange"] ?: item["range"] ?: continue
+            symbols.add(CodeSymbol(item["name"].asString,item["kind"]?.asInt ?: 13,
+                CodeLocation(file.canonicalPath,gson.fromJson(range.asJsonObject["start"],Position::class.java),item["name"].asString),depth))
+            item["children"]?.takeIf { it.isJsonArray }?.let { visit(it.asJsonArray,depth+1) }
+        } }
+        if(result.isJsonArray) visit(result.asJsonArray,0)
+        return symbols
+    }
     suspend fun close() = lock.withLock { closeUnlocked() }
-    private suspend fun closeUnlocked() { ready=false; eventJob?.cancel(); client?.close(); client=null; val p=process; process=null; p?.stop(); p?.closeStreams(); opened.clear(); mutableDiagnostics.value=emptyList() }
+    private suspend fun closeUnlocked() { ready=false; capabilities=null; eventJob?.cancel(); client?.close(); client=null; val p=process; process=null; p?.stop(); p?.closeStreams(); opened.clear(); mutableDiagnostics.value=emptyList() }
 }

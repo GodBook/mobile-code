@@ -9,6 +9,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import java.io.File
 import java.io.FileOutputStream
 import java.nio.file.Files
@@ -38,28 +42,39 @@ fun resolveInside(directory: File, path: String): File {
     return result
 }
 
-class WorkspaceService(private val context: Context) {
+data class UnreadableProject(val directory: File,val reason: String)
+data class ImportProgress(val running: Boolean=false,val bytes: Long=0,val files: Int=0,val message: String="")
+class ImportLanguageChoice(val uri: Uri,val candidates: List<CodeLanguage>): IllegalArgumentException("请选择导入项目的语言")
+
+class WorkspaceService(internal val context: Context) {
     val projectsRoot = File(context.filesDir,"projects").canonicalFile.apply { mkdirs() }
     val sessionsRoot = File(context.filesDir,"sessions").canonicalFile.apply { mkdirs() }
-    private val mutex = Mutex()
+    internal val mutex = Mutex()
+    private val mutableProblems=MutableStateFlow<List<UnreadableProject>>(emptyList())
+    val problems=mutableProblems.asStateFlow()
+    internal val mutableImport=MutableStateFlow(ImportProgress())
+    val importProgress=mutableImport.asStateFlow()
     private var recovered = false
     val database = Room.databaseBuilder(context,MetaDatabase::class.java,"metadata.db").build()
-    private val dao get() = database.dao()
+    internal val dao get() = database.dao()
 
     suspend fun projects(): List<Project> = mutex.withLock { withContext(Dispatchers.IO) {
         if(!recovered) { dao.interruptPreviousSessions(); recovered = true }
         val metadata=dao.projects().associateBy { it.id }
-        projectsRoot.listFiles().orEmpty().filter { it.isDirectory && !it.name.startsWith('.') }.mapNotNull { dir ->
+        val problems=mutableListOf<UnreadableProject>()
+        val projects=projectsRoot.listFiles().orEmpty().filter { it.isDirectory && !it.name.startsWith('.') }.mapNotNull { dir ->
             runCatching {
                 val config = readConfig(File(dir,"project.json"))
                 require(config.schemaVersion == 1 && config.id == dir.name)
                 val old = metadata[config.id]
                 val project = Project(config,dir,old?.updatedAt ?: dir.lastModified())
                 register(project); project
-            }.getOrNull()
+            }.onFailure { problems.add(UnreadableProject(dir,it.message ?: "无法读取项目配置")) }.getOrNull()
         }.sortedByDescending { it.updatedAt }
+        mutableProblems.value=problems
+        projects
     } }
-    private fun readConfig(file: File, replacementId: String? = null): ProjectConfig {
+    internal fun readConfig(file: File, replacementId: String? = null): ProjectConfig {
         val raw = JsonParser.parseString(file.readText()).asJsonObject
         require((raw["schemaVersion"]?.asInt ?: 1)==1) { "不支持的项目格式" }
         val language = CodeLanguage.valueOf(raw["language"].asString)
@@ -77,7 +92,7 @@ class WorkspaceService(private val context: Context) {
         return ProjectConfig(id=id,name=name,language=language,sourceRoots=roots,entry=entry,arguments=args,runTimeoutSeconds=timeout,
             preloadedInput=raw["preloadedInput"]?.takeUnless { it.isJsonNull }?.asString)
     }
-    private fun register(project: Project) {
+    internal fun register(project: Project) {
         dao.putProject(ProjectEntity().also { it.id=project.config.id; it.name=project.config.name; it.language=project.config.language.name; it.updatedAt=project.updatedAt })
     }
     suspend fun create(name: String, language: CodeLanguage, multiple: Boolean): Project = withContext(Dispatchers.IO) {
@@ -110,6 +125,11 @@ class WorkspaceService(private val context: Context) {
     }
     suspend fun updateConfig(project: Project, config: ProjectConfig): Project = withContext(Dispatchers.IO) {
         require(config.id == project.config.id && config.runTimeoutSeconds in 1..600)
+        require(config.name.isNotBlank() && config.name.length<=64 && config.sourceRoots.isNotEmpty() && config.sourceRoots.size<=100) { "项目配置无效" }
+        config.sourceRoots.filter { it!="." }.forEach { resolveInside(project.directory,it) }
+        require(config.arguments.size<=100 && config.arguments.all { !it.contains('\u0000') && it.length<=8192 }) { "程序参数无效" }
+        if(config.language==CodeLanguage.PYTHON) resolveInside(project.directory,config.entry)
+        if(config.language==CodeLanguage.JAVA) require(Regex("[\\p{L}_$][\\p{L}\\p{N}_$]*(?:\\.[\\p{L}_$][\\p{L}\\p{N}_$]*)*").matches(config.entry)) { "Java 入口类名无效" }
         AtomicFiles.text(File(project.directory,"project.json"),gson.toJson(config))
         project.copy(config=config).also(::register)
     }
@@ -121,6 +141,7 @@ class WorkspaceService(private val context: Context) {
     }
     suspend fun snapshot(project: Project): Snapshot = mutex.withLock {
         withContext(Dispatchers.IO) {
+            require(sessionsRoot.usableSpace>64L*1024*1024) { "可用空间不足，至少需要64MiB；请在存储管理中导出并清理历史产物" }
             val id=UUID.randomUUID().toString(); val dir=File(sessionsRoot,id).apply { mkdirs() }
             val source=File(dir,"source").apply { mkdirs() }; val work=File(dir,"work").apply { mkdirs() }
             val build=File(dir,"build").apply { mkdirs() }; File(dir,"tmp").mkdirs()
@@ -156,12 +177,15 @@ class WorkspaceService(private val context: Context) {
             stream.use { out -> resolveInside(project.directory,path).inputStream().use { it.copyTo(out) } }
         }
     }
-    suspend fun importProject(uri: Uri): Project = withContext(Dispatchers.IO) {
+    suspend fun importProject(uri: Uri, selectedLanguage: CodeLanguage?=null): Project = mutex.withLock { withContext(Dispatchers.IO) {
         val id=UUID.randomUUID().toString(); val staging=File(projectsRoot,".import-$id").apply { mkdirs() }
+        mutableImport.value=ImportProgress(true,message="正在读取 ZIP，取消不会影响已有项目")
+        try {
         var bytes=0L; var count=0
         val stream=context.contentResolver.openInputStream(uri) ?: error("无法打开导入文件")
         ZipInputStream(stream).use { zip ->
             while(true) {
+                currentCoroutineContext().ensureActive()
                 val entry=zip.nextEntry ?: break
                 val path=entry.name.trimEnd('/')
                 if(path.isEmpty()) continue
@@ -171,22 +195,23 @@ class WorkspaceService(private val context: Context) {
                     dest.parentFile!!.mkdirs()
                     FileOutputStream(dest).use { out ->
                         val buffer=ByteArray(16384)
-                        while(true) { val n=zip.read(buffer); if(n<0) break; bytes+=n; require(bytes<=50L*1024*1024) { "导入项目超过 50MB" }; out.write(buffer,0,n) }
+                        while(true) { currentCoroutineContext().ensureActive(); val n=zip.read(buffer); if(n<0) break; bytes+=n; require(bytes<=50L*1024*1024) { "导入项目超过 50MB" }; out.write(buffer,0,n); mutableImport.value=ImportProgress(true,bytes,count,"正在导入 $count 个文件") }
                     }
                 }
                 zip.closeEntry()
             }
         }
         val nested=staging.listFiles().orEmpty().singleOrNull()?.takeIf { it.isDirectory }
-        val base=if(!File(staging,"project.json").exists() && nested!=null) nested else staging
+        val base=if(!File(staging,"project.json").exists() && nested!=null && nested.name!="src") nested else staging
         val marker=File(base,"project.json")
         val config=if(marker.exists()) {
             readConfig(marker,id)
         } else {
             val paths=base.walkTopDown().filter { it.isFile }.map { it.relativeTo(base).invariantSeparatorsPath }.toList()
             val candidates=CodeLanguage.entries.filter { l -> paths.any(l::isSource) }.filterNot { it==CodeLanguage.C && paths.any(CodeLanguage.CPP::isSource) && paths.any { it.endsWith(".cpp") } }
-            require(candidates.size==1) { "无法确定项目语言，请导入包含 project.json 的项目 ZIP" }
-            val language=candidates.single()
+            if(selectedLanguage==null && candidates.size!=1) throw ImportLanguageChoice(uri,candidates.ifEmpty { CodeLanguage.entries })
+            val language=selectedLanguage ?: candidates.single()
+            require(paths.any(language::isSource)) { "ZIP 中没有 ${language.title} 源文件" }
             val entry=if(language==CodeLanguage.PYTHON) paths.firstOrNull { it.endsWith("main.py") } ?: paths.first(language::isSource) else language.entry
             ProjectConfig(id=id,name="导入的项目",language=language,sourceRoots=listOf("src").takeIf { File(base,"src").isDirectory } ?: listOf("."),entry=entry)
         }
@@ -195,5 +220,10 @@ class WorkspaceService(private val context: Context) {
         val finalDir=File(projectsRoot,id)
         Files.move(base.toPath(),finalDir.toPath(),StandardCopyOption.ATOMIC_MOVE)
         Project(config,finalDir,System.currentTimeMillis()).also(::register)
-    }
+        } finally {
+            mutableImport.value=mutableImport.value.copy(running=false)
+            // Explicitly marked for the storage screen; never delete an imported or existing project.
+            if(staging.isDirectory) runCatching { AtomicFiles.text(File(staging,".failed-import"),"可在存储管理中清理此导入暂存目录") }
+        }
+    } }
 }

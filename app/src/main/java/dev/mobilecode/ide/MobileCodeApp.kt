@@ -18,9 +18,11 @@ class MobileCodeApp: Application() {
     lateinit var languages: LanguageService; private set
     lateinit var sessions: SessionSupervisor; private set
     lateinit var updates: UpdateService; private set
+    lateinit var journal: WorkspaceJournal; private set
     override fun onCreate() {
         super.onCreate()
         workspace=WorkspaceService(this); settings=SettingsRepository(this); toolchains=ToolchainService(this)
+        journal=WorkspaceJournal(this)
         processes=ProcessFactory(scope); languages=LanguageService(scope,processes,File(filesDir,"language-state"))
         sessions=SessionSupervisor(this,scope,workspace,processes)
         updates=UpdateService(this,scope)

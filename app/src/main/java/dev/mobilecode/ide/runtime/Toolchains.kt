@@ -55,7 +55,7 @@ class ToolchainService(private val context: Context) {
                     context.assets.open("toolchains/root.zip").use { input -> val buffer=ByteArray(65536); while(true) { val n=input.read(buffer); if(n<0) break; checksum.update(buffer,0,n) } }
                     val actual=checksum.digest().joinToString("") { "%02x".format(it) }
                     require(actual==manifest.resourceSha256) { "离线资源校验失败" }
-                    require(parent.usableSpace>manifest.resourceBytes+50L*1024*1024) { "可用存储不足，请释放空间后重试" }
+                    require(parent.usableSpace>manifest.resourceBytes+50L*1024*1024) { "可用存储 ${parent.usableSpace/1024/1024}MiB，首次准备至少需要 ${manifest.resourceBytes/1024/1024+50}MiB，请释放空间后重试" }
                     root.mkdirs(); var written=0L; var next=0L
                     ZipInputStream(context.assets.open("toolchains/root.zip")).use { zip ->
                         while(true) {

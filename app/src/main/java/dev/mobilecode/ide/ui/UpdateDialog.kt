@@ -27,13 +27,17 @@ fun UpdateDialog(service: UpdateService, installationAllowed: Boolean, onInstall
         text = {
             Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Text("当前版本 ${BuildConfig.VERSION_NAME}", style = MaterialTheme.typography.bodyMedium)
+                if(service.installedReleaseNotice) Row(verticalAlignment=Alignment.CenterVertically) { Text("已安装 ${BuildConfig.VERSION_NAME}",Modifier.weight(1f)); TextButton(onClick={ service.acknowledgeInstalledVersion() }) { Text("知道了") } }
+                Text("上次成功检查：${timeLabel(state.lastSuccess).let { if(state.lastSuccess==0L) "尚无记录" else it }}",style=MaterialTheme.typography.bodySmall)
                 Text(state.message, modifier = Modifier.testTag("更新状态"), color = if (state.phase == UpdatePhase.ERROR) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface)
                 if (state.hasUpdate) state.release?.let { release ->
                     Text("新版本 ${release.versionName} · ${mib(release.size)} MiB", style = MaterialTheme.typography.titleSmall)
+                    if(state.phase==UpdatePhase.AVAILABLE || state.phase==UpdatePhase.ERROR) Text("下载与校验需 ${mib(release.size*2+32*1024*1024)} MiB，当前可用 ${mib(service.availableBytes)} MiB",style=MaterialTheme.typography.bodySmall)
                     if (release.releaseNotes.isNotBlank()) Text(release.releaseNotes, style = MaterialTheme.typography.bodySmall)
                     if (state.phase == UpdatePhase.DOWNLOADING) {
                         LinearProgressIndicator(progress = { (state.downloadedBytes.toFloat() / release.size).coerceIn(0f, 1f) }, modifier = Modifier.fillMaxWidth())
                         Text("${mib(state.downloadedBytes)} / ${mib(release.size)} MiB", style = MaterialTheme.typography.labelSmall)
+                        if(state.bytesPerSecond>0) Text("${mib(state.bytesPerSecond)} MiB/s · 预计剩余 ${state.remainingSeconds}s",style=MaterialTheme.typography.labelSmall)
                     }
                 }
                 if (state.phase == UpdatePhase.CHECKING || state.phase == UpdatePhase.VERIFYING) LinearProgressIndicator(Modifier.fillMaxWidth())
@@ -42,6 +46,7 @@ fun UpdateDialog(service: UpdateService, installationAllowed: Boolean, onInstall
                     Text("启动时检查更新", Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
                     Switch(state.autoCheck, onCheckedChange = service::setAutoCheck, modifier = Modifier.testTag("自动检查更新"))
                 }
+                Row(verticalAlignment=Alignment.CenterVertically) { Text("仅 Wi-Fi 下载",Modifier.weight(1f),style=MaterialTheme.typography.bodyMedium); Switch(state.wifiOnly,onCheckedChange=service::setWifiOnly,enabled=!state.busy) }
                 Text("检查更新不会自动下载。下载可在后台继续；安装由安卓系统确认，项目文件会保留。", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 TextButton(onClick = { browser.openUri("https://github.com/${BuildConfig.UPDATE_REPOSITORY}") }) { Text("GitHub 项目与历史版本") }
             }

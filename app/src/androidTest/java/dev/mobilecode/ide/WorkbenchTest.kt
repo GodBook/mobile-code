@@ -144,7 +144,7 @@ class WorkbenchTest {
         val previousId=model.session.value.id
         rule.onNodeWithTag("运行").performClick()
         val openedPanel=rule.onAllNodesWithTag("output-expanded").fetchSemanticsNodes().isEmpty()
-        if(openedPanel) rule.onNodeWithTag("折叠控制台").performClick()
+        if(openedPanel) rule.onNodeWithTag("展开控制台").performClick()
         rule.waitUntil(30_000) { model.session.value.id!=null && model.session.value.id!=previousId && !model.session.value.active }
         assertEquals(model.session.value.output.takeLast(1000),SessionPhase.FINISHED,model.session.value.phase)
         assertTrue(model.session.value.standardOutput.length>=128*1024)

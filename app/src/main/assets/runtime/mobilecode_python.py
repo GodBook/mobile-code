@@ -141,7 +141,7 @@ def language_server(config):
         result = None
         try:
             if method == "initialize":
-                result = {"capabilities": {"positionEncoding": "utf-16", "textDocumentSync": 1, "completionProvider": {"triggerCharacters": ["."]}, "signatureHelpProvider": {"triggerCharacters": ["(", ","]}}, "serverInfo": {"name": "Mobile Code / Jedi", "version": "0.19.2"}}
+                result = {"capabilities": {"positionEncoding": "utf-16", "textDocumentSync": 1, "completionProvider": {"triggerCharacters": ["."]}, "signatureHelpProvider": {"triggerCharacters": ["(", ","]}, "definitionProvider": True, "referencesProvider": True, "documentSymbolProvider": True}, "serverInfo": {"name": "Mobile Code / Jedi", "version": "0.19.2"}}
             elif method == "shutdown":
                 shutdown = True
             elif method == "exit":
@@ -156,7 +156,7 @@ def language_server(config):
                 publish(item["uri"])
             elif method == "textDocument/didClose":
                 documents.pop(params["textDocument"]["uri"], None)
-            elif method in ("textDocument/completion", "textDocument/signatureHelp") and not shutdown:
+            elif method in ("textDocument/completion", "textDocument/signatureHelp", "textDocument/definition", "textDocument/references", "textDocument/documentSymbol") and not shutdown:
                 uri = params["textDocument"]["uri"]
                 text, _ = documents.get(uri, (Path(path_of(uri)).read_text(), 0))
                 position = params["position"]
@@ -172,9 +172,38 @@ def language_server(config):
                         items.append({"label": completion.name, "detail": completion.description, "insertText": completion.name,
                             "textEdit": {"range": {"start": {"line": line, "character": start}, "end": position}, "newText": completion.name}})
                     result = {"isIncomplete": False, "items": items}
-                else:
+                elif method.endswith("signatureHelp"):
                     signatures = script.get_signatures(line + 1, column)
                     result = {"signatures": [{"label": s.to_string(), "parameters": [{"label": p.to_string()} for p in s.params]} for s in signatures], "activeSignature": 0, "activeParameter": (signatures[0].index or 0) if signatures else 0}
+                else:
+                    def name_location(name):
+                        if name.module_path is None or name.line is None:
+                            return None
+                        target = Path(name.module_path)
+                        target_uri = target.resolve().as_uri()
+                        target_text = documents.get(target_uri, (None, 0))[0]
+                        if target_text is None:
+                            target_text = target.read_text(errors="replace")
+                        target_lines = target_text.split("\n")
+                        target_line = max(0, name.line - 1)
+                        content = target_lines[target_line] if target_line < len(target_lines) else ""
+                        start = column_to_utf16(content, name.column)
+                        end = column_to_utf16(content, name.column + len(name.name))
+                        return {"uri": target_uri, "range": {"start": {"line": target_line, "character": start}, "end": {"line": target_line, "character": end}}}
+
+                    if method.endswith("definition"):
+                        names = script.goto(line + 1, column, follow_imports=True, follow_builtin_imports=True)
+                        result = [location for name in names if (location := name_location(name)) is not None]
+                    elif method.endswith("references"):
+                        names = script.get_references(line + 1, column, include_builtins=False, scope="project")
+                        result = [location for name in names if (location := name_location(name)) is not None]
+                    else:
+                        kinds = {"module": 2, "class": 5, "function": 12, "param": 13, "statement": 13, "instance": 13}
+                        result = []
+                        for name in script.get_names(all_scopes=True, definitions=True, references=False):
+                            location = name_location(name)
+                            if location is not None:
+                                result.append({"name": name.name, "kind": kinds.get(name.type, 13), "location": location})
             if request_id is not None:
                 connection.send({"jsonrpc": "2.0", "id": request_id, "result": result})
         except Exception as error:

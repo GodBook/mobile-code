@@ -55,10 +55,16 @@ data class SessionState(
     val variables: List<DebugVariable> = emptyList(), val threadId: Int = 1, val frameId: Int? = null,
     val breakpointResults: Map<String, List<Breakpoint>> = emptyMap(),
     val stopSequence: Int = 0,
+    val inputOpen: Boolean = false, val inputSending: Boolean = false,
+    val outputCounts: Map<String,Long> = emptyMap(),
 ) {
     val active get() = phase in setOf(SessionPhase.PREPARING, SessionPhase.BUILDING, SessionPhase.STARTING, SessionPhase.RUNNING, SessionPhase.PAUSED)
     val sourceLocked get() = active && debugging
+    val canSendInput get() = phase==SessionPhase.RUNNING && inputOpen && !inputSending
 }
+
+data class CodeLocation(val path: String, val position: Position, val label: String = "")
+data class CodeSymbol(val name: String, val kind: Int, val location: CodeLocation, val depth: Int = 0)
 
 fun sha256(bytes: ByteArray): String = MessageDigest.getInstance("SHA-256").digest(bytes).joinToString("") { "%02x".format(it) }
 

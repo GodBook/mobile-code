@@ -1,0 +1,120 @@
+{
+  "time": "2026-10-14T05:14:27.084817+00:00",
+  "device": {
+    "model": "Xiaomi Mi 9 SE",
+    "os": "LineageOS Android 15",
+    "api": 35,
+    "abi": "arm64-v8a",
+    "pageBytes": 4096
+  },
+  "apk": ".downloads\\ux-0.3.0-restored-bridge.apk",
+  "apkSha256": "6281ed00a9a7b423ad75ed169117666aaa25ec5467f6fba36af09b236fb8d152",
+  "passed": true,
+  "tests": [
+    {
+      "class": "dev.mobilecode.ide.WorkbenchTest",
+      "test": "fourIncrementalGrammarsAcceptUnicodeAndIncompleteSource",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.WorkbenchTest",
+      "test": "visibleOutputFloodKeepsEditorResponsiveAndMemoryBounded",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.WorkbenchTest",
+      "test": "createEditComposeUndoFoldAutosaveAndRunFromWorkbench",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.EditorAppearanceTest",
+      "test": "lightAndDarkSelectionPreservesTextUndoAndRestoresAfterRecreation",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.EditorAppearanceTest",
+      "test": "closedTabsAndReplacedSnapshotsReleaseEditorResources",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.EditorAppearanceTest",
+      "test": "semanticCompletionRestartsAfterMemoryReleaseAndRejectsOlderVersions",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.EditorAppearanceTest",
+      "test": "syntaxRolesMatchReferenceAndRemainOrderedWithUnicode",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.EditorPerformanceTest",
+      "test": "measureLargeFileTypingTabRetentionAndIdleAllocations",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.EditorPerformanceTest",
+      "test": "lexicalFallbackScansOneMiBWithoutNativeMemoryGrowth",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.UxUpgradeTest",
+      "test": "tabsLocationsWatchesAndPinnedProjectsRestoreAfterRecreation",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.UxUpgradeTest",
+      "test": "failedSaveKeepsBufferAndExportThenRetryAndRecovery",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.UxLayoutTest",
+      "test": "homeSearchFilterPinAndTreeKeepChineseProjectAccessible",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.UxLayoutTest",
+      "test": "systemThemeAndLandscapeKeepNonzeroEditorAndFullPanels",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.UpgradeDataTest",
+      "test": "verifyAfterSystemUpdate",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    }
+  ],
+  "durationSeconds": 68.614,
+  "log": "verification\\releases\\v0.3.0\\bridge-targeted.log",
+  "notVerified": [
+    "Actual 16KiB execution",
+    "Full Android10–17/vendor matrix",
+    "P95 performance and long-running background/low-memory matrix"
+  ]
+}

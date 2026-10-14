@@ -28,25 +28,29 @@ class SessionSupervisor(private val context: Context, private val scope: Corouti
     private val children=ConcurrentHashMap<Int,ChildProcess>()
     private var connection: JsonConnection?=null
     private var stdin: OutputStream?=null
+        set(value) { field=value; mutable.update { it.copy(inputOpen=value!=null) } }
+    private val inputLock=Mutex()
     private var currentArtifact: BuildArtifact?=null
     private var debugTarget: Int?=null
     private var forcedReason: String?=null
     private val outputLock=Any()
     private val output=StringBuilder()
     private val channels=mapOf("stdout" to StringBuilder(),"stderr" to StringBuilder(),"build" to StringBuilder())
+    private val characterCounts=mutableMapOf("all" to 0L,"stdout" to 0L,"stderr" to 0L,"build" to 0L)
     private var diskLog: OutputStream?=null
     private var diskBytes=0L
     private val pointIds=ConcurrentHashMap<Int,Pair<String,Int>>()
     private val outputChanged=Channel<Unit>(Channel.CONFLATED)
     private var outputDirty=false
-    private val publisher=scope.launch {
+    private val publisher=scope.launch { publishOutputs() }
+    private suspend fun publishOutputs() {
         for(change in outputChanged) {
             delay(50)
             synchronized(outputLock) {
                 if(outputDirty) {
                     val all=output.toString(); val out=channels.getValue("stdout").toString()
                     val error=channels.getValue("stderr").toString(); val build=channels.getValue("build").toString()
-                    mutable.update { it.copy(output=all,standardOutput=out,standardError=error,buildOutput=build) }
+                    mutable.update { it.copy(output=all,standardOutput=out,standardError=error,buildOutput=build,outputCounts=characterCounts.toMap()) }
                     outputDirty=false
                 }
             }
@@ -57,6 +61,8 @@ class SessionSupervisor(private val context: Context, private val scope: Corouti
     private fun track(child: ChildProcess) { children[child.pid]=child; scope.launch { child.exit.await(); children.remove(child.pid) } }
     private fun append(text: String,channel: String="system") {
         synchronized(outputLock) {
+            characterCounts["all"]=characterCounts.getValue("all")+text.length
+            if(channel in channels) characterCounts[channel]=characterCounts.getValue(channel)+text.length
             channels[channel]?.let { value -> value.append(text); if(value.length>128*1024) value.delete(0,value.length-128*1024) }
             output.append(text)
             outputDirty=true; outputChanged.trySend(Unit)
@@ -64,14 +70,14 @@ class SessionSupervisor(private val context: Context, private val scope: Corouti
             if(diskBytes<10L*1024*1024) {
                 val bytes=text.toByteArray(); val size=minOf(bytes.size.toLong(),10L*1024*1024-diskBytes).toInt()
                 runCatching { diskLog?.write(bytes,0,size) }; diskBytes+=size
-                if(diskBytes>=10L*1024*1024) output.append("\n[日志已达 10MB，继续显示最近输出]\n")
+                if(diskBytes>=10L*1024*1024) { val notice="\n[日志已达 10MB，继续显示最近输出]\n"; output.append(notice); characterCounts["all"]=characterCounts.getValue("all")+notice.length }
             }
         }
     }
     suspend fun start(project: Project, chain: Toolchain, debugging: Boolean, points: List<Breakpoint>, preloadedInput: String?, requestId: String=UUID.randomUUID().toString()): String = lock.withLock {
         if(mutable.value.active) { check(mutable.value.id==requestId) { "已有任务正在运行" }; return@withLock requestId }
         forcedReason=null; debugTarget=null; currentArtifact=null; pointIds.clear()
-        synchronized(outputLock) { output.clear(); channels.values.forEach { it.clear() }; diskBytes=0; diskLog=null; outputDirty=false }
+        synchronized(outputLock) { output.clear(); channels.values.forEach { it.clear() }; characterCounts.keys.toList().forEach { characterCounts[it]=0L }; diskBytes=0; diskLog=null; outputDirty=false }
         mutable.value=SessionState(id=requestId,phase=SessionPhase.PREPARING,debugging=debugging)
         try { ContextCompat.startForegroundService(context,Intent(context,SessionForegroundService::class.java)) }
         catch(error:Exception) { mutable.update { it.copy(phase=SessionPhase.FAILED,reason=error.message ?: "无法启动本地任务") }; throw error }
@@ -104,7 +110,7 @@ class SessionSupervisor(private val context: Context, private val scope: Corouti
                     val elapsed=SystemClock.elapsedRealtime()-start
                     synchronized(outputLock) {
                         val texts=listOf(output.toString(),channels.getValue("stdout").toString(),channels.getValue("stderr").toString(),channels.getValue("build").toString())
-                        mutable.update { it.copy(phase=finalPhase,exitCode=exit,reason=reason,elapsedMs=elapsed,output=texts[0],standardOutput=texts[1],standardError=texts[2],buildOutput=texts[3]) }
+                        mutable.update { it.copy(phase=finalPhase,exitCode=exit,reason=reason,elapsedMs=elapsed,output=texts[0],standardOutput=texts[1],standardError=texts[2],buildOutput=texts[3],outputCounts=characterCounts.toMap()) }
                         outputDirty=false
                     }
                     history.status=finalPhase.name.lowercase(); history.durationMs=elapsed; history.exitCode=exit
@@ -299,10 +305,15 @@ class SessionSupervisor(private val context: Context, private val scope: Corouti
         return DebugVariable(expression,body["result"].asString,body["type"]?.asString ?: "",body["variablesReference"]?.asInt ?: 0)
     }
     suspend fun command(command: String) { connection?.request(command,json("threadId" to state.value.threadId),3000) ?: error("调试器未连接") }
-    suspend fun sendInput(text: String, newline: Boolean=true) = withContext(Dispatchers.IO) {
+    suspend fun sendInput(text: String, newline: Boolean=true,expectedSessionId: String?=state.value.id) = inputLock.withLock { withContext(Dispatchers.IO) {
+        val sessionId=state.value.id
+        check(sessionId==expectedSessionId) { "输入所属任务已经结束，请在新任务中重新发送" }
         val stream=stdin ?: error("标准输入已经关闭")
-        synchronized(stream) { stream.write((text+if(newline) "\n" else "").toByteArray()); stream.flush() }
-    }
+        mutable.update { it.copy(inputSending=true) }
+        try { synchronized(stream) { stream.write((text+if(newline) "\n" else "").toByteArray()); stream.flush() } }
+        catch(error: IOException) { if(state.value.id==sessionId) eof(); throw error }
+        finally { mutable.update { if(it.id==sessionId) it.copy(inputSending=false) else it } }
+    } }
     private suspend fun preloadInput(text: String) {
         try { sendInput(text,false) }
         catch(error:IOException) { append("\n[标准输入已关闭，剩余预置输入未发送]\n") }

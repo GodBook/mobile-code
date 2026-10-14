@@ -18,7 +18,11 @@ Android 10 以上，ARM64 手机；建议 6GB 内存和至少 3GB 可用存储�
 4. 点击行号区域设置断点，再点击调试；底部提供单步、调用栈、变量和观察项。
 5. 通过系统文件选择器导入、导出项目 ZIP，或在更多菜单中导出当前源码文件。
 6. 在设置 → 软件更新中检查、下载和安装新版本。检查不会自动下载，安装仍需安卓系统确认。
-7. 在设置 → 外观主题中选择“亮色”或“暗色”。主题同时应用于工作台和代码编辑器，高亮区分关键字、类型、函数、字符串、预处理指令及多层括号。
+7. 在设置 → 外观主题中选择“跟随系统”“亮色”或“暗色”。主题同时应用于工作台和代码编辑器，高亮区分关键字、类型、函数、字符串、预处理指令及多层括号。
+
+0.3.0 增加项目搜索/置顶、目录树、快速打开、项目文本搜索、真实定义/引用/大纲、多标签位置恢复和专注编辑。保存失败会持续标记，可重试或导出未保存内容；恢复草稿需要对照后确认，磁盘满时仍可能无法写入草稿。文件和项目移入回收站后可恢复。“存储与历史”可查看日志/生成文件并手动清理历史产物，清理前请先导出需要保留的文件。
+
+详细改动见 [0.3.0 更新说明](docs/releases/v0.3.0.md)，实施范围与验收对应关系见 [升级规划](docs/UX_UPGRADE_PLAN.md)。
 
 横屏或键盘占用较多空间时，工作台会收起辅助栏与控制台，优先保留编辑区域。点击控制台右侧箭头可打开独立面板，再次点击或返回即可回到代码。
 
@@ -78,12 +82,14 @@ adb -s DEVICE_SERIAL shell am instrument -w -r `
 
 联网验收使用单独的 PublishedUpdateTest；从较低 versionCode 检查、下载并验证实际 GitHub APK。升级前后分别运行 UpgradeDataTest 的两个方法检查项目、源码、断点和设置是否保留。测试过程中需解锁手机并保持屏幕活动，避免锁屏/Doze影响界面和时间限制验收。详细流程见 [在线更新与发布](docs/UPDATES.md)。
 
+0.3.0 的完整回归再加入 `dev.mobilecode.ide.UxUpgradeTest,dev.mobilecode.ide.UxLayoutTest`，合计43项，其中包括100次真实运行后的安全清理。`RecoveryProcessTest` 必须先单独运行 `recordFailedSaveDraftBeforeProcessDeath`，再由主机执行 `adb -s DEVICE_SERIAL shell am force-stop dev.mobilecode.ide`，最后运行 `verifyRecoveryAfterFreshProcess`。它只操作新建的验收项目；若中断在两步之间，需完成第二步恢复故障夹具。发布配置测试使用 `-PmcTestBuildType=release` 构建 `:app:assembleReleaseAndroidTest`。
+
 ## 工程入口
 
 - `app/`：Compose/Sora 工作台、项目保存、语言服务、会话管理及 Android 原生桥接。
 - `runtime-java/`：Java 编译服务、JDI 调试适配器。
 - `tools/`：离线工具链准备、CPython 交叉编译、主机原生验证。
 - `verification/`：主机集成测试和验证证据。
-- [实现设计](docs/DESIGN.md)、[当前检查点](docs/project/STATE.md)、[任务状态](docs/project/TASKS.md)。
+- [实现设计](docs/DESIGN.md)、[当前检查点](docs/project/STATE.md)、[任务状态](docs/project/TASKS.md)、[用户体验优化与升级规划](docs/UX_UPGRADE_PLAN.md)。
 
 用户程序与编辑器使用不同进程，但仍属于同一应用 UID；请仅运行自己信任的代码。它提供崩溃隔离和资源限制，不是恶意代码沙箱。

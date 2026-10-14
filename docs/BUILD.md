@@ -48,6 +48,14 @@ Windows 源码目录可放 NTFS，但大规模 Linux 构建应在 ext4 缓存进
 
 打包 Java runtime JAR 的任务依赖 `runtime-java:jar`，无需用户设备安装单独 Java 应用。
 
+## 0.3.0 包体积治理
+
+使用 `python tools/report_apk_size.py APK --output REPORT.json` 测量 APK 及内嵌离线资源。主要体积来自原生程序和标准库/语言服务资源；本轮保持这些文件完整，不按语言在线下载，也不裁掉运行、调试或语义服务能力。
+
+release 默认开启 `mcShrinkUi`，控制 R8 依赖代码裁剪。规则保留应用、Gson、JNI、Sora 和反射相关名称，关闭混淆与优化；主要删除未使用的扩展图标等依赖代码。Sora0.24.6 中未被引用的 `ShareableData$DefaultImpls` 克隆桥接未保留；它引用已移除的 Kotlin ABI。此处不添加伪造兼容类或缺类警告抑制。Compose/Espresso 桥接使用的 Future API 明确保留，以便在与发布包相同的配置上验收。
+
+需要比较时可用 `-PmcShrinkUi=false` 构建未裁剪版本；更改规则后需重新验证真实四语言流程、编辑器与原生/离线资源审计。实际包大小和测试绑定的哈希见 [验证记录](VERIFICATION.md)，构建成功不能代替手机运行验收。
+
 ## 排障
 
 - Android SDK 安装目录移动后，应停止 Gradle daemon 再构建；本工程曾因缓存的 `android-37.0-2` 路径出现 Android 类全部无法解析。

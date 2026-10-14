@@ -14,8 +14,8 @@ android {
         applicationId = "dev.mobilecode.ide"
         minSdk = 29
         targetSdk = 37
-        versionCode = providers.gradleProperty("mcVersionCode").orElse("6").get().toInt()
-        versionName = providers.gradleProperty("mcVersionName").orElse("0.2.3").get()
+        versionCode = providers.gradleProperty("mcVersionCode").orElse("7").get().toInt()
+        versionName = providers.gradleProperty("mcVersionName").orElse("0.3.0").get()
         ndk { abiFilters += runtimeAbi }
         buildConfigField("String", "RUNTIME_ABI", "\"$runtimeAbi\"")
         buildConfigField("String", "UPDATE_REPOSITORY", "\"GodBook/mobile-code\"")
@@ -48,7 +48,8 @@ android {
     buildTypes {
         release {
             isDebuggable = false
-            isMinifyEnabled = false
+            isMinifyEnabled = providers.gradleProperty("mcShrinkUi").orElse("true").get().toBoolean()
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"),"proguard-rules.pro")
             signingConfig = signingConfigs.getByName("debug")
         }
         create("p0") { initWith(getByName("release")); matchingFallbacks += "release"; isDebuggable=false }

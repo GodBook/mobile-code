@@ -11,6 +11,8 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.view.inputmethod.InputMethodManager
+import android.view.KeyEvent
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -34,7 +36,7 @@ class MainActivity: ComponentActivity() {
     private var notificationAsked=false
     private val importProject=registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri -> uri?.let { model.importProject(it) } }
     private val exportProject=registerForActivityResult(ActivityResultContracts.CreateDocument("application/zip")) { uri -> uri?.let { model.exportProject(it) } }
-    private val exportSource=registerForActivityResult(ActivityResultContracts.CreateDocument("application/octet-stream")) { uri -> uri?.let { model.exportSource(it) } }
+    private val exportSource=registerForActivityResult(ActivityResultContracts.CreateDocument("application/octet-stream")) { uri -> if(uri!=null) model.exportSource(uri) else model.cancelExport() }
     private val notificationPermission=registerForActivityResult(ActivityResultContracts.RequestPermission()) { }
     private val installPermission=registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if(packageManager.canRequestPackageInstalls()) installDownloadedUpdate()
@@ -44,6 +46,22 @@ class MainActivity: ComponentActivity() {
         super.onStart()
         model.foreground()
         model.app.updates.check(manual=false)
+    }
+    override fun onKeyShortcut(keyCode: Int,event: KeyEvent): Boolean {
+        if(event.isCtrlPressed) {
+            when(keyCode) {
+                KeyEvent.KEYCODE_P -> model.uiCommand("quick-open")
+                KeyEvent.KEYCODE_F -> model.uiCommand(if(event.isShiftPressed) "project-search" else "find")
+                KeyEvent.KEYCODE_L -> model.uiCommand("go-line")
+                KeyEvent.KEYCODE_S -> model.flush()
+                else -> return super.onKeyShortcut(keyCode,event)
+            }
+            return true
+        }
+        if(event.isAltPressed && keyCode in listOf(KeyEvent.KEYCODE_DPAD_LEFT,KeyEvent.KEYCODE_DPAD_RIGHT)) {
+            model.navigateBack(keyCode==KeyEvent.KEYCODE_DPAD_RIGHT); return true
+        }
+        return super.onKeyShortcut(keyCode,event)
     }
     private fun installDownloadedUpdate() {
         model.installUpdate { apk ->
@@ -62,7 +80,8 @@ class MainActivity: ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState); enableEdgeToEdge()
         setContent {
-            val dark by remember(model) { model.settings.map { it.dark }.distinctUntilChanged() }.collectAsStateWithLifecycle(initialValue=true)
+            val appearance by remember(model) { model.settings.map { it.dark to it.followSystem }.distinctUntilChanged() }.collectAsStateWithLifecycle(initialValue=true to false)
+            val dark=if(appearance.second) isSystemInDarkTheme() else appearance.first
             LaunchedEffect(dark) {
                 val style=if(dark) SystemBarStyle.dark(android.graphics.Color.TRANSPARENT)
                     else SystemBarStyle.light(android.graphics.Color.TRANSPARENT,android.graphics.Color.TRANSPARENT)
@@ -78,7 +97,7 @@ class MainActivity: ComponentActivity() {
                 }
                 IdeScreen(model,onImport={ importProject.launch(arrayOf("application/zip","application/octet-stream")) },
                     onExport={ exportProject.launch("${model.state.value.project?.config?.name ?: "project"}.zip") },
-                    onExportSource={ exportSource.launch(model.state.value.activePath.substringAfterLast('/')) },
+                    onExportSource={ exportSource.launch(model.state.value.export?.name ?: model.state.value.activePath.substringAfterLast('/')) },
                     onRun={ debug ->
                         (getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager).hideSoftInputFromWindow(currentFocus?.windowToken,0)
                         if(Build.VERSION.SDK_INT>=33 && !notificationAsked && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)!=PackageManager.PERMISSION_GRANTED) {
