@@ -1,0 +1,117 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-14",
+  "timezone": "Asia/Shanghai",
+  "repository": "https://github.com/GodBook/mobile-code",
+  "release": {
+    "tag": "v0.3.1",
+    "url": "https://github.com/GodBook/mobile-code/releases/tag/v0.3.1",
+    "publication": "prepared",
+    "latest": false
+  },
+  "apk": {
+    "versionName": "0.3.1",
+    "versionCode": 8,
+    "bytes": 400671849,
+    "sha256": "3983d693f654504fbeb6f3e77154bf2b233282ec545c0790e52a80abf5887604",
+    "signingCertificateSha256": "b579d64db9b1ca5ab84084823dfcae5c625de4bcd6dd38fe4bdcfc1df5fa370a",
+    "abi": "arm64-v8a",
+    "minSdk": 29,
+    "targetSdk": 37,
+    "compileSdk": 37,
+    "debuggable": false,
+    "installedBaseApkHashMatches": true
+  },
+  "device": {
+    "model": "Xiaomi Mi 9 SE",
+    "os": "LineageOS Android 15",
+    "api": 35,
+    "abi": "arm64-v8a",
+    "pageBytes": 4096
+  },
+  "unitTests": {
+    "passed": 27,
+    "configuration": "release",
+    "evidence": "unit-summary.json"
+  },
+  "apkAudit": {
+    "passed": true,
+    "nativeFiles": 484,
+    "checks": 1460,
+    "evidence": "apk-audit.json"
+  },
+  "shippingCoreRegression": {
+    "passed": 24,
+    "failed": 0,
+    "seconds": 246.69,
+    "configuration": "release",
+    "evidence": "core-regression.json",
+    "scope": "Four-language real run/debug/semantic completion; project snapshots/ZIP; timeout/crash/output/stdin; update security; four targeted reliability fixes. Tests use actual tools and APIs while PIN keyguard is present; no physical screen interaction or latency claims."
+  },
+  "dataPreservation": {
+    "installation": "USB adb install -r",
+    "beforeInstall": "data-before.json",
+    "afterInstall": "data-after-install.json",
+    "afterTests": "data-final.json",
+    "scope": "Original project IDs, representative Unicode source hash, breakpoints and appearance settings; all 1/1 passed"
+  },
+  "preReleaseEvidence": {
+    "configuration": "p0",
+    "versionName": "0.3.0",
+    "versionCode": 7,
+    "apkSha256": "55569099c077f38a03244fd0b73e45012dd3a9f17ec43eac00d5497f9a1e0e9a",
+    "targetedPassed": 4,
+    "targetedSeconds": 54.726,
+    "fullRegressionPassed": 43,
+    "fullRegressionSeconds": 438.864,
+    "evidence": [
+      "pre-release-targeted.json",
+      "pre-release-regression.json"
+    ],
+    "scope": "Completed fixes before the publishing version bump; includes editor/UX/performance/storage. Distinct artifact, not a 47-case result on the shipping release APK."
+  },
+  "shippingFullUiRegression": {
+    "status": "not_repeated",
+    "reason": "Phone has a secure PIN keyguard; screen-interaction/performance classes require manual unlock. Shipping core24 and pre-release full43 are separately recorded."
+  },
+  "intermediateFailures": [
+    {
+      "evidence": "pre-release-first-targeted.json",
+      "apkSha256": "f9e0329e35b2cafeee4846e76881df8f365815348311271f394b2e37f07c5fff",
+      "passed": 3,
+      "failed": 1,
+      "detail": "Actual descendant-held output pipe exposed InterruptedIOException masking deadline cancellation; production reader corrected and original assertion retained. Failed pre-release run excluded from accepted counts."
+    }
+  ],
+  "onlineUpdate": {
+    "phoneStatus": "not_verified",
+    "reason": "No available phone network; release installed through USB, no new phone GitHub/system-installer acceptance"
+  },
+  "deviceSettings": {
+    "stayOnWhilePluggedIn": 0,
+    "fontScale": 1,
+    "physicalDensity": 440,
+    "densityOverride": false,
+    "pinOrLockConfigurationChanged": false,
+    "networkConfigurationChanged": false,
+    "appForceStoppedAfterAcceptance": true
+  },
+  "notVerified": [
+    "Shipping full screen-interaction/performance suite after version bump",
+    "Actual 16KiB execution",
+    "Full Android10–17/vendor matrix",
+    "Stable50ms input target and physical IME-to-display latency",
+    "Sustained/background/low-memory matrix",
+    "External SAF provider UI matrix",
+    "TalkBack/physical keyboard/split-screen matrix",
+    "Full-disk and broader component fault matrix",
+    "Broader navigation/rapid-debug transitions",
+    "New phone GitHub download/system-installer/current-version flow"
+  ],
+  "deferred": [
+    "Full dependency management",
+    "Android/GUI projects",
+    "Cloud/remote execution",
+    "Arbitrary debug evaluation/variable mutation"
+  ]
+}

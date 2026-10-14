@@ -1,5 +1,20 @@
 # Task state
 
+## GitHub / Release follow-up (user authorized, 2026-10-14)
+
+0.3.1/code8 publication in progress. Actual signed release APK SHA2563983d693f654504fbeb6f3e77154bf2b233282ec545c0790e52a80abf5887604:27 release units,24 real-phone core cases(246.690s),484 native files/1460 audits and original-data checks before/after install/tests passed. Corresponding sources prepared. Remaining publication steps: matching source commit/archive/tag, non-force push, five verified draft assets, publish/latest and public manifest/APK plus frozen0.3.0 checks. Phone is PIN-locked, so shipping UI/performance suite was not repeated; prior p0 full43 remains separate. New phone OTA and broad device matrices remain unverified.
+
+## Four reliability fixes (user authorized, 2026-10-14)
+
+| ID | Deliverable | State | Verification |
+|---|---|---|---|
+| FIX-01 | Stable session/snapshot identity and failed-build history | Implemented; host/phone scope passed |3 units and real run/failed-build log association after repository reload; old unlinked snapshots accessible; schema unchanged |
+| FIX-02 | Project/document/snapshot diagnostic provenance | Implemented; host/phone scope passed |5 units and real changed-source/cross-project/snapshot-preview cases; off-UI filtering; unversioned live results remain in Problems |
+| FIX-03 | One overall build deadline including output draining | Implemented; host/phone scope passed |4 units and actual descendant-held pipe timeout/termination; shared120s budget and truthful BUILD_TIMEOUT/Stop causes |
+| FIX-04 | Complete offline component verification/repair | Implemented; host/phone scope passed |9 units and real corrupt/missing-resource repair followed by four-language execution; rollback and interrupted-swap/stage recovery |
+
+Earlier unpublished non-debuggable ARM64 p0 APK SHA25655569099c077f38a03244fd0b73e45012dd3a9f17ec43eac00d5497f9a1e0e9a:27 units,4 targeted phone cases,43 full regression cases and1460 APK audit checks passed. At that checkpoint original APK/test package was restored and data preservation passed. The later user-requested0.3.1 publication is recorded above; details and device-matrix limits are in [STATE.md](STATE.md). The initial3/4 targeted run is retained and excluded from accepted counts.
+
 ## Approved UX implementation and release (2026-10-13)
 
 User approved the complete [upgrade plan](../UX_UPGRADE_PLAN.md), connected-phone validation and GitHub/Release publication. Core implementation is complete in0.3.0/code7. Exact shipping43/43 phone regression passed; [acceptance](../../verification/releases/v0.3.0/acceptance.json) records scope/limits. “Phone scope passed” is not blanket fault/device-matrix acceptance.
@@ -52,4 +67,4 @@ Available phone: Xiaomi Mi 9 SE, Android15 ARM64, 4KiB. Formal P0/P4 broad compa
 | U2 | Updated release and connected-phone validation | Accepted on phone | Actual 429,738,676-byte GitHub download, system upgrade from bridge4 to public5, project/settings preservation, 22/22 final regression and post-upgrade latest check |
 | U3 | Public GodBook/mobile-code repository and release | Published | https://github.com/GodBook/mobile-code/releases/tag/v0.2.2; all five assets verified by size/SHA256; application and corresponding source archives included |
 
-Historical evidence: [0.2.2 acceptance report](../../verification/releases/v0.2.2/acceptance.json), adjacent raw instrumentation logs, and [verification notes](../VERIFICATION.md). The phone now uses0.3.0/versionCode7; see[0.3.0 acceptance](../../verification/releases/v0.3.0/acceptance.json). The earlier temporary screen-activity helper remains stopped; failed locked/Doze and intermediate runs are retained and excluded from passing counts.
+Historical evidence: [0.2.2 acceptance report](../../verification/releases/v0.2.2/acceptance.json), adjacent raw instrumentation logs, and [verification notes](../VERIFICATION.md). The phone now uses0.3.1/versionCode8; see[0.3.1 acceptance](../../verification/releases/v0.3.1/acceptance.json). The earlier temporary screen-activity helper remains stopped; failed locked/Doze and intermediate runs are retained and excluded from passing counts.

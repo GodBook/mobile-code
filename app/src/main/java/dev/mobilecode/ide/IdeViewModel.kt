@@ -17,6 +17,7 @@ data class Navigation(val line: Int=0,val column: Int=0,val serial: Long=0,val r
 data class Preview(val title: String,val document: Document,val file: File?=null)
 data class FileSaveState(val phase: String="saved",val message: String="",val savedAt: Long=0)
 data class ExportContent(val name: String,val text: String?=null,val file: File?=null,val directory: File?=null)
+data class EditorDiagnosticState(val projectId: String="",val document: Document?=null,val items: List<Diagnostic> = emptyList())
 data class IdeState(val projects: List<Project> = emptyList(),val project: Project?=null,val files: List<String> = emptyList(),
     val documents: Map<String,Document> = emptyMap(),val activePath: String="",val breakpoints: List<Breakpoint> = emptyList(),
     val preview: Preview?=null,val navigation: Navigation=Navigation(),val error: String?=null,val busy: Boolean=false,
@@ -37,7 +38,17 @@ class IdeViewModel(application: Application): AndroidViewModel(application) {
     val settings=app.settings.flow.stateIn(viewModelScope,SharingStarted.Eagerly,EditorSettings())
     val toolchains=app.toolchains.status
     val session=app.sessions.state
-    val diagnostics=combine(app.languages.diagnostics,session) { live,run -> (live+run.diagnostics).distinctBy { listOf(it.path,it.range,it.message,it.severity,it.version,it.source) } }.stateIn(viewModelScope,SharingStarted.Eagerly,emptyList())
+    val diagnostics=combine(app.languages.diagnostics,session,state) { live,run,ide ->
+        (live+run.diagnostics).filter { it.projectId==ide.project?.config?.id && it.projectId!=null }.distinct()
+    }.flowOn(Dispatchers.Default).stateIn(viewModelScope,SharingStarted.Eagerly,emptyList())
+    val editorDiagnostics=combine(diagnostics,state) { items,ide ->
+        val project=ide.project; val document=ide.document
+        if(project==null || document==null) EditorDiagnosticState() else {
+            val visible=if(ide.preview!=null && ide.preview.file==null) emptyList() else
+                items.filter { DiagnosticProvenance.matchesEditor(it,project,document,ide.preview?.file) }
+            EditorDiagnosticState(project.config.id,document,visible)
+        }
+    }.flowOn(Dispatchers.Default).stateIn(viewModelScope,SharingStarted.Eagerly,EditorDiagnosticState())
     val languageStatus=app.languages.status
     private val saves=mutableMapOf<String,Job>()
     private val languageChanges=mutableMapOf<String,Job>()
@@ -131,7 +142,12 @@ class IdeViewModel(application: Application): AndroidViewModel(application) {
         activation?.cancel()
         activation=viewModelScope.launch { guarded { app.languages.activate(project,chain); state.value.documents.values.forEach { app.languages.change(it) } } }
     }
-    fun retryTools()=viewModelScope.launch { guarded { check(!session.value.active) { "请先停止任务再检查组件" }; app.toolchains.prepare(); activate() } }
+    fun retryTools()=viewModelScope.launch { guarded {
+        check(!session.value.active && !state.value.busy) { "请先停止任务再检查组件" }
+        mutable.update { it.copy(busy=true) }
+        try { activation?.cancelAndJoin(); app.languages.close(); app.toolchains.prepare(repair=true) }
+        finally { mutable.update { it.copy(busy=false) } }
+    } }
     fun retryLanguage()=viewModelScope.launch { guarded { activation?.cancelAndJoin(); app.languages.close(); activate() } }
     fun foreground() { if(restoration.isCompleted) activate() }
     fun home()=viewModelScope.launch { restoration.join(); guarded {

@@ -50,6 +50,7 @@ fun IdeScreen(model: IdeViewModel,onImport: ()->Unit,onExport: ()->Unit,onExport
     val session by model.session.collectAsStateWithLifecycle()
     val tools by model.toolchains.collectAsStateWithLifecycle()
     val diagnostics by model.diagnostics.collectAsStateWithLifecycle()
+    val editorDiagnostics by model.editorDiagnostics.collectAsStateWithLifecycle()
     val languageStatus by model.languageStatus.collectAsStateWithLifecycle()
     val update by model.app.updates.state.collectAsStateWithLifecycle()
     val snackbar=remember { SnackbarHostState() }
@@ -143,7 +144,7 @@ fun IdeScreen(model: IdeViewModel,onImport: ()->Unit,onExport: ()->Unit,onExport
                         }
                         if(search && editor!=null) InlineSearchBar(editor!!,session.sourceLocked || state.preview!=null,onDismiss={ search=false })
                         Box(Modifier.weight(1f).fillMaxWidth()) {
-                            if(state.document!=null) EditorHost(model,state,settings,session,diagnostics,Modifier.fillMaxSize()) { editor=it }
+                            if(state.document!=null) EditorHost(model,state,settings,session,editorDiagnostics,Modifier.fillMaxSize()) { editor=it }
                             else Column(Modifier.align(Alignment.Center),horizontalAlignment=Alignment.CenterHorizontally) {
                                 Text("选择文件开始编写",color=MaterialTheme.colorScheme.onSurfaceVariant)
                                 TextButton(onClick={ scope.launch { drawer.open() } }) { Text("打开项目文件") }
@@ -406,7 +407,7 @@ private fun SettingsDialog(model: IdeViewModel,current: EditorSettings,onDismiss
         Row { listOf(30,60,120,300).forEach { seconds -> TextButton(onClick={ timeout=seconds.toString(); draft=draft.copy(runTimeout=seconds) }) { Text("${seconds}s") } } }
         Text("已有项目请在“运行配置”中修改上限。",style=MaterialTheme.typography.bodySmall)
         HorizontalDivider(Modifier.padding(vertical=12.dp)); Text(tools.error ?: tools.message,style=MaterialTheme.typography.bodySmall)
-        TextButton(onClick={ model.retryTools() },enabled=!model.session.value.active) { Text("重新检查运行组件") }
+        TextButton(onClick={ model.retryTools() },enabled=!model.session.value.active && !model.state.value.busy) { Text("检查并修复运行组件") }
         TextButton(onClick={ model.retryLanguage() }) { Text("重启当前语言服务") }
         TextButton(onClick={ licenses=true }) { Text("开源组件说明") }
         TextButton(onClick=onUpdates,modifier=Modifier.testTag("软件更新")) { Text("软件更新") }

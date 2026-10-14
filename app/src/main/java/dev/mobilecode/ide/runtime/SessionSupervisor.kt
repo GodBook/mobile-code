@@ -30,7 +30,7 @@ class SessionSupervisor(private val context: Context, private val scope: Corouti
     private var stdin: OutputStream?=null
         set(value) { field=value; mutable.update { it.copy(inputOpen=value!=null) } }
     private val inputLock=Mutex()
-    private var currentArtifact: BuildArtifact?=null
+    @Volatile private var currentSnapshot: Snapshot?=null
     private var debugTarget: Int?=null
     private var forcedReason: String?=null
     private val outputLock=Any()
@@ -57,7 +57,7 @@ class SessionSupervisor(private val context: Context, private val scope: Corouti
         }
     }
 
-    val snapshot get() = currentArtifact?.snapshot
+    val snapshot get() = currentSnapshot
     private fun track(child: ChildProcess) { children[child.pid]=child; scope.launch { child.exit.await(); children.remove(child.pid) } }
     private fun append(text: String,channel: String="system") {
         synchronized(outputLock) {
@@ -76,7 +76,10 @@ class SessionSupervisor(private val context: Context, private val scope: Corouti
     }
     suspend fun start(project: Project, chain: Toolchain, debugging: Boolean, points: List<Breakpoint>, preloadedInput: String?, requestId: String=UUID.randomUUID().toString()): String = lock.withLock {
         if(mutable.value.active) { check(mutable.value.id==requestId) { "已有任务正在运行" }; return@withLock requestId }
-        forcedReason=null; debugTarget=null; currentArtifact=null; pointIds.clear()
+        if(mutable.value.id==requestId) return@withLock requestId
+        require(Regex("[A-Za-z0-9_-]{1,128}").matches(requestId)) { "运行任务标识无效" }
+        require(!File(workspace.sessionsRoot,requestId).exists()) { "该任务快照已存在，原产物已保留" }
+        forcedReason=null; debugTarget=null; currentSnapshot=null; pointIds.clear()
         synchronized(outputLock) { output.clear(); channels.values.forEach { it.clear() }; characterCounts.keys.toList().forEach { characterCounts[it]=0L }; diskBytes=0; diskLog=null; outputDirty=false }
         mutable.value=SessionState(id=requestId,phase=SessionPhase.PREPARING,debugging=debugging)
         try { ContextCompat.startForegroundService(context,Intent(context,SessionForegroundService::class.java)) }
@@ -87,13 +90,13 @@ class SessionSupervisor(private val context: Context, private val scope: Corouti
             var watchdog:Job?=null
             try {
                 withContext(Dispatchers.IO) { workspace.database.dao().putHistory(history) }
-                val source=workspace.snapshot(project)
+                val source=workspace.snapshot(project,requestId); currentSnapshot=source
                 watchdog=launch { monitor(source,project.config.runTimeoutSeconds) }
                 diskLog=withContext(Dispatchers.IO) { File(source.directory,"console.log").outputStream() }
                 append("${project.config.language.title} · ${if(debugging) "调试" else "运行"}\n")
                 mutable.update { it.copy(phase=SessionPhase.BUILDING) }
-                val builder=BuildService(factory,::track,{ append(it,"build") }) { diagnostic -> mutable.update { it.copy(diagnostics=it.diagnostics+diagnostic) } }
-                val artifact=builder.build(chain,source); currentArtifact=artifact
+                val builder=BuildService(factory,::track,{ append(it,"build") },diagnostic={ diagnostic -> mutable.update { it.copy(diagnostics=it.diagnostics+diagnostic) } })
+                val artifact=builder.build(chain,source)
                 mutable.update { it.copy(phase=SessionPhase.STARTING) }
                 exit=if(debugging) debug(chain,artifact,points,preloadedInput) else run(chain,artifact,preloadedInput)
                 finalPhase=if(exit==null || exit==0) SessionPhase.FINISHED else SessionPhase.FAILED

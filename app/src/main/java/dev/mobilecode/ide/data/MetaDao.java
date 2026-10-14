@@ -11,4 +11,5 @@ import java.util.List;
     @Insert(onConflict=OnConflictStrategy.REPLACE) public abstract void putHistory(HistoryEntity history);
     @Query("UPDATE history SET status='interrupted' WHERE status='running'") public abstract void interruptPreviousSessions();
     @Query("SELECT * FROM history ORDER BY startedAt DESC LIMIT 20") public abstract List<HistoryEntity> history();
+    @Query("SELECT id FROM history") public abstract List<String> historyIds();
 }

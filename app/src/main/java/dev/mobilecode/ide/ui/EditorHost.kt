@@ -30,10 +30,13 @@ private class EditorRegistry {
 }
 
 @Composable
-fun EditorHost(model: IdeViewModel,state: IdeState,settings: EditorSettings,session: SessionState,diagnostics: List<Diagnostic>,
+fun EditorHost(model: IdeViewModel,state: IdeState,settings: EditorSettings,session: SessionState,diagnosticState: EditorDiagnosticState,
                modifier: Modifier=Modifier,onEditor: (MobileCodeEditor)->Unit) {
     val project=state.project ?: return
     val document=state.document ?: return
+    // Filtering/hashing happens off the UI thread. Reject the result if the
+    // document instance changed while that work was in flight.
+    val diagnostics=if(diagnosticState.projectId==project.config.id && diagnosticState.document===document) diagnosticState.items else emptyList()
     val registry=remember(project.config.id) { EditorRegistry() }
     DisposableEffect(registry) { onDispose { registry.close() } }
     val path=document.path
@@ -100,7 +103,7 @@ fun EditorHost(model: IdeViewModel,state: IdeState,settings: EditorSettings,sess
         editor.setExecutionLine(if(session.phase==SessionPhase.PAUSED && frame?.path?.endsWith("/$path")==true) frame.line else -1)
         if(entry.diagnostics!=diagnostics || entry.diagnosticVersion!=document.version) {
             entry.diagnostics=diagnostics; entry.diagnosticVersion=document.version
-            val regions=diagnostics.filter { it.path.endsWith("/$path") && (it.version==null || it.version==document.version) }.map { diagnostic ->
+            val regions=diagnostics.map { diagnostic ->
                 val start=Positions.index(document.text,diagnostic.range.start); val end=Positions.index(document.text,diagnostic.range.end).coerceAtLeast(start+1).coerceAtMost(document.text.length)
                 DiagnosticRegion(start,end,if(diagnostic.severity==1) DiagnosticRegion.SEVERITY_ERROR else DiagnosticRegion.SEVERITY_WARNING)
             }

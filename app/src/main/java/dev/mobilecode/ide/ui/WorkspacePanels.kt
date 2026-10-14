@@ -238,7 +238,7 @@ internal fun StorageDialog(model: IdeViewModel,state: IdeState,onExport: ()->Uni
                 trailingContent={ if(item.cleanable) TextButton(onClick={ cleanup=item },enabled=item.bytes>0) { Text("清理") } }) } }
             1 -> LazyColumn(Modifier.weight(1f)) { items(state.history,key={ it.id }) { entry -> Column {
                 ListItem(headlineContent={ Text("${state.projects.firstOrNull { it.config.id==entry.projectId }?.config?.name ?: "历史项目"} · ${entry.status}") },
-                    supportingContent={ Text("${timeLabel(entry.startedAt)} · ${entry.durationMs/1000.0}s · 退出 ${entry.exitCode ?: "—"}\n${if(entry.files.isEmpty()) "产物已清理或无可用文件" else "${entry.files.size}个日志/生成文件"}",fontSize=12.sp) },
+                    supportingContent={ Text("${timeLabel(entry.startedAt)} · ${if(entry.unlinkedSnapshot) "运行状态未知" else "${entry.durationMs/1000.0}s · 退出 ${entry.exitCode ?: "—"}"}\n${if(entry.files.isEmpty()) "产物已清理或无可用文件" else "${entry.files.size}个日志/生成文件"}",fontSize=12.sp) },
                     modifier=Modifier.clickable { expandedHistory=if(expandedHistory==entry.id) null else entry.id })
                 if(expandedHistory==entry.id) entry.files.forEach { file -> Row(Modifier.padding(start=16.dp),verticalAlignment=Alignment.CenterVertically) {
                     Text(file.relativeTo(File(model.app.workspace.sessionsRoot,entry.id)).invariantSeparatorsPath,Modifier.weight(1f),fontSize=12.sp,maxLines=2)

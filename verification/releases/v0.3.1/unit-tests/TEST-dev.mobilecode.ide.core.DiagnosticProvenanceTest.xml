@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="dev.mobilecode.ide.core.DiagnosticProvenanceTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-10-14T13:29:26.996Z" hostname="DESKTOP-GNS73CU" time="0.129">
+  <properties/>
+  <testcase name="systemHeaderErrorsCannotMarkAProjectFileWithTheSameSuffix" classname="dev.mobilecode.ide.core.DiagnosticProvenanceTest" time="0.072"/>
+  <testcase name="liveErrorsRequireAnExactPathAndMatchingReportedVersion" classname="dev.mobilecode.ide.core.DiagnosticProvenanceTest" time="0.006"/>
+  <testcase name="buildErrorsRequireTheSameProjectAndExactSourceContents" classname="dev.mobilecode.ide.core.DiagnosticProvenanceTest" time="0.02"/>
+  <testcase name="structuredRuntimeErrorsReceiveProvenanceEvenWithoutJsonMetadata" classname="dev.mobilecode.ide.core.DiagnosticProvenanceTest" time="0.018"/>
+  <testcase name="aSnapshotPreviewRequiresItsOwnFileAndHash" classname="dev.mobilecode.ide.core.DiagnosticProvenanceTest" time="0.011"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

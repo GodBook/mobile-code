@@ -18,10 +18,10 @@ import dev.mobilecode.ide.core.*
 @Composable
 internal fun ProblemsList(model: IdeViewModel,diagnostics: List<Diagnostic>,state: IdeState,session: SessionState,onNavigate: ()->Unit) {
     var severity by remember { mutableIntStateOf(0) }; var source by remember { mutableIntStateOf(0) }; var current by remember { mutableStateOf(false) }
-    val snapshot=model.app.sessions.snapshot?.source?.absolutePath
-    fun isRun(item: Diagnostic)=snapshot!=null && item.path.startsWith("$snapshot/")
+    fun isRun(item: Diagnostic)=item.origin==DiagnosticOrigin.BUILD
+    fun isCurrent(item: Diagnostic)=item.projectId==state.project?.config?.id && item.relativePath==state.activePath
     val visible=diagnostics.filter { item -> (severity==0 || (severity==1 && item.severity==1) || (severity==2 && item.severity!=1)) &&
-        (source==0 || (source==1 && !isRun(item)) || (source==2 && isRun(item))) && (!current || item.path.endsWith("/${state.activePath}")) }
+        (source==0 || (source==1 && !isRun(item)) || (source==2 && isRun(item))) && (!current || isCurrent(item)) }
     Column(Modifier.fillMaxSize()) {
         Row(Modifier.horizontalScroll(rememberScrollState()),horizontalArrangement=Arrangement.spacedBy(4.dp)) {
             FilterChip(selected=severity==0,onClick={ severity=0 },label={ Text("全部") })
@@ -33,7 +33,7 @@ internal fun ProblemsList(model: IdeViewModel,diagnostics: List<Diagnostic>,stat
         }
         LazyColumn(Modifier.weight(1f)) { items(visible) { item -> ListItem(
             headlineContent={ Text(item.message,fontSize=13.sp,maxLines=4,overflow=TextOverflow.Ellipsis) },
-            supportingContent={ Text("${item.path.substringAfterLast('/')}:${item.range.start.line+1} · ${if(isRun(item)) "本次运行快照" else "当前文档分析"} · ${item.source}",fontSize=12.sp) },
+            supportingContent={ Text("${item.path.substringAfterLast('/')}:${item.range.start.line+1} · ${if(isRun(item)) "运行快照" else if(item.version==null) "实时分析（未提供版本）" else "实时分析"} · ${item.source}",fontSize=12.sp) },
             leadingContent={ Text(if(item.severity==1) "错误" else "提示",fontSize=12.sp,color=if(item.severity==1) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary) },
             modifier=Modifier.clickable { model.diagnostic(item); onNavigate() }) } }
     }

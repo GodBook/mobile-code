@@ -139,10 +139,12 @@ class WorkspaceService(internal val context: Context) {
     suspend fun saveBreakpoints(project: Project, points: List<Breakpoint>) = withContext(Dispatchers.IO) {
         dao.replaceBreakpoints(project.config.id,points.map { p -> BreakpointEntity().also { it.projectId=project.config.id; it.path=p.path; it.line=p.line } })
     }
-    suspend fun snapshot(project: Project): Snapshot = mutex.withLock {
+    suspend fun snapshot(project: Project, id: String=UUID.randomUUID().toString()): Snapshot = mutex.withLock {
         withContext(Dispatchers.IO) {
             require(sessionsRoot.usableSpace>64L*1024*1024) { "可用空间不足，至少需要64MiB；请在存储管理中导出并清理历史产物" }
-            val id=UUID.randomUUID().toString(); val dir=File(sessionsRoot,id).apply { mkdirs() }
+            require(Regex("[A-Za-z0-9_-]{1,128}").matches(id)) { "运行任务标识无效" }
+            val dir=resolveInside(sessionsRoot,id)
+            require(!dir.exists() && dir.mkdir()) { "运行快照已存在或无法创建，原产物已保留" }
             val source=File(dir,"source").apply { mkdirs() }; val work=File(dir,"work").apply { mkdirs() }
             val build=File(dir,"build").apply { mkdirs() }; File(dir,"tmp").mkdirs()
             val hashes=linkedMapOf<String,String>(); var bytes=0L; var count=0
@@ -158,7 +160,7 @@ class WorkspaceService(internal val context: Context) {
             }
             val hash=sha256(gson.toJson(hashes).toByteArray())
             AtomicFiles.text(File(dir,"snapshot.json"),gson.toJson(mapOf("id" to id,"project" to project.config,"hash" to hash,"files" to hashes)))
-            Snapshot(id,project.config,dir,source,work,build,hash)
+            Snapshot(id,project.config,dir,source,work,build,hash,hashes)
         }
     }
     suspend fun export(project: Project, uri: Uri) = mutex.withLock {

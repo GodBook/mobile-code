@@ -2,9 +2,26 @@
 
 更新日期：2026-10-14。所有“待验证”均表示未取得通过证据。
 
+## 0.3.1 可靠性修复验收
+
+版本0.3.1/versionCode8，正式APK400,671,849字节，SHA256：`3983d693f654504fbeb6f3e77154bf2b233282ec545c0790e52a80abf5887604`。实际安装base.apk哈希相同；沿用原签名，保持ARM64-only、minSdk29、compile/targetSdk37、debuggable=false。源码和五个发布附件已准备，GitHub发布核验仍在进行；没有宣称新版OTA通过。
+
+| 检查 | 结果 | 实际范围 |
+|---|---|---|
+| 发布配置构建及单元测试 | 27/27；构建、lint通过 | 历史关联3、诊断来源5、总期限4、离线修复/回滚/恢复9、更新器6；release配置 |
+| 正式APK审计 | 484文件、1460项通过 | 原生ABI/对齐、离线资源与哈希；不能代替16KiB实际运行 |
+| 正式包真机核心回归 | 24/24，246.690秒 | 四语言真实运行/调试/跨文件语义补全、输入/EOF、崩溃/输出/超时、快照/ZIP、更新安全和四处可靠性修复 |
+| 数据保留 | 安装前3.438秒、安装后3.157秒、测试后1.205秒，各1/1 | USB覆盖安装；原项目ID、代表中文/emoji源码哈希、断点及外观设置 |
+
+证据见[0.3.1验收报告](../verification/releases/v0.3.1/acceptance.json)及相邻日志/单元XML。手机保留新正式版本，测试结束后应用及测试包均force-stop，无执行服务；font_scale1.0、物理density440/无覆盖、stay-awake0，未修改PIN或网络配置。
+
+修复完成后的独立p0包（0.3.0/code7，SHA256`55569099c077f38a03244fd0b73e45012dd3a9f17ec43eac00d5497f9a1e0e9a`）已通过4/4专项54.726秒及43/43全量438.864秒，含编辑器/UX/性能/100次运行。该结果单独保存为pre-release-targeted/regression，不能计为正式0.3.1包47项通过。首轮p0专项3/4暴露真实后代持有输出管道时的取消原因被IOException覆盖；生产读取器修复后保留原断言，全套通过；原失败日志也保留并排除出通过数。
+
+手机现处于安全PIN锁屏，本次只执行不依赖屏幕点击的核心回归，升版后的完整界面及性能套件未重跑。实际16KiB执行、完整Android10～17/厂商、稳定50ms/完整物理IME、长期后台/低内存、外部SAF、TalkBack/硬件键盘/分屏及更广故障矩阵仍待验证。手机无可用网络，本次没有新的GitHub下载/系统安装器/当前版本提示验收；公开发布端核验与手机在线流程分别记录。
+
 ## 0.3.0 用户体验升级验收
 
-[v0.3.0](https://github.com/GodBook/mobile-code/releases/tag/v0.3.0)已于2026-10-14T06:19:56Z发布并设为latest。五个资产的大小及GitHub SHA256均与本地一致，匿名最新清单返回versionCode7，公开APK响应HTTP200及正确长度；历史0.2.3五个资产和源码标签保持不变。[发布核验](../verification/releases/v0.3.0/publication.json)记录详情。
+[v0.3.0](https://github.com/GodBook/mobile-code/releases/tag/v0.3.0)于2026-10-14T06:19:56Z发布，当时设为latest。五个资产的大小及GitHub SHA256均与本地一致，当时匿名最新清单返回versionCode7，公开APK响应HTTP200及正确长度；历史0.2.3五个资产和源码标签保持不变。[发布核验](../verification/releases/v0.3.0/publication.json)记录详情。
 
 版本0.3.0/versionCode7，400,641,853字节，SHA256：`e319f2360aa471abd294646735af98206a89b69c2cdd4d14ec201856116d0cdd`。手机安装的base.apk哈希相同；原签名、ARM64-only、minSdk29、compile/targetSdk37、debuggable=false保持一致。源码标签73c9ca0，发布后的核验记录在main补充，已发布文件保持冻结。
 

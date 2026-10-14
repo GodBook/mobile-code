@@ -84,13 +84,14 @@ class LanguageService(private val scope: CoroutineScope, private val factory: Pr
                 if(project?.config?.id!=next.config.id || client!==rpc) return@collect
                 if(event["method"]?.asString=="textDocument/publishDiagnostics") {
                     val params=event.getAsJsonObject("params"); val uri=params["uri"].asString
-                    val path=File(java.net.URI(uri)).absolutePath
+                    val path=File(java.net.URI(uri)).canonicalPath
                     val version=params["version"]?.takeUnless { it.isJsonNull }?.asInt
-                    val relative=runCatching { File(path).relativeTo(next.directory).invariantSeparatorsPath }.getOrDefault(path)
+                    val relative=runCatching { File(path).relativeTo(next.directory.canonicalFile).invariantSeparatorsPath }.getOrDefault(path)
                     if(version==null || opened[relative]==version) {
                         val items=params.getAsJsonArray("diagnostics").map { item ->
                             val value=item.asJsonObject
-                            Diagnostic(path,gson.fromJson(value["range"],SourceRange::class.java),value["message"].asString,value["severity"]?.asInt ?: 1,version,value["source"]?.asString ?: next.config.language.title)
+                            Diagnostic(path,gson.fromJson(value["range"],SourceRange::class.java),value["message"].asString,value["severity"]?.asInt ?: 1,version,value["source"]?.asString ?: next.config.language.title,
+                                origin=DiagnosticOrigin.LANGUAGE,projectId=next.config.id,relativePath=relative)
                         }
                         mutableDiagnostics.value=mutableDiagnostics.value.filterNot { it.path==path }+items
                     }

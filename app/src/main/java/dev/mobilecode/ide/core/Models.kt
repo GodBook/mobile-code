@@ -36,11 +36,16 @@ data class ProjectConfig(
 data class Project(val config: ProjectConfig, val directory: File, val updatedAt: Long)
 data class Document(val path: String, val text: String, val version: Int = 1, val savedVersion: Int = 1) {
     val dirty get() = version != savedVersion
+    val contentHash: String by lazy(LazyThreadSafetyMode.PUBLICATION) { sha256(text.toByteArray(Charsets.UTF_8)) }
 }
 data class Position(val line: Int, val character: Int)
 data class SourceRange(val start: Position, val end: Position)
-data class Diagnostic(val path: String, val range: SourceRange, val message: String, val severity: Int = 1, val version: Int? = null, val source: String = "")
-data class Snapshot(val id: String, val project: ProjectConfig, val directory: File, val source: File, val work: File, val build: File, val hash: String)
+enum class DiagnosticOrigin { LANGUAGE, BUILD }
+data class Diagnostic(val path: String, val range: SourceRange, val message: String, val severity: Int = 1, val version: Int? = null, val source: String = "",
+    val origin: DiagnosticOrigin = DiagnosticOrigin.LANGUAGE, val projectId: String? = null, val snapshotId: String? = null,
+    val relativePath: String? = null, val sourceHash: String? = null)
+data class Snapshot(val id: String, val project: ProjectConfig, val directory: File, val source: File, val work: File, val build: File, val hash: String,
+    val fileHashes: Map<String,String> = emptyMap())
 data class Completion(val label: String, val insertText: String, val detail: String = "", val range: SourceRange? = null,
     val additionalEdits: List<Pair<SourceRange, String>> = emptyList(), val snippet: Boolean = false, val version: Int = 0)
 enum class SessionPhase { IDLE, PREPARING, BUILDING, STARTING, RUNNING, PAUSED, FINISHED, FAILED, CANCELLED }

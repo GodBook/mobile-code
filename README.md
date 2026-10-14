@@ -22,7 +22,7 @@ Android 10 以上，ARM64 手机；建议 6GB 内存和至少 3GB 可用存储�
 
 0.3.0 增加项目搜索/置顶、目录树、快速打开、项目文本搜索、真实定义/引用/大纲、多标签位置恢复和专注编辑。保存失败会持续标记，可重试或导出未保存内容；恢复草稿需要对照后确认，磁盘满时仍可能无法写入草稿。文件和项目移入回收站后可恢复。“存储与历史”可查看日志/生成文件并手动清理历史产物，清理前请先导出需要保留的文件。
 
-详细改动见 [0.3.0 更新说明](docs/releases/v0.3.0.md)，实施范围与验收对应关系见 [升级规划](docs/UX_UPGRADE_PLAN.md)。
+0.3.1 修复运行历史与快照关联、过期诊断误标、构建总超时和离线组件修复。旧快照保留并单独展示；完整离线组件和原签名继续保留。详细改动见 [0.3.1 更新说明](docs/releases/v0.3.1.md)，此前的工作台升级见 [0.3.0 更新说明](docs/releases/v0.3.0.md)及[升级规划](docs/UX_UPGRADE_PLAN.md)。
 
 横屏或键盘占用较多空间时，工作台会收起辅助栏与控制台，优先保留编辑区域。点击控制台右侧箭头可打开独立面板，再次点击或返回即可回到代码。
 
@@ -67,6 +67,11 @@ PYTHONDONTWRITEBYTECODE=1 python3.13 verification/test_runtime.py
 ```
 
 ```powershell
+# 主机单元测试：更新清单、历史关联、诊断来源、构建总超时和离线修复/回滚。
+.\gradlew.bat :app:testP0UnitTest --offline '-Pkotlin.compiler.execution.strategy=in-process'
+```
+
+```powershell
 # ARM64 真机的非 debuggable 配置。指定 serial，避免操作其他设备。
 .\gradlew.bat :app:assembleP0 :app:assembleP0AndroidTest
 adb -s DEVICE_SERIAL install -r app/build/outputs/apk/p0/app-p0.apk
@@ -83,6 +88,10 @@ adb -s DEVICE_SERIAL shell am instrument -w -r `
 联网验收使用单独的 PublishedUpdateTest；从较低 versionCode 检查、下载并验证实际 GitHub APK。升级前后分别运行 UpgradeDataTest 的两个方法检查项目、源码、断点和设置是否保留。测试过程中需解锁手机并保持屏幕活动，避免锁屏/Doze影响界面和时间限制验收。详细流程见 [在线更新与发布](docs/UPDATES.md)。
 
 0.3.0 的完整回归再加入 `dev.mobilecode.ide.UxUpgradeTest,dev.mobilecode.ide.UxLayoutTest`，合计43项，其中包括100次真实运行后的安全清理。`RecoveryProcessTest` 必须先单独运行 `recordFailedSaveDraftBeforeProcessDeath`，再由主机执行 `adb -s DEVICE_SERIAL shell am force-stop dev.mobilecode.ide`，最后运行 `verifyRecoveryAfterFreshProcess`。它只操作新建的验收项目；若中断在两步之间，需完成第二步恢复故障夹具。发布配置测试使用 `-PmcTestBuildType=release` 构建 `:app:assembleReleaseAndroidTest`。
+
+可靠性修复的真机用例为 `dev.mobilecode.ide.ReliabilityFixTest`，覆盖运行/构建失败后的日志关联、改动源码及跨项目诊断隔离、真实子进程占住输出管道时的超时清理，以及损坏组件后的离线修复和四语言运行。组件用例临时改动工具链的两个资源，并在结束时恢复夹具；请等待修复完成再使用 IDE。旧版本未记录关联的快照会在运行历史单独列出，不按时间猜配运行记录。
+
+0.3.1 发布配置执行 `:app:testReleaseUnitTest :app:assembleRelease :app:assembleReleaseAndroidTest` 时加上 `-PmcTestBuildType=release`。完整真机回归使用上述七个原有测试类及 `ReliabilityFixTest`，合计47项；验证结果须绑定实际发布APK，不能用p0测试包代替。
 
 ## 工程入口
 

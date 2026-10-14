@@ -1,0 +1,42 @@
+{
+  "configuration": "release",
+  "tests": 27,
+  "passed": true,
+  "suites": [
+    {
+      "name": "dev.mobilecode.ide.core.DiagnosticProvenanceTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "dev.mobilecode.ide.data.SessionHistoryTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "dev.mobilecode.ide.runtime.BuildDeadlineTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "dev.mobilecode.ide.runtime.OfflineResourcesTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "dev.mobilecode.ide.update.UpdateReleaseTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ]
+}

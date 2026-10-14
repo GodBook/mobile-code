@@ -1,0 +1,7 @@
+{
+  "versionCode": 8,
+  "versionName": "0.3.1",
+  "apkSha256": "3983d693f654504fbeb6f3e77154bf2b233282ec545c0790e52a80abf5887604",
+  "matchesShippingApk": true,
+  "installation": "USB adb install -r"
+}

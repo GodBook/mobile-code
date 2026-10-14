@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="dev.mobilecode.ide.runtime.OfflineResourcesTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-10-14T13:29:27.340Z" hostname="DESKTOP-GNS73CU" time="0.151">
+  <properties/>
+  <testcase name="freshProcessRollsBackASwapInterruptedBeforeCommit" classname="dev.mobilecode.ide.runtime.OfflineResourcesTest" time="0.022"/>
+  <testcase name="incompleteExtractionCannotPublishAReadyTree" classname="dev.mobilecode.ide.runtime.OfflineResourcesTest" time="0.022"/>
+  <testcase name="traversalAndOversizedEntriesLeaveTheOriginalTreeIntact" classname="dev.mobilecode.ide.runtime.OfflineResourcesTest" time="0.02"/>
+  <testcase name="freshProcessKeepsACommittedRepairAndRemovesOnlyItsBackup" classname="dev.mobilecode.ide.runtime.OfflineResourcesTest" time="0.012"/>
+  <testcase name="publicationFailureRollsBackThePreviousDirectory" classname="dev.mobilecode.ide.runtime.OfflineResourcesTest" time="0.017"/>
+  <testcase name="repairReplacesCorruptAndMissingResourcesFromTheVerifiedArchive" classname="dev.mobilecode.ide.runtime.OfflineResourcesTest" time="0.026"/>
+  <testcase name="cancellationBeforePublicationPreservesOriginalResources" classname="dev.mobilecode.ide.runtime.OfflineResourcesTest" time="0.012"/>
+  <testcase name="freshProcessReclaimsOnlyItsAbandonedStagesBeforeCheckingFreeSpace" classname="dev.mobilecode.ide.runtime.OfflineResourcesTest" time="0.009"/>
+  <testcase name="corruptArchiveCannotReplaceExistingResources" classname="dev.mobilecode.ide.runtime.OfflineResourcesTest" time="0.009"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

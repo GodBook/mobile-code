@@ -14,8 +14,8 @@ android {
         applicationId = "dev.mobilecode.ide"
         minSdk = 29
         targetSdk = 37
-        versionCode = providers.gradleProperty("mcVersionCode").orElse("7").get().toInt()
-        versionName = providers.gradleProperty("mcVersionName").orElse("0.3.0").get()
+        versionCode = providers.gradleProperty("mcVersionCode").orElse("8").get().toInt()
+        versionName = providers.gradleProperty("mcVersionName").orElse("0.3.1").get()
         ndk { abiFilters += runtimeAbi }
         buildConfigField("String", "RUNTIME_ABI", "\"$runtimeAbi\"")
         buildConfigField("String", "UPDATE_REPOSITORY", "\"GodBook/mobile-code\"")

@@ -15,7 +15,7 @@ data class TrashRecord(val id: String,val projectId: String,val path: String,val
     val name: String,val removedAt: Long=System.currentTimeMillis())
 data class StorageItem(val id: String,val label: String,val bytes: Long,val cleanable: Boolean,val detail: String)
 data class StoredSession(val id: String,val projectId: String,val startedAt: Long,val status: String,
-    val durationMs: Long,val exitCode: Int?,val files: List<File>)
+    val durationMs: Long,val exitCode: Int?,val files: List<File>,val unlinkedSnapshot: Boolean=false)
 data class TextMatch(val path: String,val line: Int,val column: Int,val text: String)
 
 internal fun treeBytes(file: File): Long = if(!file.exists()) 0 else file.walkTopDown()
@@ -155,10 +155,5 @@ suspend fun WorkspaceService.clean(category: String,protectedSessions: Set<Strin
 } }
 
 suspend fun WorkspaceService.history(): List<StoredSession> = withContext(Dispatchers.IO) {
-    dao.history().map { row ->
-        val directory=resolveInside(sessionsRoot,row.id)
-        val work=File(directory,"work")
-        val files=(listOf(File(directory,"console.log"))+work.walkTopDown().onEnter { !Files.isSymbolicLink(it.toPath()) }.filter { it.isFile }.toList()).filter { it.isFile && !Files.isSymbolicLink(it.toPath()) }
-        StoredSession(row.id,row.projectId,row.startedAt,row.status,row.durationMs,row.exitCode,files)
-    }
+    readSessionHistory(sessionsRoot,dao.history(),dao.historyIds().toSet())
 }

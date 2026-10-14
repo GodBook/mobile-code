@@ -24,8 +24,12 @@ object CompilerCommands {
 }
 
 class BuildService(private val factory: ProcessFactory, private val track: (ChildProcess)->Unit,
-                   private val log: (String)->Unit, private val diagnostic: (Diagnostic)->Unit) {
+                   private val log: (String)->Unit, private val diagnostic: (Diagnostic)->Unit,
+                   private val buildTimeoutMs: Long=120_000) {
     suspend fun build(chain: Toolchain, snapshot: Snapshot): BuildArtifact = withContext(Dispatchers.IO) {
+        withBuildDeadline(buildTimeoutMs) { compile(chain,snapshot) }
+    }
+    private suspend fun compile(chain: Toolchain, snapshot: Snapshot): BuildArtifact {
         val config=File(snapshot.directory,"runtime.json")
         val settings=json("source" to snapshot.source.absolutePath,"work" to snapshot.work.absolutePath,"build" to snapshot.build.absolutePath,
             "entry" to snapshot.project.entry,"sourceRoots" to snapshot.project.sourceRoots,"arguments" to snapshot.project.arguments,"debugFd" to 3)
@@ -71,25 +75,39 @@ class BuildService(private val factory: ProcessFactory, private val track: (Chil
             }
         }
         AtomicFiles.text(config,settings.toString())
-        BuildArtifact(snapshot,module,entry,config)
+        return BuildArtifact(snapshot,module,entry,config)
     }
 
     private suspend fun run(chain: Toolchain, executable: File, arguments: List<String>, snapshot: Snapshot, capture: StringBuilder?=null): Int =
         runProcess(factory.start(chain,executable,arguments,snapshot.work),snapshot,capture)
 
-    private suspend fun runProcess(process: ChildProcess, snapshot: Snapshot, capture: StringBuilder?=null): Int = coroutineScope {
+    internal suspend fun runProcess(process: ChildProcess, snapshot: Snapshot, capture: StringBuilder?=null): Int = coroutineScope {
         track(process); process.eof()
+        fun publish(item: Diagnostic)=diagnostic(DiagnosticProvenance.build(item,snapshot))
         val consume: suspend (java.io.InputStream)->Unit = { input ->
-            input.bufferedReader().useLines { lines -> lines.forEach { line ->
-                if(capture!=null) synchronized(capture) { if(capture.length<1024*1024) capture.appendLine(line) }
-                if(line.startsWith("MC_DIAGNOSTIC:")) runCatching { diagnostic(gson.fromJson(line.removePrefix("MC_DIAGNOSTIC:"),Diagnostic::class.java)) }
-                else if(!line.startsWith("MC_ENTRIES:")) { log(line+"\n"); parseClang(line,snapshot)?.let(diagnostic) }
-            } }
+            try {
+                input.bufferedReader().useLines { lines -> lines.forEach { line ->
+                    currentCoroutineContext().ensureActive()
+                    if(capture!=null) synchronized(capture) { if(capture.length<1024*1024) capture.appendLine(line) }
+                    if(line.startsWith("MC_DIAGNOSTIC:")) runCatching { publish(gson.fromJson(line.removePrefix("MC_DIAGNOSTIC:"),Diagnostic::class.java)) }
+                    else if(!line.startsWith("MC_ENTRIES:")) { log(line+"\n"); parseClang(line,snapshot)?.let(::publish) }
+                } }
+            } catch(error: java.io.IOException) {
+                // Android interrupts a blocking read when timeout/Stop closes the
+                // descriptor. Preserve that cancellation instead of replacing its cause.
+                currentCoroutineContext().ensureActive()
+                throw error
+            }
         }
         val stdout=launch(Dispatchers.IO) { consume(process.output) }
         val stderr=launch(Dispatchers.IO) { consume(process.error) }
-        try { val result=withTimeout(120_000) { process.exit.await() }; stdout.join(); stderr.join(); result }
-        finally { withContext(NonCancellable) { process.stop(); process.closeStreams() } }
+        try { val result=process.exit.await(); stdout.join(); stderr.join(); result }
+        finally { withContext(NonCancellable+Dispatchers.IO) {
+            // A compiler descendant may keep a pipe open after its leader exits.
+            NativeProcess.signal(process.pid,9,true)
+            process.closeStreams(); process.stop()
+            stdout.cancel(); stderr.cancel()
+        } }
     }
     private fun parseClang(line: String, snapshot: Snapshot): Diagnostic? {
         val match=Regex("^(.+):(\\d+):(\\d+): (fatal error|error|warning|note): (.*)$").matchEntire(line) ?: return null

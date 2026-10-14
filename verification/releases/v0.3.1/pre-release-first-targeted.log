@@ -1,0 +1,128 @@
+INSTRUMENTATION_STATUS: class=dev.mobilecode.ide.ReliabilityFixTest
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=4
+INSTRUMENTATION_STATUS: stream=
+dev.mobilecode.ide.ReliabilityFixTest:
+INSTRUMENTATION_STATUS: test=buildErrorsFollowTheSnapshotInsteadOfEditedOrOtherProjectBuffers
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=dev.mobilecode.ide.ReliabilityFixTest
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=4
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=buildErrorsFollowTheSnapshotInsteadOfEditedOrOtherProjectBuffers
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=dev.mobilecode.ide.ReliabilityFixTest
+INSTRUMENTATION_STATUS: current=2
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=4
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=manualRepairIgnoresReadyMarkersAndRestoresOfflineResourcesThenRunsAllLanguages
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=dev.mobilecode.ide.ReliabilityFixTest
+INSTRUMENTATION_STATUS: current=2
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=4
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=manualRepairIgnoresReadyMarkersAndRestoresOfflineResourcesThenRunsAllLanguages
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=dev.mobilecode.ide.ReliabilityFixTest
+INSTRUMENTATION_STATUS: current=3
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=4
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=deadlineKillsARealDescendantHoldingOutputAfterItsParentExited
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=dev.mobilecode.ide.ReliabilityFixTest
+INSTRUMENTATION_STATUS: current=3
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=4
+INSTRUMENTATION_STATUS: stack=java.lang.AssertionError: java.io.InterruptedIOException: read interrupted by close() on another thread
+	at org.junit.Assert.fail(r8-map-id-77efbd396dcc4ee1588f75127038bbf303cdbb178d63851439198f721f6b83d2:11)
+	at org.junit.Assert.assertTrue(r8-map-id-77efbd396dcc4ee1588f75127038bbf303cdbb178d63851439198f721f6b83d2:3)
+	at dev.mobilecode.ide.ReliabilityFixTest$deadlineKillsARealDescendantHoldingOutputAfterItsParentExited$1.invokeSuspend(r8-map-id-77efbd396dcc4ee1588f75127038bbf303cdbb178d63851439198f721f6b83d2:16)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:34)
+	at kotlinx.coroutines.internal.ScopeCoroutine.afterResume(Scopes.kt:35)
+	at kotlinx.coroutines.AbstractCoroutine.resumeWith(AbstractCoroutine.kt:101)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:47)
+	at kotlinx.coroutines.internal.ScopeCoroutine.afterResume(Scopes.kt:35)
+	at kotlinx.coroutines.AbstractCoroutine.resumeWith(AbstractCoroutine.kt:101)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:47)
+	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:204)
+	at kotlinx.coroutines.EventLoopImplBase.processNextEvent(EventLoop.common.kt:263)
+	at kotlinx.coroutines.BlockingCoroutine.joinBlocking(Builders.kt:94)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking(Builders.kt:70)
+	at kotlinx.coroutines.BuildersKt.runBlocking(Unknown Source:1)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking$default(Builders.kt:48)
+	at kotlinx.coroutines.BuildersKt.runBlocking$default(Unknown Source:1)
+	at dev.mobilecode.ide.ReliabilityFixTest.deadlineKillsARealDescendantHoldingOutputAfterItsParentExited(r8-map-id-77efbd396dcc4ee1588f75127038bbf303cdbb178d63851439198f721f6b83d2:8)
+
+INSTRUMENTATION_STATUS: stream=
+Error in deadlineKillsARealDescendantHoldingOutputAfterItsParentExited(dev.mobilecode.ide.ReliabilityFixTest):
+java.lang.AssertionError: java.io.InterruptedIOException: read interrupted by close() on another thread
+	at org.junit.Assert.fail(r8-map-id-77efbd396dcc4ee1588f75127038bbf303cdbb178d63851439198f721f6b83d2:11)
+	at org.junit.Assert.assertTrue(r8-map-id-77efbd396dcc4ee1588f75127038bbf303cdbb178d63851439198f721f6b83d2:3)
+	at dev.mobilecode.ide.ReliabilityFixTest$deadlineKillsARealDescendantHoldingOutputAfterItsParentExited$1.invokeSuspend(r8-map-id-77efbd396dcc4ee1588f75127038bbf303cdbb178d63851439198f721f6b83d2:16)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:34)
+	at kotlinx.coroutines.internal.ScopeCoroutine.afterResume(Scopes.kt:35)
+	at kotlinx.coroutines.AbstractCoroutine.resumeWith(AbstractCoroutine.kt:101)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:47)
+	at kotlinx.coroutines.internal.ScopeCoroutine.afterResume(Scopes.kt:35)
+	at kotlinx.coroutines.AbstractCoroutine.resumeWith(AbstractCoroutine.kt:101)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:47)
+	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:204)
+	at kotlinx.coroutines.EventLoopImplBase.processNextEvent(EventLoop.common.kt:263)
+	at kotlinx.coroutines.BlockingCoroutine.joinBlocking(Builders.kt:94)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking(Builders.kt:70)
+	at kotlinx.coroutines.BuildersKt.runBlocking(Unknown Source:1)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking$default(Builders.kt:48)
+	at kotlinx.coroutines.BuildersKt.runBlocking$default(Unknown Source:1)
+	at dev.mobilecode.ide.ReliabilityFixTest.deadlineKillsARealDescendantHoldingOutputAfterItsParentExited(r8-map-id-77efbd396dcc4ee1588f75127038bbf303cdbb178d63851439198f721f6b83d2:8)
+
+INSTRUMENTATION_STATUS: test=deadlineKillsARealDescendantHoldingOutputAfterItsParentExited
+INSTRUMENTATION_STATUS_CODE: -2
+INSTRUMENTATION_STATUS: class=dev.mobilecode.ide.ReliabilityFixTest
+INSTRUMENTATION_STATUS: current=4
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=4
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=runAndFailedBuildBothKeepTheirOwnHistoryAndSnapshot
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=dev.mobilecode.ide.ReliabilityFixTest
+INSTRUMENTATION_STATUS: current=4
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=4
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=runAndFailedBuildBothKeepTheirOwnHistoryAndSnapshot
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_RESULT: stream=
+
+Time: 77.346
+There was 1 failure:
+1) deadlineKillsARealDescendantHoldingOutputAfterItsParentExited(dev.mobilecode.ide.ReliabilityFixTest)
+java.lang.AssertionError: java.io.InterruptedIOException: read interrupted by close() on another thread
+	at org.junit.Assert.fail(r8-map-id-77efbd396dcc4ee1588f75127038bbf303cdbb178d63851439198f721f6b83d2:11)
+	at org.junit.Assert.assertTrue(r8-map-id-77efbd396dcc4ee1588f75127038bbf303cdbb178d63851439198f721f6b83d2:3)
+	at dev.mobilecode.ide.ReliabilityFixTest$deadlineKillsARealDescendantHoldingOutputAfterItsParentExited$1.invokeSuspend(r8-map-id-77efbd396dcc4ee1588f75127038bbf303cdbb178d63851439198f721f6b83d2:16)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:34)
+	at kotlinx.coroutines.internal.ScopeCoroutine.afterResume(Scopes.kt:35)
+	at kotlinx.coroutines.AbstractCoroutine.resumeWith(AbstractCoroutine.kt:101)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:47)
+	at kotlinx.coroutines.internal.ScopeCoroutine.afterResume(Scopes.kt:35)
+	at kotlinx.coroutines.AbstractCoroutine.resumeWith(AbstractCoroutine.kt:101)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:47)
+	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:204)
+	at kotlinx.coroutines.EventLoopImplBase.processNextEvent(EventLoop.common.kt:263)
+	at kotlinx.coroutines.BlockingCoroutine.joinBlocking(Builders.kt:94)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking(Builders.kt:70)
+	at kotlinx.coroutines.BuildersKt.runBlocking(Unknown Source:1)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking$default(Builders.kt:48)
+	at kotlinx.coroutines.BuildersKt.runBlocking$default(Unknown Source:1)
+	at dev.mobilecode.ide.ReliabilityFixTest.deadlineKillsARealDescendantHoldingOutputAfterItsParentExited(r8-map-id-77efbd396dcc4ee1588f75127038bbf303cdbb178d63851439198f721f6b83d2:8)
+
+FAILURES!!!
+Tests run: 4,  Failures: 1
+
+
+INSTRUMENTATION_CODE: -1
