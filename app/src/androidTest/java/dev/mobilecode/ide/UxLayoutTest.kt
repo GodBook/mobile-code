@@ -47,9 +47,9 @@ class UxLayoutTest {
         action { it.pin(project) }; action { it.home() }
         rule.onNodeWithTag("project-search").performTextReplacement(project.config.name)
         rule.onNodeWithTag("project-${project.config.id}").assertExists()
-        rule.onNodeWithText("Java",useUnmergedTree=true).performClick()
+        rule.onNodeWithText("Java",useUnmergedTree=true).performScrollTo().performClick()
         rule.onNodeWithText("没有匹配的项目").assertExists()
-        rule.onNodeWithText("全部",useUnmergedTree=true).performClick()
+        rule.onNodeWithText("全部",useUnmergedTree=true).performScrollTo().performClick()
         rule.waitUntil(10_000) { rule.onAllNodesWithTag("project-${project.config.id}").fetchSemanticsNodes().isNotEmpty() }
         screenshot("ux-home.png")
         rule.onNodeWithTag("project-${project.config.id}").performClick()

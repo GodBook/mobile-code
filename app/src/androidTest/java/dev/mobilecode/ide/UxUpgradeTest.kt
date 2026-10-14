@@ -209,8 +209,17 @@ class UxUpgradeTest {
         rule.waitUntil(30_000) { model.session.value.canSendInput }
         if(rule.onAllNodesWithTag("output-collapsed").fetchSemanticsNodes().isNotEmpty()) rule.onNodeWithTag("展开控制台").performClick()
         rule.onNodeWithTag("stdin").performTextReplacement("中文😀")
-        rule.onNodeWithTag("send-stdin").performClick()
-        rule.waitUntil(15_000) { model.session.value.standardOutput.contains("中文😀") && !model.session.value.active }
+        var bounds: androidx.compose.ui.geometry.Rect?=null
+        var settledAt=android.os.SystemClock.elapsedRealtime()
+        // IME insets move the compact panel into a dialog; wait for its actual touch target.
+        rule.waitUntil(15_000) {
+            val next=rule.onNodeWithTag("send-stdin").fetchSemanticsNode().boundsInWindow
+            if(next!=bounds) { bounds=next; settledAt=android.os.SystemClock.elapsedRealtime() }
+            android.os.SystemClock.elapsedRealtime()-settledAt>=500
+        }
+        rule.onNodeWithTag("send-stdin").assertIsEnabled().assertIsDisplayed().performClick()
+        try { rule.waitUntil(15_000) { model.session.value.standardOutput.contains("中文😀") && !model.session.value.active } }
+        catch(error: ComposeTimeoutException) { throw AssertionError("Input result: ${model.session.value}; UI error: ${model.state.value.error}",error) }
         rule.onNodeWithTag("stdin").assert(SemanticsMatcher.expectValue(SemanticsProperties.EditableText,AnnotatedString("")))
         rule.onNodeWithTag("stdin").performTextReplacement("保留草稿")
         rule.onNodeWithTag("send-stdin").assertIsNotEnabled()

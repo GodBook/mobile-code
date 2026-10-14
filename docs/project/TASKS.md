@@ -2,25 +2,25 @@
 
 ## Approved UX implementation and release (2026-10-13)
 
-User approved execution of [the upgrade plan](../UX_UPGRADE_PLAN.md), connected-phone tests, and GitHub/Release publication. Integrated target0.3.0/versionCode7. All runtime, signing, offline and compatibility constraints remain authoritative. “Implemented” does not imply every fault/device matrix has passed; exact shipping evidence is still pending.
+User approved the complete [upgrade plan](../UX_UPGRADE_PLAN.md), connected-phone validation and GitHub/Release publication. Core implementation is complete in0.3.0/code7. Exact shipping43/43 phone regression passed; [acceptance](../../verification/releases/v0.3.0/acceptance.json) records scope/limits. “Phone scope passed” is not blanket fault/device-matrix acceptance.
 
-| ID | Deliverable | State | Current evidence / remaining work |
+| ID | Deliverable | State | Actual evidence / open scope |
 |---|---|---|---|
-| UX-01 | Per-file save, retry, dirty-buffer export and explicit recovery | Bridge phone scope passed | Immediate-flush failure/export/retry, automatic draft and actual force-stop/fresh-process recovery passed; final shipping regression pending |
-| UX-02 | Acknowledged stdin drafts and EOF capability | Bridge phone scope passed | Actual input/EOF/error/session draft case plus four-language core input; final shipping regression pending |
-| UX-03 | Invalid-project recovery and cancellable imports | Bridge phone scope passed | Broken config raw export, mixed-language/src preservation, cancellation and original project hashes |
-| UX-04 | Component readiness and direct retry/space feedback | Implemented; partial phone evidence | Normal tool preparation used throughout; corrupt-resource/full-disk/device restart fault matrix still open |
-| UX-05 | Storage inventory, safe cleanup and generated-file/history access | Bridge phone scope passed |100 real Python runs;283 pre-existing sessions/current snapshot/source hash protected in v2; external SAF UI matrix open |
-| UX-06 | Compact/searchable/pinned/recent home | Bridge phone scope passed | Actual Chinese filter/pin/home/tree UI; final narrow/font checks pending |
-| UX-07 | Folder tree, atomic moves, project operations and recycle restore | Bridge phone scope passed | Conflict rejection, Unicode paths, entry/breakpoint migration, copy/rename and source hashes |
-| UX-08 | Quick open, inline search/replace, line/project search | Bridge phone scope passed | Actual Unicode buffer/search/navigation; final shipping regression pending |
-| UX-09 | Tabs, per-file locations, watches and workspace restoration | Bridge phone scope passed | Tabs/watches and actual cursor after recreation passed on corrected bridge; final shipping regression pending |
-| UX-10 | Focus/responsive UI, accessibility labels, shortcuts and settings | Implemented; matrix partial | Earlier font1502/2 and landscape; updated geometry check next. Physical keyboard/TalkBack/split-screen coverage open |
-| UX-11 | Diagnostic provenance, bounded logs, argv/configuration and history | Implemented; core phone scope passed | Real fault/12MiB flood/10MiB log limit, source snapshot identity and input/argv; external export UI matrix open |
-| UX-12 | Breakpoint explanations and fresh variable/watch UI | Implemented; core phone scope passed | Real four-language debug/step/locals/watch; response identity checks added; broader rapid-transition matrix open |
-| UX-13 | Real definition/references/outline and language-service retry | Bridge phone scope passed | C/C++/Python/Java real cross-file navigation passed; formatting/semantic rename remain assessment items |
-| UX-14 | Updater clarity and measured complete-package reduction | Implemented; OTA pending | Narrow R8 experiment/native audit passed; real public download/install/data preservation next |
-| UX-R | Signed production APK, phone verification and GitHub Release | In progress | Latest bridge checks, freeze production7, five immutable assets, actual OTA and exact shipping43-case regression pending |
+| UX-01 | Per-file save, retry, dirty-buffer export and explicit recovery | Shipping phone scope passed | Immediate-flush fault/export/retry, automatic draft and real force-stop recovery; original source preserved |
+| UX-02 | Acknowledged stdin drafts and EOF capability | Shipping phone scope passed | Four-language core input plus UI acknowledgment/error/draft/EOF, including360dp/font1.5/IME |
+| UX-03 | Invalid-project recovery and cancellable imports | Shipping phone scope passed | Broken config raw export, mixed-language/src preservation, cancellation and original hashes |
+| UX-04 | Component readiness and direct retry/space feedback | Implemented; partial phone scope | Normal preparation verified; corrupt-resource/full-disk/restart fault matrix open |
+| UX-05 | Storage inventory, safe cleanup and generated-file/history access | Shipping phone scope passed |100 real runs;356 existing sessions/current snapshot/source protected; external SAF UI open |
+| UX-06 | Compact/searchable/pinned/recent home | Shipping phone scope passed | Chinese search/filter/pin/tree;360dp/font1.3 and1.5 checked |
+| UX-07 | Folder tree, atomic moves, project operations and recycle restore | Shipping phone scope passed | Conflict rejection, Unicode paths, entry/breakpoint migration, copy/rename and source hashes |
+| UX-08 | Quick open, inline search/replace, line/project search | Shipping phone scope passed | Actual Unicode buffer/search/navigation; broader search edge matrix remains open |
+| UX-09 | Tabs, per-file locations, watches and workspace restoration | Shipping phone scope passed | Actual cursor after recreation, tabs/watches restoration and process recovery |
+| UX-10 | Focus/responsive UI, accessibility labels, shortcuts and settings | Shipping phone scope passed; matrix partial | Default/font130/font150 portrait/landscape/IME; TalkBack/physical keyboard/split-screen open |
+| UX-11 | Diagnostic provenance, bounded logs, argv/configuration and history | Shipping core phone scope passed | Real fault/12MiB flood/10MiB log limit, snapshots/input/argv; external export UI open |
+| UX-12 | Breakpoint explanations and fresh variable/watch UI | Shipping core phone scope passed | Four-language real debug/step/locals/watch; broader rapid-transition matrix open |
+| UX-13 | Real definition/references/outline and service retry | Shipping phone scope passed | Four-language real cross-file navigation; overload/scope/external-source matrix open; formatting/semantic rename assessed/deferred |
+| UX-14 | Updater clarity and measured complete-package reduction | Implemented; online flow unverified |6.78% measured reduction/native audit/security checks; phone had no network, real new OTA unverified |
+| UX-R | Signed production APK, phone verification and GitHub Release | Phone accepted; publication in progress | Exact APK43/43,6 units/1460 audits; publish five immutable assets and verify anonymous endpoints next |
 
 ## Appearance and performance increment (2026-10-12)
 
@@ -52,4 +52,4 @@ Available phone: Xiaomi Mi 9 SE, Android15 ARM64, 4KiB. Formal P0/P4 broad compa
 | U2 | Updated release and connected-phone validation | Accepted on phone | Actual 429,738,676-byte GitHub download, system upgrade from bridge4 to public5, project/settings preservation, 22/22 final regression and post-upgrade latest check |
 | U3 | Public GodBook/mobile-code repository and release | Published | https://github.com/GodBook/mobile-code/releases/tag/v0.2.2; all five assets verified by size/SHA256; application and corresponding source archives included |
 
-Historical evidence: [0.2.2 acceptance report](../../verification/releases/v0.2.2/acceptance.json), adjacent raw instrumentation logs, and [verification notes](../VERIFICATION.md). The phone is now on0.2.3/versionCode6; see[0.2.3 acceptance](../../verification/releases/v0.2.3/acceptance.json). The earlier temporary screen-activity helper remains stopped; failed locked/Doze and intermediate runs are retained locally and excluded from passing counts.
+Historical evidence: [0.2.2 acceptance report](../../verification/releases/v0.2.2/acceptance.json), adjacent raw instrumentation logs, and [verification notes](../VERIFICATION.md). The phone now uses0.3.0/versionCode7; see[0.3.0 acceptance](../../verification/releases/v0.3.0/acceptance.json). The earlier temporary screen-activity helper remains stopped; failed locked/Doze and intermediate runs are retained and excluded from passing counts.

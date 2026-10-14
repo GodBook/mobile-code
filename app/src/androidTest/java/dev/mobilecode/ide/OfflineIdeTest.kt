@@ -125,8 +125,9 @@ class OfflineIdeTest {
     private suspend fun finishRun(project: Project, input: String? = null): SessionState {
         val id = app.sessions.start(project, chain, false, emptyList(), input)
         val result = withTimeout(150_000) { app.sessions.state.first { it.id==id && !it.active } }
-        assertEquals(result.output, SessionPhase.FINISHED, result.phase)
-        assertEquals(result.output, 0, result.exitCode)
+        val detail="${result.output}\n${result.reason}; exit=${result.exitCode}; elapsed=${result.elapsedMs}ms"
+        assertEquals(detail, SessionPhase.FINISHED, result.phase)
+        assertEquals(detail, 0, result.exitCode)
         assertTrue(result.toString(), result.standardOutput.contains("answer 8"))
         return result
     }
@@ -212,11 +213,14 @@ class OfflineIdeTest {
 
     @Test fun timeoutAndCrashLeaveEditorAndNextRunUsable(): Unit = runBlocking {
         var project = app.workspace.create("faults", CodeLanguage.PYTHON, false)
+        val normalTimeout=project.config.runTimeoutSeconds
         app.workspace.save(project, Document("src/main.py", "while True: pass\n"))
         project = app.workspace.updateConfig(project, project.config.copy(runTimeoutSeconds=1))
         val id = app.sessions.start(project, chain, false, emptyList(), null)
         val timeout = withTimeout(20_000) { app.sessions.state.first { it.id==id && !it.active } }
         assertTrue(timeout.toString(), timeout.reason.contains("TIMEOUT"))
+        // Recovery checks use the normal budget; the 1s timeout above is a deliberate fault.
+        project=app.workspace.updateConfig(project,project.config.copy(runTimeoutSeconds=normalTimeout))
         app.workspace.save(project, Document("src/main.py", "raise ValueError('intentional')\n"))
         val crashId = app.sessions.start(project, chain, false, emptyList(), null)
         val crash = withTimeout(20_000) { app.sessions.state.first { it.id==crashId && !it.active } }

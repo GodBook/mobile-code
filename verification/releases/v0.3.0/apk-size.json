@@ -1,0 +1,1507 @@
+{
+  "apk": "MobileCode-0.3.0-arm64-v8a.apk",
+  "bytes": 400641853,
+  "sha256": "e319f2360aa471abd294646735af98206a89b69c2cdd4d14ec201856116d0cdd",
+  "groups": {
+    "androidResourcesAndMetadata": {
+      "entries": 188,
+      "storedBytes": 568031,
+      "expandedBytes": 715571
+    },
+    "assets": {
+      "entries": 13,
+      "storedBytes": 367524,
+      "expandedBytes": 642637
+    },
+    "dex": {
+      "entries": 2,
+      "storedBytes": 18693672,
+      "expandedBytes": 18693672
+    },
+    "native": {
+      "entries": 484,
+      "storedBytes": 133506387,
+      "expandedBytes": 411075729
+    },
+    "offlineResources": {
+      "entries": 1,
+      "storedBytes": 247368584,
+      "expandedBytes": 253723445
+    }
+  },
+  "largestEntries": [
+    {
+      "path": "assets/toolchains/root.zip",
+      "storedBytes": 247368584,
+      "expandedBytes": 253723445
+    },
+    {
+      "path": "lib/arm64-v8a/libLLVM.so",
+      "storedBytes": 42489153,
+      "expandedBytes": 137452937
+    },
+    {
+      "path": "lib/arm64-v8a/libclang-cpp.so",
+      "storedBytes": 20135565,
+      "expandedBytes": 62972824
+    },
+    {
+      "path": "classes.dex",
+      "storedBytes": 12331988,
+      "expandedBytes": 12331988
+    },
+    {
+      "path": "lib/arm64-v8a/libclang.so",
+      "storedBytes": 12122019,
+      "expandedBytes": 35296128
+    },
+    {
+      "path": "lib/arm64-v8a/libpython3.13.so",
+      "storedBytes": 8761801,
+      "expandedBytes": 24697249
+    },
+    {
+      "path": "classes2.dex",
+      "storedBytes": 6361684,
+      "expandedBytes": 6361684
+    },
+    {
+      "path": "lib/arm64-v8a/libjvm.so",
+      "storedBytes": 6306753,
+      "expandedBytes": 20738456
+    },
+    {
+      "path": "lib/arm64-v8a/liblldb.so",
+      "storedBytes": 5998821,
+      "expandedBytes": 17639393
+    },
+    {
+      "path": "lib/arm64-v8a/libmc_usr_bin_clangd.so",
+      "storedBytes": 5391076,
+      "expandedBytes": 18662672
+    },
+    {
+      "path": "lib/arm64-v8a/libmc_usr_lib_libcrypto_so_3.so",
+      "storedBytes": 2388880,
+      "expandedBytes": 5352705
+    },
+    {
+      "path": "lib/arm64-v8a/libmc_usr_bin_lld.so",
+      "storedBytes": 2163651,
+      "expandedBytes": 6237825
+    },
+    {
+      "path": "lib/arm64-v8a/libpython3.14.so",
+      "storedBytes": 1855562,
+      "expandedBytes": 5842848
+    },
+    {
+      "path": "lib/arm64-v8a/libmc_syntax.so",
+      "storedBytes": 1482617,
+      "expandedBytes": 8885600
+    },
+    {
+      "path": "lib/arm64-v8a/libmc_runner.so",
+      "storedBytes": 1278395,
+      "expandedBytes": 5817728
+    },
+    {
+      "path": "lib/arm64-v8a/libmc_usr_bin_lldb_server.so",
+      "storedBytes": 1119238,
+      "expandedBytes": 2930721
+    },
+    {
+      "path": "lib/arm64-v8a/libiconv.so",
+      "storedBytes": 741403,
+      "expandedBytes": 1083304
+    },
+    {
+      "path": "lib/arm64-v8a/libX11.so",
+      "storedBytes": 714170,
+      "expandedBytes": 1187752
+    },
+    {
+      "path": "lib/arm64-v8a/libsqlite3.54.0.so",
+      "storedBytes": 710522,
+      "expandedBytes": 1303801
+    },
+    {
+      "path": "lib/arm64-v8a/libmc_process.so",
+      "storedBytes": 634069,
+      "expandedBytes": 2728312
+    }
+  ],
+  "offlineResourceGroups": {
+    "cpython313/include/python3.13": {
+      "entries": 264,
+      "storedBytes": 429297,
+      "expandedBytes": 1827844
+    },
+    "cpython313/lib/pkgconfig": {
+      "entries": 4,
+      "storedBytes": 854,
+      "expandedBytes": 1258
+    },
+    "cpython313/lib/python3.13": {
+      "entries": 4502,
+      "storedBytes": 33421987,
+      "expandedBytes": 102393642
+    },
+    "usr/etc/alsa": {
+      "entries": 8,
+      "storedBytes": 1743,
+      "expandedBytes": 3335
+    },
+    "usr/etc/dbus-1": {
+      "entries": 2,
+      "storedBytes": 932,
+      "expandedBytes": 1779
+    },
+    "usr/etc/inputrc": {
+      "entries": 1,
+      "storedBytes": 257,
+      "expandedBytes": 489
+    },
+    "usr/etc/pulse": {
+      "entries": 4,
+      "storedBytes": 4586,
+      "expandedBytes": 10181
+    },
+    "usr/etc/tls": {
+      "entries": 2,
+      "storedBytes": 113044,
+      "expandedBytes": 201311
+    },
+    "usr/include/FLAC": {
+      "entries": 9,
+      "storedBytes": 71814,
+      "expandedBytes": 350767
+    },
+    "usr/include/FLAC++": {
+      "entries": 5,
+      "storedBytes": 18361,
+      "expandedBytes": 87005
+    },
+    "usr/include/GL": {
+      "entries": 5,
+      "storedBytes": 21648,
+      "expandedBytes": 103056
+    },
+    "usr/include/OMXAL": {
+      "entries": 3,
+      "storedBytes": 19592,
+      "expandedBytes": 118906
+    },
+    "usr/include/SLES": {
+      "entries": 5,
+      "storedBytes": 20344,
+      "expandedBytes": 107667
+    },
+    "usr/include/X11": {
+      "entries": 161,
+      "storedBytes": 367860,
+      "expandedBytes": 1480016
+    },
+    "usr/include/__libunwind_config.h": {
+      "entries": 1,
+      "storedBytes": 1416,
+      "expandedBytes": 7944
+    },
+    "usr/include/aarch64-linux-android": {
+      "entries": 38,
+      "storedBytes": 15264,
+      "expandedBytes": 44056
+    },
+    "usr/include/aaudio": {
+      "entries": 1,
+      "storedBytes": 22935,
+      "expandedBytes": 114441
+    },
+    "usr/include/absl": {
+      "entries": 408,
+      "storedBytes": 1152524,
+      "expandedBytes": 4036795
+    },
+    "usr/include/alloca.h": {
+      "entries": 1,
+      "storedBytes": 1008,
+      "expandedBytes": 1882
+    },
+    "usr/include/alsa": {
+      "entries": 48,
+      "storedBytes": 117796,
+      "expandedBytes": 500146
+    },
+    "usr/include/amidi": {
+      "entries": 1,
+      "storedBytes": 3322,
+      "expandedBytes": 14393
+    },
+    "usr/include/android": {
+      "entries": 66,
+      "storedBytes": 265239,
+      "expandedBytes": 1235228
+    },
+    "usr/include/ar.h": {
+      "entries": 1,
+      "storedBytes": 1354,
+      "expandedBytes": 2768
+    },
+    "usr/include/arm-linux-androideabi": {
+      "entries": 36,
+      "storedBytes": 15976,
+      "expandedBytes": 61449
+    },
+    "usr/include/arpa": {
+      "entries": 6,
+      "storedBytes": 18993,
+      "expandedBytes": 50572
+    },
+    "usr/include/asm-generic": {
+      "entries": 37,
+      "storedBytes": 20847,
+      "expandedBytes": 59596
+    },
+    "usr/include/asoundlib.h": {
+      "entries": 1,
+      "storedBytes": 77,
+      "expandedBytes": 96
+    },
+    "usr/include/assert.h": {
+      "entries": 1,
+      "storedBytes": 1555,
+      "expandedBytes": 3372
+    },
+    "usr/include/bits": {
+      "entries": 52,
+      "storedBytes": 88418,
+      "expandedBytes": 275109
+    },
+    "usr/include/byteswap.h": {
+      "entries": 1,
+      "storedBytes": 962,
+      "expandedBytes": 2002
+    },
+    "usr/include/bzlib.h": {
+      "entries": 1,
+      "storedBytes": 1660,
+      "expandedBytes": 6240
+    },
+    "usr/include/c++": {
+      "entries": 1665,
+      "storedBytes": 2548959,
+      "expandedBytes": 12927561
+    },
+    "usr/include/camera": {
+      "entries": 8,
+      "storedBytes": 149535,
+      "expandedBytes": 807389
+    },
+    "usr/include/clang": {
+      "entries": 886,
+      "storedBytes": 4182302,
+      "expandedBytes": 30508289
+    },
+    "usr/include/clang-c": {
+      "entries": 13,
+      "storedBytes": 66972,
+      "expandedBytes": 286397
+    },
+    "usr/include/clang-tidy": {
+      "entries": 422,
+      "storedBytes": 335665,
+      "expandedBytes": 815394
+    },
+    "usr/include/complex.h": {
+      "entries": 1,
+      "storedBytes": 1608,
+      "expandedBytes": 10053
+    },
+    "usr/include/cpio.h": {
+      "entries": 1,
+      "storedBytes": 1154,
+      "expandedBytes": 2835
+    },
+    "usr/include/crypt.h": {
+      "entries": 1,
+      "storedBytes": 120,
+      "expandedBytes": 159
+    },
+    "usr/include/ctype.h": {
+      "entries": 1,
+      "storedBytes": 2106,
+      "expandedBytes": 8252
+    },
+    "usr/include/curses.h": {
+      "entries": 1,
+      "storedBytes": 21010,
+      "expandedBytes": 105293
+    },
+    "usr/include/dbm.h": {
+      "entries": 1,
+      "storedBytes": 706,
+      "expandedBytes": 1403
+    },
+    "usr/include/dbus-1.0": {
+      "entries": 17,
+      "storedBytes": 35340,
+      "expandedBytes": 124688
+    },
+    "usr/include/dirent.h": {
+      "entries": 1,
+      "storedBytes": 2497,
+      "expandedBytes": 9935
+    },
+    "usr/include/dlfcn.h": {
+      "entries": 1,
+      "storedBytes": 3274,
+      "expandedBytes": 8723
+    },
+    "usr/include/drm": {
+      "entries": 33,
+      "storedBytes": 74663,
+      "expandedBytes": 320370
+    },
+    "usr/include/editline": {
+      "entries": 1,
+      "storedBytes": 3132,
+      "expandedBytes": 9627
+    },
+    "usr/include/elf.h": {
+      "entries": 1,
+      "storedBytes": 2814,
+      "expandedBytes": 8289
+    },
+    "usr/include/endian.h": {
+      "entries": 1,
+      "storedBytes": 120,
+      "expandedBytes": 171
+    },
+    "usr/include/err.h": {
+      "entries": 1,
+      "storedBytes": 1335,
+      "expandedBytes": 4346
+    },
+    "usr/include/errno.h": {
+      "entries": 1,
+      "storedBytes": 1099,
+      "expandedBytes": 2055
+    },
+    "usr/include/error.h": {
+      "entries": 1,
+      "storedBytes": 1387,
+      "expandedBytes": 3597
+    },
+    "usr/include/eti.h": {
+      "entries": 1,
+      "storedBytes": 1119,
+      "expandedBytes": 2969
+    },
+    "usr/include/execinfo.h": {
+      "entries": 1,
+      "storedBytes": 1346,
+      "expandedBytes": 2993
+    },
+    "usr/include/expat.h": {
+      "entries": 1,
+      "storedBytes": 13078,
+      "expandedBytes": 47697
+    },
+    "usr/include/expat_config.h": {
+      "entries": 1,
+      "storedBytes": 1362,
+      "expandedBytes": 4059
+    },
+    "usr/include/expat_external.h": {
+      "entries": 1,
+      "storedBytes": 2728,
+      "expandedBytes": 6923
+    },
+    "usr/include/fcntl.h": {
+      "entries": 1,
+      "storedBytes": 2347,
+      "expandedBytes": 7938
+    },
+    "usr/include/features.h": {
+      "entries": 1,
+      "storedBytes": 813,
+      "expandedBytes": 1540
+    },
+    "usr/include/fenv.h": {
+      "entries": 1,
+      "storedBytes": 1841,
+      "expandedBytes": 6260
+    },
+    "usr/include/ffi.h": {
+      "entries": 1,
+      "storedBytes": 4959,
+      "expandedBytes": 16188
+    },
+    "usr/include/ffitarget.h": {
+      "entries": 1,
+      "storedBytes": 1393,
+      "expandedBytes": 2997
+    },
+    "usr/include/fmt123.h": {
+      "entries": 1,
+      "storedBytes": 2332,
+      "expandedBytes": 6089
+    },
+    "usr/include/fnmatch.h": {
+      "entries": 1,
+      "storedBytes": 1261,
+      "expandedBytes": 2671
+    },
+    "usr/include/form.h": {
+      "entries": 1,
+      "storedBytes": 4722,
+      "expandedBytes": 18899
+    },
+    "usr/include/fts.h": {
+      "entries": 1,
+      "storedBytes": 2286,
+      "expandedBytes": 5622
+    },
+    "usr/include/ftw.h": {
+      "entries": 1,
+      "storedBytes": 1290,
+      "expandedBytes": 2828
+    },
+    "usr/include/fuzzer": {
+      "entries": 1,
+      "storedBytes": 4812,
+      "expandedBytes": 16106
+    },
+    "usr/include/gdbm.h": {
+      "entries": 1,
+      "storedBytes": 4640,
+      "expandedBytes": 13626
+    },
+    "usr/include/getopt.h": {
+      "entries": 1,
+      "storedBytes": 1419,
+      "expandedBytes": 3215
+    },
+    "usr/include/glob.h": {
+      "entries": 1,
+      "storedBytes": 1884,
+      "expandedBytes": 4050
+    },
+    "usr/include/grp.h": {
+      "entries": 1,
+      "storedBytes": 1325,
+      "expandedBytes": 3117
+    },
+    "usr/include/histedit.h": {
+      "entries": 1,
+      "storedBytes": 3232,
+      "expandedBytes": 9767
+    },
+    "usr/include/i686-linux-android": {
+      "entries": 66,
+      "storedBytes": 40338,
+      "expandedBytes": 129368
+    },
+    "usr/include/iconv.h": {
+      "entries": 1,
+      "storedBytes": 2958,
+      "expandedBytes": 9663
+    },
+    "usr/include/ifaddrs.h": {
+      "entries": 1,
+      "storedBytes": 1418,
+      "expandedBytes": 3295
+    },
+    "usr/include/inttypes.h": {
+      "entries": 1,
+      "storedBytes": 2773,
+      "expandedBytes": 13343
+    },
+    "usr/include/jconfig.h": {
+      "entries": 1,
+      "storedBytes": 930,
+      "expandedBytes": 2065
+    },
+    "usr/include/jerror.h": {
+      "entries": 1,
+      "storedBytes": 4360,
+      "expandedBytes": 16163
+    },
+    "usr/include/jmorecfg.h": {
+      "entries": 1,
+      "storedBytes": 5310,
+      "expandedBytes": 14622
+    },
+    "usr/include/jni.h": {
+      "entries": 1,
+      "storedBytes": 7811,
+      "expandedBytes": 52236
+    },
+    "usr/include/jpeglib.h": {
+      "entries": 1,
+      "storedBytes": 14943,
+      "expandedBytes": 55794
+    },
+    "usr/include/lame": {
+      "entries": 1,
+      "storedBytes": 11826,
+      "expandedBytes": 50618
+    },
+    "usr/include/langinfo.h": {
+      "entries": 1,
+      "storedBytes": 1957,
+      "expandedBytes": 4845
+    },
+    "usr/include/lastlog.h": {
+      "entries": 1,
+      "storedBytes": 120,
+      "expandedBytes": 155
+    },
+    "usr/include/lcms2.h": {
+      "entries": 1,
+      "storedBytes": 21060,
+      "expandedBytes": 108852
+    },
+    "usr/include/lcms2_plugin.h": {
+      "entries": 1,
+      "storedBytes": 7296,
+      "expandedBytes": 31557
+    },
+    "usr/include/libcharset.h": {
+      "entries": 1,
+      "storedBytes": 746,
+      "expandedBytes": 1510
+    },
+    "usr/include/libgen.h": {
+      "entries": 1,
+      "storedBytes": 1325,
+      "expandedBytes": 3036
+    },
+    "usr/include/libintl.h": {
+      "entries": 1,
+      "storedBytes": 410,
+      "expandedBytes": 1610
+    },
+    "usr/include/libltdl": {
+      "entries": 3,
+      "storedBytes": 5045,
+      "expandedBytes": 11694
+    },
+    "usr/include/libunwind.h": {
+      "entries": 1,
+      "storedBytes": 8218,
+      "expandedBytes": 33252
+    },
+    "usr/include/libxml2": {
+      "entries": 46,
+      "storedBytes": 88825,
+      "expandedBytes": 393065
+    },
+    "usr/include/limits.h": {
+      "entries": 1,
+      "storedBytes": 2245,
+      "expandedBytes": 5100
+    },
+    "usr/include/link.h": {
+      "entries": 1,
+      "storedBytes": 1937,
+      "expandedBytes": 5198
+    },
+    "usr/include/linux": {
+      "entries": 817,
+      "storedBytes": 721011,
+      "expandedBytes": 2520188
+    },
+    "usr/include/lld": {
+      "entries": 16,
+      "storedBytes": 17205,
+      "expandedBytes": 48516
+    },
+    "usr/include/lldb": {
+      "entries": 572,
+      "storedBytes": 1007396,
+      "expandedBytes": 3470859
+    },
+    "usr/include/llvm": {
+      "entries": 2178,
+      "storedBytes": 6794119,
+      "expandedBytes": 33384878
+    },
+    "usr/include/llvm-c": {
+      "entries": 30,
+      "storedBytes": 91475,
+      "expandedBytes": 440994
+    },
+    "usr/include/localcharset.h": {
+      "entries": 1,
+      "storedBytes": 1801,
+      "expandedBytes": 6338
+    },
+    "usr/include/locale.h": {
+      "entries": 1,
+      "storedBytes": 1443,
+      "expandedBytes": 3972
+    },
+    "usr/include/ltdl.h": {
+      "entries": 1,
+      "storedBytes": 2003,
+      "expandedBytes": 5600
+    },
+    "usr/include/lzma": {
+      "entries": 14,
+      "storedBytes": 58089,
+      "expandedBytes": 219796
+    },
+    "usr/include/lzma.h": {
+      "entries": 1,
+      "storedBytes": 3582,
+      "expandedBytes": 9790
+    },
+    "usr/include/malloc.h": {
+      "entries": 1,
+      "storedBytes": 4944,
+      "expandedBytes": 16401
+    },
+    "usr/include/math.h": {
+      "entries": 1,
+      "storedBytes": 2647,
+      "expandedBytes": 13179
+    },
+    "usr/include/media": {
+      "entries": 12,
+      "storedBytes": 48486,
+      "expandedBytes": 210936
+    },
+    "usr/include/memory.h": {
+      "entries": 1,
+      "storedBytes": 121,
+      "expandedBytes": 160
+    },
+    "usr/include/menu.h": {
+      "entries": 1,
+      "storedBytes": 3123,
+      "expandedBytes": 11875
+    },
+    "usr/include/misc": {
+      "entries": 8,
+      "storedBytes": 4206,
+      "expandedBytes": 10684
+    },
+    "usr/include/mntent.h": {
+      "entries": 1,
+      "storedBytes": 1136,
+      "expandedBytes": 2488
+    },
+    "usr/include/mpg123.h": {
+      "entries": 1,
+      "storedBytes": 27886,
+      "expandedBytes": 106709
+    },
+    "usr/include/mtd": {
+      "entries": 5,
+      "storedBytes": 3666,
+      "expandedBytes": 10617
+    },
+    "usr/include/ncurses": {
+      "entries": 11,
+      "storedBytes": 67943,
+      "expandedBytes": 310674
+    },
+    "usr/include/ncurses.h": {
+      "entries": 1,
+      "storedBytes": 21010,
+      "expandedBytes": 105293
+    },
+    "usr/include/ncurses_dll.h": {
+      "entries": 1,
+      "storedBytes": 1641,
+      "expandedBytes": 4183
+    },
+    "usr/include/ncursesw": {
+      "entries": 11,
+      "storedBytes": 67943,
+      "expandedBytes": 310674
+    },
+    "usr/include/ndbm.h": {
+      "entries": 1,
+      "storedBytes": 1118,
+      "expandedBytes": 2443
+    },
+    "usr/include/net": {
+      "entries": 5,
+      "storedBytes": 3129,
+      "expandedBytes": 6593
+    },
+    "usr/include/netdb.h": {
+      "entries": 1,
+      "storedBytes": 3809,
+      "expandedBytes": 11185
+    },
+    "usr/include/netinet": {
+      "entries": 12,
+      "storedBytes": 23774,
+      "expandedBytes": 64631
+    },
+    "usr/include/netpacket": {
+      "entries": 1,
+      "storedBytes": 31,
+      "expandedBytes": 29
+    },
+    "usr/include/nl_types.h": {
+      "entries": 1,
+      "storedBytes": 1335,
+      "expandedBytes": 2935
+    },
+    "usr/include/ogg": {
+      "entries": 3,
+      "storedBytes": 3123,
+      "expandedBytes": 13692
+    },
+    "usr/include/openssl": {
+      "entries": 142,
+      "storedBytes": 403880,
+      "expandedBytes": 2013622
+    },
+    "usr/include/opus": {
+      "entries": 5,
+      "storedBytes": 33719,
+      "expandedBytes": 174485
+    },
+    "usr/include/orc": {
+      "entries": 1,
+      "storedBytes": 1787,
+      "expandedBytes": 7008
+    },
+    "usr/include/out123.h": {
+      "entries": 1,
+      "storedBytes": 9718,
+      "expandedBytes": 30838
+    },
+    "usr/include/panel.h": {
+      "entries": 1,
+      "storedBytes": 1540,
+      "expandedBytes": 4512
+    },
+    "usr/include/paths.h": {
+      "entries": 1,
+      "storedBytes": 1293,
+      "expandedBytes": 2834
+    },
+    "usr/include/poll.h": {
+      "entries": 1,
+      "storedBytes": 1328,
+      "expandedBytes": 2964
+    },
+    "usr/include/profile": {
+      "entries": 2,
+      "storedBytes": 10995,
+      "expandedBytes": 42359
+    },
+    "usr/include/pthread.h": {
+      "entries": 1,
+      "storedBytes": 4674,
+      "expandedBytes": 21403
+    },
+    "usr/include/pty.h": {
+      "entries": 1,
+      "storedBytes": 1206,
+      "expandedBytes": 2647
+    },
+    "usr/include/pulse": {
+      "entries": 31,
+      "storedBytes": 91031,
+      "expandedBytes": 327640
+    },
+    "usr/include/pwd.h": {
+      "entries": 1,
+      "storedBytes": 1853,
+      "expandedBytes": 5891
+    },
+    "usr/include/python3.14": {
+      "entries": 283,
+      "storedBytes": 468864,
+      "expandedBytes": 2000406
+    },
+    "usr/include/rdma": {
+      "entries": 30,
+      "storedBytes": 32997,
+      "expandedBytes": 126750
+    },
+    "usr/include/readline": {
+      "entries": 8,
+      "storedBytes": 21919,
+      "expandedBytes": 68561
+    },
+    "usr/include/regex.h": {
+      "entries": 1,
+      "storedBytes": 1818,
+      "expandedBytes": 3972
+    },
+    "usr/include/resolv.h": {
+      "entries": 1,
+      "storedBytes": 1209,
+      "expandedBytes": 2956
+    },
+    "usr/include/riscv64-linux-android": {
+      "entries": 42,
+      "storedBytes": 16213,
+      "expandedBytes": 47227
+    },
+    "usr/include/sanitizer": {
+      "entries": 16,
+      "storedBytes": 81291,
+      "expandedBytes": 675002
+    },
+    "usr/include/sched.h": {
+      "entries": 1,
+      "storedBytes": 3393,
+      "expandedBytes": 15501
+    },
+    "usr/include/scsi": {
+      "entries": 14,
+      "storedBytes": 17422,
+      "expandedBytes": 55349
+    },
+    "usr/include/search.h": {
+      "entries": 1,
+      "storedBytes": 1827,
+      "expandedBytes": 7420
+    },
+    "usr/include/semaphore.h": {
+      "entries": 1,
+      "storedBytes": 1475,
+      "expandedBytes": 3272
+    },
+    "usr/include/setjmp.h": {
+      "entries": 1,
+      "storedBytes": 2066,
+      "expandedBytes": 4950
+    },
+    "usr/include/signal.h": {
+      "entries": 1,
+      "storedBytes": 2245,
+      "expandedBytes": 8190
+    },
+    "usr/include/sndfile.h": {
+      "entries": 1,
+      "storedBytes": 9333,
+      "expandedBytes": 29558
+    },
+    "usr/include/sndfile.hh": {
+      "entries": 1,
+      "storedBytes": 3135,
+      "expandedBytes": 13436
+    },
+    "usr/include/sound": {
+      "entries": 24,
+      "storedBytes": 33118,
+      "expandedBytes": 134855
+    },
+    "usr/include/soxr-lsr.h": {
+      "entries": 1,
+      "storedBytes": 1260,
+      "expandedBytes": 3112
+    },
+    "usr/include/soxr.h": {
+      "entries": 1,
+      "storedBytes": 4607,
+      "expandedBytes": 13984
+    },
+    "usr/include/spawn.h": {
+      "entries": 1,
+      "storedBytes": 1334,
+      "expandedBytes": 4769
+    },
+    "usr/include/speex": {
+      "entries": 6,
+      "storedBytes": 11578,
+      "expandedBytes": 40739
+    },
+    "usr/include/sqlite3.h": {
+      "entries": 1,
+      "storedBytes": 180128,
+      "expandedBytes": 695737
+    },
+    "usr/include/sqlite3ext.h": {
+      "entries": 1,
+      "storedBytes": 6829,
+      "expandedBytes": 39547
+    },
+    "usr/include/stdatomic.h": {
+      "entries": 1,
+      "storedBytes": 1537,
+      "expandedBytes": 4628
+    },
+    "usr/include/stdbit.h": {
+      "entries": 1,
+      "storedBytes": 3123,
+      "expandedBytes": 18602
+    },
+    "usr/include/stdint.h": {
+      "entries": 1,
+      "storedBytes": 2017,
+      "expandedBytes": 7439
+    },
+    "usr/include/stdio.h": {
+      "entries": 1,
+      "storedBytes": 5090,
+      "expandedBytes": 19174
+    },
+    "usr/include/stdio_ext.h": {
+      "entries": 1,
+      "storedBytes": 1613,
+      "expandedBytes": 5240
+    },
+    "usr/include/stdlib.h": {
+      "entries": 1,
+      "storedBytes": 4762,
+      "expandedBytes": 20150
+    },
+    "usr/include/string.h": {
+      "entries": 1,
+      "storedBytes": 3668,
+      "expandedBytes": 15340
+    },
+    "usr/include/strings.h": {
+      "entries": 1,
+      "storedBytes": 1548,
+      "expandedBytes": 3747
+    },
+    "usr/include/syn123.h": {
+      "entries": 1,
+      "storedBytes": 15798,
+      "expandedBytes": 53292
+    },
+    "usr/include/sys": {
+      "entries": 71,
+      "storedBytes": 87024,
+      "expandedBytes": 234645
+    },
+    "usr/include/syscall.h": {
+      "entries": 1,
+      "storedBytes": 121,
+      "expandedBytes": 176
+    },
+    "usr/include/sysexits.h": {
+      "entries": 1,
+      "storedBytes": 2297,
+      "expandedBytes": 5038
+    },
+    "usr/include/syslog.h": {
+      "entries": 1,
+      "storedBytes": 2704,
+      "expandedBytes": 9268
+    },
+    "usr/include/tar.h": {
+      "entries": 1,
+      "storedBytes": 1248,
+      "expandedBytes": 3034
+    },
+    "usr/include/term.h": {
+      "entries": 1,
+      "storedBytes": 8340,
+      "expandedBytes": 42283
+    },
+    "usr/include/term_entry.h": {
+      "entries": 1,
+      "storedBytes": 2914,
+      "expandedBytes": 8685
+    },
+    "usr/include/termcap.h": {
+      "entries": 1,
+      "storedBytes": 1265,
+      "expandedBytes": 3468
+    },
+    "usr/include/termio.h": {
+      "entries": 1,
+      "storedBytes": 119,
+      "expandedBytes": 163
+    },
+    "usr/include/termios.h": {
+      "entries": 1,
+      "storedBytes": 1800,
+      "expandedBytes": 5688
+    },
+    "usr/include/threads.h": {
+      "entries": 1,
+      "storedBytes": 2249,
+      "expandedBytes": 6281
+    },
+    "usr/include/time.h": {
+      "entries": 1,
+      "storedBytes": 4478,
+      "expandedBytes": 18144
+    },
+    "usr/include/time64.h": {
+      "entries": 1,
+      "storedBytes": 984,
+      "expandedBytes": 2138
+    },
+    "usr/include/turbojpeg.h": {
+      "entries": 1,
+      "storedBytes": 22083,
+      "expandedBytes": 124890
+    },
+    "usr/include/uchar.h": {
+      "entries": 1,
+      "storedBytes": 1281,
+      "expandedBytes": 3065
+    },
+    "usr/include/uconfig_local.h": {
+      "entries": 1,
+      "storedBytes": 706,
+      "expandedBytes": 1367
+    },
+    "usr/include/ucontext.h": {
+      "entries": 1,
+      "storedBytes": 122,
+      "expandedBytes": 180
+    },
+    "usr/include/unctrl.h": {
+      "entries": 1,
+      "storedBytes": 1259,
+      "expandedBytes": 3214
+    },
+    "usr/include/unistd.h": {
+      "entries": 1,
+      "storedBytes": 5463,
+      "expandedBytes": 20681
+    },
+    "usr/include/utime.h": {
+      "entries": 1,
+      "storedBytes": 1053,
+      "expandedBytes": 1980
+    },
+    "usr/include/utmp.h": {
+      "entries": 1,
+      "storedBytes": 1651,
+      "expandedBytes": 3568
+    },
+    "usr/include/utmpx.h": {
+      "entries": 1,
+      "storedBytes": 1195,
+      "expandedBytes": 2758
+    },
+    "usr/include/video": {
+      "entries": 3,
+      "storedBytes": 1951,
+      "expandedBytes": 5223
+    },
+    "usr/include/vorbis": {
+      "entries": 3,
+      "storedBytes": 8804,
+      "expandedBytes": 33367
+    },
+    "usr/include/wait.h": {
+      "entries": 1,
+      "storedBytes": 120,
+      "expandedBytes": 164
+    },
+    "usr/include/wchar.h": {
+      "entries": 1,
+      "storedBytes": 2427,
+      "expandedBytes": 11152
+    },
+    "usr/include/wctype.h": {
+      "entries": 1,
+      "storedBytes": 1031,
+      "expandedBytes": 2725
+    },
+    "usr/include/webrtc-audio-processing-1": {
+      "entries": 23,
+      "storedBytes": 47190,
+      "expandedBytes": 164547
+    },
+    "usr/include/x86_64-linux-android": {
+      "entries": 66,
+      "storedBytes": 40338,
+      "expandedBytes": 129368
+    },
+    "usr/include/xcb": {
+      "entries": 33,
+      "storedBytes": 205436,
+      "expandedBytes": 2132629
+    },
+    "usr/include/xen": {
+      "entries": 4,
+      "storedBytes": 2582,
+      "expandedBytes": 7657
+    },
+    "usr/include/xlocale.h": {
+      "entries": 1,
+      "storedBytes": 1020,
+      "expandedBytes": 1987
+    },
+    "usr/include/xray": {
+      "entries": 3,
+      "storedBytes": 8503,
+      "expandedBytes": 27551
+    },
+    "usr/include/zconf.h": {
+      "entries": 1,
+      "storedBytes": 4541,
+      "expandedBytes": 16921
+    },
+    "usr/include/zdict.h": {
+      "entries": 1,
+      "storedBytes": 6558,
+      "expandedBytes": 26516
+    },
+    "usr/include/zlib.h": {
+      "entries": 1,
+      "storedBytes": 28071,
+      "expandedBytes": 103848
+    },
+    "usr/include/zstd.h": {
+      "entries": 1,
+      "storedBytes": 46086,
+      "expandedBytes": 181748
+    },
+    "usr/include/zstd_errors.h": {
+      "entries": 1,
+      "storedBytes": 1624,
+      "expandedBytes": 4278
+    },
+    "usr/lib/alsa-lib": {
+      "entries": 8,
+      "storedBytes": 4437,
+      "expandedBytes": 9329
+    },
+    "usr/lib/clang": {
+      "entries": 313,
+      "storedBytes": 7642467,
+      "expandedBytes": 45715389
+    },
+    "usr/lib/crt_pad_segment.o": {
+      "entries": 1,
+      "storedBytes": 280,
+      "expandedBytes": 840
+    },
+    "usr/lib/crtbegin_dynamic.o": {
+      "entries": 1,
+      "storedBytes": 1506,
+      "expandedBytes": 4856
+    },
+    "usr/lib/crtbegin_so.o": {
+      "entries": 1,
+      "storedBytes": 1243,
+      "expandedBytes": 4696
+    },
+    "usr/lib/crtend_android.o": {
+      "entries": 1,
+      "storedBytes": 307,
+      "expandedBytes": 912
+    },
+    "usr/lib/crtend_so.o": {
+      "entries": 1,
+      "storedBytes": 309,
+      "expandedBytes": 912
+    },
+    "usr/lib/dbus-1.0": {
+      "entries": 1,
+      "storedBytes": 1096,
+      "expandedBytes": 2167
+    },
+    "usr/lib/jvm": {
+      "entries": 412,
+      "storedBytes": 124924392,
+      "expandedBytes": 229412408
+    },
+    "usr/lib/libOpenSLES.so": {
+      "entries": 1,
+      "storedBytes": 4004,
+      "expandedBytes": 11480
+    },
+    "usr/lib/libXau.la": {
+      "entries": 1,
+      "storedBytes": 481,
+      "expandedBytes": 940
+    },
+    "usr/lib/libandroid.so": {
+      "entries": 1,
+      "storedBytes": 14805,
+      "expandedBytes": 48928
+    },
+    "usr/lib/libasound.la": {
+      "entries": 1,
+      "storedBytes": 527,
+      "expandedBytes": 1023
+    },
+    "usr/lib/libatomic.a": {
+      "entries": 1,
+      "storedBytes": 126,
+      "expandedBytes": 150
+    },
+    "usr/lib/libatopology.la": {
+      "entries": 1,
+      "storedBytes": 538,
+      "expandedBytes": 1084
+    },
+    "usr/lib/libbinder_ndk.so": {
+      "entries": 1,
+      "storedBytes": 7790,
+      "expandedBytes": 24000
+    },
+    "usr/lib/libc++experimental.a": {
+      "entries": 1,
+      "storedBytes": 2522,
+      "expandedBytes": 3992
+    },
+    "usr/lib/libcompiler_rt-extras.a": {
+      "entries": 1,
+      "storedBytes": 5107,
+      "expandedBytes": 13274
+    },
+    "usr/lib/libear": {
+      "entries": 3,
+      "storedBytes": 6177,
+      "expandedBytes": 27762
+    },
+    "usr/lib/liblldCOFF.a": {
+      "entries": 1,
+      "storedBytes": 705144,
+      "expandedBytes": 2813598
+    },
+    "usr/lib/liblldCommon.a": {
+      "entries": 1,
+      "storedBytes": 90428,
+      "expandedBytes": 350306
+    },
+    "usr/lib/liblldELF.a": {
+      "entries": 1,
+      "storedBytes": 1623529,
+      "expandedBytes": 7327054
+    },
+    "usr/lib/liblldMachO.a": {
+      "entries": 1,
+      "storedBytes": 710275,
+      "expandedBytes": 2796520
+    },
+    "usr/lib/liblldMinGW.a": {
+      "entries": 1,
+      "storedBytes": 21523,
+      "expandedBytes": 85190
+    },
+    "usr/lib/liblldWasm.a": {
+      "entries": 1,
+      "storedBytes": 339907,
+      "expandedBytes": 1373614
+    },
+    "usr/lib/libmediandk.so": {
+      "entries": 1,
+      "storedBytes": 11449,
+      "expandedBytes": 35592
+    },
+    "usr/lib/libomp.a": {
+      "entries": 1,
+      "storedBytes": 489583,
+      "expandedBytes": 2134998
+    },
+    "usr/lib/libpthread.so": {
+      "entries": 1,
+      "storedBytes": 13,
+      "expandedBytes": 11
+    },
+    "usr/lib/librt.so": {
+      "entries": 1,
+      "storedBytes": 13,
+      "expandedBytes": 11
+    },
+    "usr/lib/libscanbuild": {
+      "entries": 11,
+      "storedBytes": 37721,
+      "expandedBytes": 124843
+    },
+    "usr/lib/libsqlite3.so": {
+      "entries": 1,
+      "storedBytes": 675135,
+      "expandedBytes": 1224016
+    },
+    "usr/lib/libsqlite3.so.0": {
+      "entries": 1,
+      "storedBytes": 675135,
+      "expandedBytes": 1224016
+    },
+    "usr/lib/libsqlite3.so.3.54.0": {
+      "entries": 1,
+      "storedBytes": 675135,
+      "expandedBytes": 1224016
+    },
+    "usr/lib/libtermux-platform-ns.so": {
+      "entries": 1,
+      "storedBytes": 2648,
+      "expandedBytes": 6552
+    },
+    "usr/lib/libunwind.a": {
+      "entries": 1,
+      "storedBytes": 23986,
+      "expandedBytes": 92456
+    },
+    "usr/lib/libutil.so": {
+      "entries": 1,
+      "storedBytes": 13,
+      "expandedBytes": 11
+    },
+    "usr/lib/pkgIndex.tcl": {
+      "entries": 1,
+      "storedBytes": 77,
+      "expandedBytes": 88
+    },
+    "usr/lib/pkgconfig": {
+      "entries": 336,
+      "storedBytes": 89409,
+      "expandedBytes": 175627
+    },
+    "usr/lib/python3.14": {
+      "entries": 611,
+      "storedBytes": 2972842,
+      "expandedBytes": 11842285
+    },
+    "usr/libexec/analyze-c++": {
+      "entries": 1,
+      "storedBytes": 321,
+      "expandedBytes": 515
+    },
+    "usr/libexec/analyze-cc": {
+      "entries": 1,
+      "storedBytes": 320,
+      "expandedBytes": 514
+    },
+    "usr/libexec/c++-analyzer": {
+      "entries": 1,
+      "storedBytes": 172,
+      "expandedBytes": 230
+    },
+    "usr/libexec/ccc-analyzer": {
+      "entries": 1,
+      "storedBytes": 6304,
+      "expandedBytes": 21130
+    },
+    "usr/libexec/dbus-daemon-launch-helper": {
+      "entries": 1,
+      "storedBytes": 20413,
+      "expandedBytes": 48784
+    },
+    "usr/libexec/intercept-c++": {
+      "entries": 1,
+      "storedBytes": 320,
+      "expandedBytes": 520
+    },
+    "usr/libexec/intercept-cc": {
+      "entries": 1,
+      "storedBytes": 320,
+      "expandedBytes": 520
+    },
+    "usr/share/X11": {
+      "entries": 191,
+      "storedBytes": 185283,
+      "expandedBytes": 1150860
+    },
+    "usr/share/aclocal": {
+      "entries": 7,
+      "storedBytes": 26441,
+      "expandedBytes": 100007
+    },
+    "usr/share/alsa": {
+      "entries": 84,
+      "storedBytes": 41965,
+      "expandedBytes": 152344
+    },
+    "usr/share/bash-completion": {
+      "entries": 9,
+      "storedBytes": 23004,
+      "expandedBytes": 142704
+    },
+    "usr/share/clang": {
+      "entries": 10,
+      "storedBytes": 27315,
+      "expandedBytes": 84428
+    },
+    "usr/share/clang-doc": {
+      "entries": 10,
+      "storedBytes": 11279,
+      "expandedBytes": 43062
+    },
+    "usr/share/dbus-1": {
+      "entries": 3,
+      "storedBytes": 4012,
+      "expandedBytes": 10761
+    },
+    "usr/share/doc": {
+      "entries": 544,
+      "storedBytes": 2285899,
+      "expandedBytes": 11189401
+    },
+    "usr/share/info": {
+      "entries": 5,
+      "storedBytes": 183459,
+      "expandedBytes": 684694
+    },
+    "usr/share/jdtls": {
+      "entries": 128,
+      "storedBytes": 51035623,
+      "expandedBytes": 54686812
+    },
+    "usr/share/opt-viewer": {
+      "entries": 6,
+      "storedBytes": 11735,
+      "expandedBytes": 37517
+    },
+    "usr/share/pkgconfig": {
+      "entries": 1,
+      "storedBytes": 263,
+      "expandedBytes": 425
+    },
+    "usr/share/readline": {
+      "entries": 19,
+      "storedBytes": 30540,
+      "expandedBytes": 78789
+    },
+    "usr/share/scan-build": {
+      "entries": 2,
+      "storedBytes": 5901,
+      "expandedBytes": 18803
+    },
+    "usr/share/scan-view": {
+      "entries": 4,
+      "storedBytes": 11014,
+      "expandedBytes": 38790
+    },
+    "usr/share/tabset": {
+      "entries": 4,
+      "storedBytes": 102,
+      "expandedBytes": 454
+    },
+    "usr/share/terminfo": {
+      "entries": 40,
+      "storedBytes": 51768,
+      "expandedBytes": 105154
+    },
+    "usr/share/util-macros": {
+      "entries": 1,
+      "storedBytes": 5880,
+      "expandedBytes": 15744
+    },
+    "usr/share/vala": {
+      "entries": 4,
+      "storedBytes": 9679,
+      "expandedBytes": 68102
+    },
+    "usr/share/xml": {
+      "entries": 3,
+      "storedBytes": 1219,
+      "expandedBytes": 3853
+    },
+    "usr/share/zsh": {
+      "entries": 1,
+      "storedBytes": 6075,
+      "expandedBytes": 32224
+    },
+    "usr/var/run": {
+      "entries": 1,
+      "storedBytes": 55,
+      "expandedBytes": 56
+    }
+  },
+  "decision": "Retain complete offline ARM64 runtimes, debug capabilities and license payload. No unmeasured shrink claim or dependency removal."
+}

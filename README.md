@@ -4,7 +4,7 @@
 
 在 Android 手机上编辑、运行和调试 C、C++、Python、Java 的本地 IDE。编译器、标准库、调试器和语义补全资源随 APK 交付，编程功能断网可用；软件更新从 GitHub Releases 获取。
 
-当前为首版开发原型。实际验收状态见 [验证记录](docs/VERIFICATION.md)；不能仅凭编译成功认定四语言和全部 Android 版本已兼容。
+当前为开发版。实际验收状态见 [验证记录](docs/VERIFICATION.md)；不能仅凭编译成功认定四语言和全部 Android 版本已兼容。
 
 [下载 APK](https://github.com/GodBook/mobile-code/releases/latest) · [在线更新与发布](docs/UPDATES.md) · [第三方源码与许可材料](docs/SOURCE_MATERIALS.md)
 

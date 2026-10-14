@@ -1,0 +1,230 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-14",
+  "timezone": "Asia/Shanghai",
+  "repository": "https://github.com/GodBook/mobile-code",
+  "implementationCommit": "0a38049efbdf4472c3d817a2cf2ce922fda59201",
+  "release": {
+    "tag": "v0.3.0",
+    "url": "https://github.com/GodBook/mobile-code/releases/tag/v0.3.0",
+    "publication": "prepared",
+    "latest": false
+  },
+  "apk": {
+    "packageName": "dev.mobilecode.ide",
+    "versionName": "0.3.0",
+    "versionCode": 7,
+    "bytes": 400641853,
+    "sha256": "e319f2360aa471abd294646735af98206a89b69c2cdd4d14ec201856116d0cdd",
+    "installedBaseApkSha256": "e319f2360aa471abd294646735af98206a89b69c2cdd4d14ec201856116d0cdd",
+    "certificateSha256": "b579d64db9b1ca5ab84084823dfcae5c625de4bcd6dd38fe4bdcfc1df5fa370a",
+    "minSdk": 29,
+    "compileSdk": 37,
+    "targetSdk": 37,
+    "abi": "arm64-v8a",
+    "debuggable": false
+  },
+  "device": {
+    "model": "Xiaomi Mi 9 SE",
+    "os": "LineageOS Android 15",
+    "api": 35,
+    "pageBytes": 4096,
+    "memoryGiBApprox": 6,
+    "connection": "USB ADB"
+  },
+  "unitTests": {
+    "passed": 6,
+    "failed": 0,
+    "evidence": "unit-tests.xml"
+  },
+  "apkAudit": {
+    "nativeFiles": 484,
+    "checks": 1460,
+    "passed": true,
+    "evidence": "apk-audit.json"
+  },
+  "regression": {
+    "passed": 43,
+    "failed": 0,
+    "seconds": 418.473,
+    "evidence": "regression.json",
+    "rawLog": "regression.log",
+    "testApk": ".downloads/ux-0.3.0-ime-stable-tests.apk",
+    "testApkSha256": "cea384cb50c2fbecefa26db3502f6898548eaf8ba5d9cd1384e211aa3cb34a65"
+  },
+  "dataPreservation": {
+    "passed": true,
+    "method": "Original-signature adb install -r from code6 to7; original project IDs, representative Chinese/emoji source hash, breakpoints and appearance settings checked again after stress",
+    "afterInstallSeconds": 0.707,
+    "finalSeconds": 0.828,
+    "evidence": [
+      "data-before.log",
+      "data-after-install.log",
+      "data-final.json",
+      "data-final.log"
+    ],
+    "githubOtaInstallerFlowRetestedForThisVersion": false
+  },
+  "processRecovery": {
+    "passed": true,
+    "steps": 2,
+    "method": "Separate instrumentation processes with host am force-stop in between; application-generated draft, original disk hash before explicit recovery, then repaired fixture/removed marker",
+    "evidence": [
+      "recovery-record.json",
+      "recovery-record.log",
+      "recovery-verify.json",
+      "recovery-verify.log"
+    ],
+    "outstandingFixture": false
+  },
+  "layout": {
+    "default": {
+      "widthDpApprox": 393,
+      "fontScale": 1,
+      "evidence": "regression.json"
+    },
+    "narrow": [
+      {
+        "widthDp": 360,
+        "fontScale": 1.3,
+        "passed": 2,
+        "seconds": 14.111,
+        "evidence": "layout-360-font130.json"
+      },
+      {
+        "widthDp": 360,
+        "fontScale": 1.5,
+        "passed": 3,
+        "seconds": 24.136,
+        "evidence": "layout-360-font150.json",
+        "includes": "Portrait home/tree, actual landscape geometry/full panels, stdin acknowledgment/draft/EOF with IME"
+      }
+    ]
+  },
+  "storage": {
+    "runs": 100,
+    "elapsedMs": 179989,
+    "protectedExistingSessions": 356,
+    "sourceHash": "3da3093fabea5cdaefa8d510cacf3a97ed5b5df85b6ab14632c995268fd3d1fa",
+    "passed": true,
+    "evidence": "storage-100.json",
+    "cleanupScope": "Only newly generated test sessions eligible; current snapshot and all pre-existing sessions protected"
+  },
+  "packageSize": {
+    "baselineVersion": "0.2.3",
+    "baselineBytes": 429758440,
+    "reductionBytes": 29116587,
+    "reductionPercent": 6.7751,
+    "evidence": "apk-size.json",
+    "method": "R8 removes unused dependency code; no obfuscation/optimization; bundled offline engines retained"
+  },
+  "editorPerformance": {
+    "sourceBytes": 1048576,
+    "samplesPerRun": 80,
+    "viewportPx": [
+      1080,
+      719
+    ],
+    "openToIdleMs": 627.835625,
+    "inputToFrameP95Ms": 61.683906,
+    "appPssKiB": 161230,
+    "evidence": "editor-performance.json",
+    "otherShippingSamples": [
+      {
+        "openMs": 496.595729,
+        "p95Ms": 61.91651,
+        "evidence": "editor-performance-first-shipping.json"
+      },
+      {
+        "openMs": 762.809843,
+        "p95Ms": 45.684583,
+        "evidence": "editor-performance-second-shipping.json"
+      }
+    ],
+    "stable50msTargetEstablished": false,
+    "physicalImeLatencyVerified": false,
+    "scope": "Instrumented insertion to next Choreographer callback, includes instrumentation; PSS app-only after closed editors/GC with language worker stopped"
+  },
+  "lexicalFallback": {
+    "bytes": 1048576,
+    "elapsedMs": 111,
+    "appPssKiB": 175551,
+    "evidence": "lexical-performance.json"
+  },
+  "consoleFlood": {
+    "bytes": 12582912,
+    "inputToFrameMs": 8.706875,
+    "appPssKiB": 131441,
+    "evidence": "console-performance.json",
+    "savedLogLimitBytes": 10485760
+  },
+  "onlineUpdate": {
+    "phoneStatus": "not_verified",
+    "reason": "Wi-Fi enabled but disconnected; no active default network and saved networks absent from scan",
+    "prepublicationCheck": "Failed truthfully with connection error on code6 bridge; not a passing online check",
+    "source": "USB shipping upgrade is distinct from the historical v0.2.2 GitHub/system-installer OTA evidence"
+  },
+  "intermediateFailures": [
+    {
+      "evidence": "first-shipping-regression.json",
+      "passed": 42,
+      "failed": 1,
+      "seconds": 408.27,
+      "detail": "Timeout recovery fixture retained injected1s budget for normal follow-up program; expected output printed but final phase FAILED. Old assertion lacked reason. Fixture now restores its original normal budget after the unchanged timeout assertion."
+    },
+    {
+      "evidence": "second-shipping-regression.json",
+      "passed": 42,
+      "failed": 1,
+      "seconds": 422.929,
+      "detail": "Stdin test timed out after a physical click while IME changed panel geometry. Added stable-target/enabled/display checks and detailed state diagnostics; final full suite and narrow-font input passed. Exact original cause was not independently established."
+    },
+    {
+      "evidence": "first-layout-360-font150.json",
+      "passed": 2,
+      "failed": 1,
+      "detail": "Test tapped offscreen language chip without scrolling. Corrected actual scroll-to gesture; final3-case retry passed."
+    }
+  ],
+  "bridgeEvidence": {
+    "versionCode": 6,
+    "notPublishable": true,
+    "apkSha256": "6281ed00a9a7b423ad75ed169117666aaa25ec5467f6fba36af09b236fb8d152",
+    "targetedPassed": 14,
+    "targetedSeconds": 68.614,
+    "evidence": [
+      "bridge-targeted.json",
+      "bridge-recovery-record.json",
+      "bridge-recovery-verify.json",
+      "bridge-storage-100.json"
+    ]
+  },
+  "deviceSettings": {
+    "restored": true,
+    "stayOnWhilePluggedIn": 0,
+    "fontScale": 1,
+    "physicalDensity": 440,
+    "densityOverride": false,
+    "wifiEnabled": 1,
+    "pinOrLockConfigurationChanged": false,
+    "appForceStoppedAfterAcceptance": true
+  },
+  "notVerified": [
+    "Actual 16KiB execution",
+    "Full Android10–17/vendor matrix",
+    "Stable50ms input target and full physical IME-to-display latency",
+    "Sustained/background/low-memory matrix",
+    "External SAF provider UI matrix",
+    "TalkBack/physical keyboard/split-screen matrix",
+    "Component corruption/full-disk preparation matrix",
+    "Full overload/scope/external-source navigation and rapid-debug-transition matrix",
+    "New phone GitHub download/system-installer/current-version flow and weak-network/wifi-only pause/cancel combinations"
+  ],
+  "deferred": [
+    "Full dependency management",
+    "Android/GUI projects",
+    "Cloud/remote execution",
+    "Formatting/semantic rename beyond assessment",
+    "Arbitrary debug evaluation/variable mutation"
+  ]
+}

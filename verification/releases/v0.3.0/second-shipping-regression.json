@@ -1,0 +1,323 @@
+{
+  "time": "2026-10-14T05:52:04.687627+00:00",
+  "device": {
+    "model": "Xiaomi Mi 9 SE",
+    "os": "LineageOS Android 15",
+    "api": 35,
+    "abi": "arm64-v8a",
+    "pageBytes": 4096
+  },
+  "apk": "artifacts\\update-publication\\MobileCode-0.3.0-arm64-v8a.apk",
+  "apkSha256": "e319f2360aa471abd294646735af98206a89b69c2cdd4d14ec201856116d0cdd",
+  "passed": false,
+  "tests": [
+    {
+      "class": "dev.mobilecode.ide.OfflineIdeTest",
+      "test": "nativeCrashAndOutputFloodStayContained",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.OfflineIdeTest",
+      "test": "blockedPresetInputStillTimesOut",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.OfflineIdeTest",
+      "test": "interactiveInputEofAndIdempotentStop",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.OfflineIdeTest",
+      "test": "pythonHasRealSourceDebugger",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.OfflineIdeTest",
+      "test": "python313RunsWithInput",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.OfflineIdeTest",
+      "test": "pythonHasCrossFileSemanticCompletion",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.OfflineIdeTest",
+      "test": "atomicWorkspaceSnapshotAndZipRoundTrip",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.OfflineIdeTest",
+      "test": "cppRunsStlAcrossFiles",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.OfflineIdeTest",
+      "test": "cppHasCrossFileSemanticCompletion",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.OfflineIdeTest",
+      "test": "cRunsWithInputAndArguments",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.OfflineIdeTest",
+      "test": "timeoutAndCrashLeaveEditorAndNextRunUsable",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.OfflineIdeTest",
+      "test": "javaHasRealSourceDebugger",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.OfflineIdeTest",
+      "test": "javaHasCrossFileSemanticCompletion",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.OfflineIdeTest",
+      "test": "cppHasRealSourceDebugger",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.OfflineIdeTest",
+      "test": "java17RunsWithInput",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.OfflineIdeTest",
+      "test": "installedReleaseHasUpdaterPermissionsAndNonDebuggable",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.OfflineIdeTest",
+      "test": "cHasCrossFileSemanticCompletion",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.OfflineIdeTest",
+      "test": "cHasRealSourceDebugger",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.WorkbenchTest",
+      "test": "fourIncrementalGrammarsAcceptUnicodeAndIncompleteSource",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.WorkbenchTest",
+      "test": "visibleOutputFloodKeepsEditorResponsiveAndMemoryBounded",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.WorkbenchTest",
+      "test": "createEditComposeUndoFoldAutosaveAndRunFromWorkbench",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.UpdateIntegrationTest",
+      "test": "rejectsCorruptDownloadsAndDowngradesBeforeInstaller",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.UpdateIntegrationTest",
+      "test": "updaterProviderCannotExposeWorkspaceFiles",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.EditorAppearanceTest",
+      "test": "lightAndDarkSelectionPreservesTextUndoAndRestoresAfterRecreation",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.EditorAppearanceTest",
+      "test": "closedTabsAndReplacedSnapshotsReleaseEditorResources",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.EditorAppearanceTest",
+      "test": "semanticCompletionRestartsAfterMemoryReleaseAndRejectsOlderVersions",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.EditorAppearanceTest",
+      "test": "syntaxRolesMatchReferenceAndRemainOrderedWithUnicode",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.EditorPerformanceTest",
+      "test": "measureLargeFileTypingTabRetentionAndIdleAllocations",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.EditorPerformanceTest",
+      "test": "lexicalFallbackScansOneMiBWithoutNativeMemoryGrowth",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.UxUpgradeTest",
+      "test": "cancelledImportLeavesExistingProjectsAndMarksTemporaryDirectory",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.UxUpgradeTest",
+      "test": "hundredRealRunsHaveSafeStorageCleanupAndPreserveExistingSessions",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.UxUpgradeTest",
+      "test": "pythonDefinitionReferencesAndOutline",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.UxUpgradeTest",
+      "test": "cppDefinitionReferencesAndOutline",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.UxUpgradeTest",
+      "test": "quickOpenInlineSearchAndProjectSearchUseUnicodeBuffer",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.UxUpgradeTest",
+      "test": "fileMoveRecycleAndProjectCopyPreserveSourceAndBreakpoints",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.UxUpgradeTest",
+      "test": "javaDefinitionReferencesAndOutline",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.UxUpgradeTest",
+      "test": "tabsLocationsWatchesAndPinnedProjectsRestoreAfterRecreation",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.UxUpgradeTest",
+      "test": "inputAcknowledgmentEofAndClosedPipeKeepDraft",
+      "passed": false,
+      "status": -2,
+      "failure": "androidx.compose.ui.test.ComposeTimeoutException: Condition still not satisfied after 15000 ms"
+    },
+    {
+      "class": "dev.mobilecode.ide.UxUpgradeTest",
+      "test": "unreadableProjectsAndMixedImportsRemainRecoverable",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.UxUpgradeTest",
+      "test": "failedSaveKeepsBufferAndExportThenRetryAndRecovery",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.UxUpgradeTest",
+      "test": "cDefinitionReferencesAndOutline",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.UxLayoutTest",
+      "test": "homeSearchFilterPinAndTreeKeepChineseProjectAccessible",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.UxLayoutTest",
+      "test": "systemThemeAndLandscapeKeepNonzeroEditorAndFullPanels",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    }
+  ],
+  "durationSeconds": 422.929,
+  "log": "verification\\releases\\v0.3.0\\second-shipping-regression.log",
+  "notVerified": [
+    "Actual 16KiB execution",
+    "Full Android10–17/vendor matrix",
+    "P95 performance and long-running background/low-memory matrix"
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "time": "2026-10-14T05:56:57.691015+00:00",
+  "device": {
+    "model": "Xiaomi Mi 9 SE",
+    "os": "LineageOS Android 15",
+    "api": 35,
+    "abi": "arm64-v8a",
+    "pageBytes": 4096
+  },
+  "apk": "artifacts\\update-publication\\MobileCode-0.3.0-arm64-v8a.apk",
+  "apkSha256": "e319f2360aa471abd294646735af98206a89b69c2cdd4d14ec201856116d0cdd",
+  "passed": true,
+  "tests": [
+    {
+      "class": "dev.mobilecode.ide.UxLayoutTest",
+      "test": "homeSearchFilterPinAndTreeKeepChineseProjectAccessible",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.UxLayoutTest",
+      "test": "systemThemeAndLandscapeKeepNonzeroEditorAndFullPanels",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    },
+    {
+      "class": "dev.mobilecode.ide.UxUpgradeTest",
+      "test": "inputAcknowledgmentEofAndClosedPipeKeepDraft",
+      "passed": true,
+      "status": 0,
+      "failure": null
+    }
+  ],
+  "durationSeconds": 24.136,
+  "log": "verification\\releases\\v0.3.0\\layout-360-font150.log",
+  "notVerified": [
+    "Actual 16KiB execution",
+    "Full Android10–17/vendor matrix",
+    "P95 performance and long-running background/low-memory matrix"
+  ]
+}

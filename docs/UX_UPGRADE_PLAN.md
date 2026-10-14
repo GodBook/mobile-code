@@ -2,7 +2,7 @@
 
 审查日期：2026-10-13（Asia/Shanghai）。基线：已发布的 **0.2.3 / versionCode 6**，本地审查提交 `3a0846880bb1350a6bb39717e104a5d441cd07c0`。
 
-本文最初根据现有代码、项目规格、验收记录及亮暗主题截图形成升级建议，不替代 [SPEC.md](project/SPEC.md) 中已批准的要求。2026-10-13 用户已授权执行本计划、连接手机测试并更新 GitHub/Release；当前正在实施 0.3.0 集成更新，实际进度见 [STATE](project/STATE.md) 与 [TASKS](project/TASKS.md)。下面的“现状”与源码索引保留原审查基线，不能视为新版本已经验收通过。
+本文最初根据现有代码、项目规格、验收记录及亮暗主题截图形成升级建议，不替代 [SPEC.md](project/SPEC.md) 中已批准的要求。用户随后授权执行本计划、连接手机测试并更新GitHub/Release。0.3.0已完成UX-01～UX-14的核心实现，正式APK真机43/43通过；实际范围与未覆盖项目见[更新说明](releases/v0.3.0.md)、[验收报告](../verification/releases/v0.3.0/acceptance.json)、[STATE](project/STATE.md)和[TASKS](project/TASKS.md)。下面的“现状”与源码索引保留原审查基线。
 
 ## 1. 判断与升级方向
 

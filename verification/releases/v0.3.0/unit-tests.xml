@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="dev.mobilecode.ide.update.UpdateReleaseTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-10-14T05:21:35.344Z" hostname="DESKTOP-GNS73CU" time="0.053">
+  <properties/>
+  <testcase name="rejectsTruncatedAndOversizedPayloads" classname="dev.mobilecode.ide.update.UpdateReleaseTest" time="0.024"/>
+  <testcase name="acceptsCompatibleReleaseAndComparesAndroidVersionCodes" classname="dev.mobilecode.ide.update.UpdateReleaseTest" time="0.005"/>
+  <testcase name="rejectsFractionalOverflowAndStringVersionCodes" classname="dev.mobilecode.ide.update.UpdateReleaseTest" time="0.003"/>
+  <testcase name="rejectsInvalidHashesAndSizes" classname="dev.mobilecode.ide.update.UpdateReleaseTest" time="0.013"/>
+  <testcase name="rejectsOtherRepositoriesAndUnsafeDownloadUrls" classname="dev.mobilecode.ide.update.UpdateReleaseTest" time="0.002"/>
+  <testcase name="rejectsIncompatiblePackageArchitectureAndSdk" classname="dev.mobilecode.ide.update.UpdateReleaseTest" time="0.003"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
