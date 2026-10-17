@@ -1,6 +1,10 @@
 # Current checkpoint
 
-Updated: 2026-10-14, Asia/Shanghai.
+Updated: 2026-10-17, Asia/Shanghai.
+
+## README review — 2026-10-17
+
+Reviewed the public project README against the existing specification, build configuration and release metadata. Simplified repeated release/testing narratives, retained the offline-runtime and device-compatibility limits, and kept detailed procedures linked from the README. Documentation checks cover Markdown structure, local link targets and the documented release version; no new application build, device test, performance measurement or OTA verification is claimed. Existing acceptance evidence and open matrices below remain unchanged.
 
 ## Completed publication — 0.3.1
 
